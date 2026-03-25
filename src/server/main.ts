@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 const app = express();
 dotenv.config({
     debug: true,
-    path: __dirname + "/../../.env." + app.get("env"),
+    path: __dirname + "/../../.env." + process.env.NODE_ENV,
 });
 
 app.get("/hello", (_, res) => {
