@@ -1,6 +1,6 @@
 import express from "express";
 import ViteExpress from "vite-express";
-import logger from "../../logging/Logger";
+import logger from "../../SillyStoreCommon/logging/Logger";
 import dotenv from "dotenv";
 
 const app = express();
