@@ -1,11 +1,12 @@
 {
-    "name": "SillyStoreDb",
+    "name": "silly_store_backend",
     "private": true,
     "version": "0.0.0",
     "scripts": {
         "dev": "NODE_ENV=development nodemon -w src/server -x tsx src/server/main.ts",
         "start": "NODE_ENV=production tsx src/server/main.ts",
-        "build": "vite build"
+        "build": "vite build",
+        "db:schema": "psql -d silly_store_db -f src/infrastructure/psql/schema.sql -U practice"
     },
     "devDependencies": {
         "@types/express": "^5.0.1",
