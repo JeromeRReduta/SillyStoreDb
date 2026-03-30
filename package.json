@@ -8,7 +8,7 @@
         "start": "NODE_ENV=production tsx src/server/main.ts",
         "build": "vite build",
         "db:schema": "psql -d silly_store_db -f src/infrastructure/psql/schema.sql -U practice",
-        "db:seed": " tsx src/infrastructure/psql/seed.ts --env-file=.env.development"
+        "db:seed": " tsx --env-file=.env.development src/infrastructure/psql/seed.ts"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",
