@@ -2,7 +2,6 @@ import configs from "../../../SillyStoreCommon/configs/Configs.ts";
 import logger from "../../../SillyStoreCommon/logging/Logger.ts";
 import pg, { QueryConfig, type Client } from "pg";
 import bcrypt from "bcrypt";
-import { log } from "console";
 
 interface Quantities {
     readonly users: number;
@@ -17,8 +16,6 @@ const quantities: Quantities = {
     ordersPerUser: 2,
     saltRounds: 10,
 };
-
-// TODO: figure out how to make this run - also fix .env.development conn string
 
 async function seedUsers(
     db: Client,
@@ -62,16 +59,16 @@ async function seedOrdersProducts(
 
 async function main(): Promise<void> {
     const db: Client = new pg.Client(configs.db.connectionString);
-    logger.debug("Connecting to db...");
+    logger.info("Connecting to db...");
     await db.connect();
-    logger.debug("Begin seeding...");
+    logger.info("Begin seeding...");
     await seedUsers(db, quantities);
     await seedProducts(db, quantities);
     await seedOrders(db, quantities);
     await seedOrdersProducts(db, quantities);
-    logger.debug("Closing db connection...");
+    logger.info("Closing db connection...");
     await db.end();
-    logger.debug("seed complete! Ending process.");
+    logger.info("seed complete! Ending process.");
 }
 
 main();
