@@ -2,24 +2,33 @@
     "name": "silly_store_backend",
     "private": true,
     "version": "0.0.0",
+    "type": "module",
     "scripts": {
         "dev": "NODE_ENV=development nodemon -w src/server -x tsx src/server/main.ts",
         "start": "NODE_ENV=production tsx src/server/main.ts",
         "build": "vite build",
-        "db:schema": "psql -d silly_store_db -f src/infrastructure/psql/schema.sql -U practice"
+        "db:schema": "psql -d silly_store_db -f src/infrastructure/psql/schema.sql -U practice",
+        "db:seed": " tsx src/infrastructure/psql/seed.ts --env-file=.env.development"
     },
     "devDependencies": {
+        "@eslint/js": "^10.0.1",
         "@types/express": "^5.0.1",
         "@types/node": "^22.15.2",
         "@types/pg": "^8.20.0",
+        "eslint": "^10.1.0",
+        "globals": "^17.4.0",
+        "jiti": "^2.6.1",
         "nodemon": "^3.1.10",
+        "typescript-eslint": "^8.57.2",
         "vite": "^6.3.3"
     },
     "dependencies": {
         "bcrypt": "^6.0.0",
         "dotenv": "^17.3.1",
+        "eslint-plugin-import-x": "^4.16.2",
         "express": "^5.2.1",
         "pg": "^8.20.0",
+        "silly-store-common": "file:/SillyStoreCommon",
         "tslog": "^4.10.2",
         "tsx": "^4.19.3",
         "typescript": "^5.8.3",
