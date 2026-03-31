@@ -2,6 +2,7 @@ import configs from "../../../SillyStoreCommon/configs/Configs.ts";
 import logger from "../../../SillyStoreCommon/logging/Logger.ts";
 import pg, { QueryConfig, type Client } from "pg";
 import bcrypt from "bcrypt";
+import PG from "pg";
 
 interface Quantities {
     readonly users: number;
@@ -22,26 +23,39 @@ async function seedUsers(
     { users, saltRounds }: Quantities,
 ): Promise<void> {
     for (let i = 0; i < users; i++) {
-        const username: string = `user ${i}`;
-        const pwHash: string = await bcrypt.hash(`password ${i}`, saltRounds);
-        const email: string = `email${i}@email.com`;
-        const sql: QueryConfig = {
-            text: `
+        const user: PgUser = await addUser(i, db, saltRounds);
+        logger.debug("result", user);
+    }
+}
+
+interface PgUser {
+    readonly id: number;
+    readonly username: number;
+    readonly pw_hash: number;
+    readonly email: number;
+}
+
+async function addUser(
+    i: number,
+    db: Client,
+    saltRounds: number,
+): Promise<PgUser> {
+    const username: string = `user ${i}`;
+    const pwHash: string = await bcrypt.hash(`password ${i}`, saltRounds);
+    const email: string = `email${i}@email.com`;
+    const sql: QueryConfig = {
+        text: `
             INSERT INTO users (username, pw_hash, email)
             VALUES ($1, $2, $3)
             RETURNING *
             `,
-            values: [username, pwHash, email],
-        };
-        logger.debug("running sql: ", sql);
-        const {
-            id: pgId,
-            username: pgUsername,
-            pw_hash: pgPwHash,
-            email: pgEmail,
-        } = (await db.query(sql)).rows[0];
-        logger.debug("result", { pgId, pgUsername, pgPwHash, pgEmail });
-    }
+        values: [username, pwHash, email],
+    };
+    logger.debug("running sql: ", sql);
+    const {
+        rows: [pgUser],
+    } = await db.query(sql);
+    return pgUser;
 }
 
 async function seedProducts(
