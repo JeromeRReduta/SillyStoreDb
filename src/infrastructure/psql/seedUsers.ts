@@ -24,6 +24,5 @@ export default async function seedUsers(
             rows: [pgUser],
         } = await db.query(sql);
         logger.debug("result", pgUser);
-        return pgUser;
     }
 }
