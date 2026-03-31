@@ -2,6 +2,7 @@ import configs from "../../../SillyStoreCommon/configs/Configs.ts";
 import logger from "../../../SillyStoreCommon/logging/Logger.ts";
 import pg, { type Client } from "pg";
 import seedUsers from "./seedUsers.ts";
+import seedProducts from "./seedProducts.ts";
 
 export interface Quantities {
     readonly users: number;
@@ -17,10 +18,6 @@ const quantities: Quantities = {
     saltRounds: 10,
 };
 
-async function seedProducts(
-    db: Client,
-    { products }: Quantities,
-): Promise<void> {}
 async function seedOrders(
     db: Client,
     { ordersPerUser }: Quantities,
@@ -35,7 +32,7 @@ async function main(): Promise<void> {
     logger.info("Connecting to db...");
     await db.connect();
     logger.info("Begin seeding...");
-    await seedUsers(db, quantities);
+    // await seedUsers(db, quantities);
     await seedProducts(db, quantities);
     await seedOrders(db, quantities);
     await seedOrdersProducts(db, quantities);
