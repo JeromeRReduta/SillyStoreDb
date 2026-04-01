@@ -3,4 +3,5 @@ export interface PgProduct {
     readonly title: string;
     readonly description: string;
     readonly price: number;
+    readonly image_src: string;
 }

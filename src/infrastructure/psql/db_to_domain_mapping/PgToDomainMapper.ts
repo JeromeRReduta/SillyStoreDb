@@ -1,25 +1,53 @@
 import { type DbToDomainMapper } from "../../../../SillyStoreCommon/domain-objects/DbToDomainMapper.ts";
-// export interface DbToDomainMapper {
-//     toUser<TDbUser>(dbUser: TDbUser): User;
-//     toOrder<TDbOrder>(dbOrder: TDbOrder): Order;
-//     toProduct<TDbProduct>(dbProduct: TDbProduct): Product;
-//     toOrderProduct<TOrderProduct>(dbOrderProduct: TOrderProduct): OrderProduct;
-// }
+import { type Order } from "../../../../SillyStoreCommon/domain-objects/Order.ts";
+import { type OrderProduct } from "../../../../SillyStoreCommon/domain-objects/OrderProduct.ts";
+import { type Product } from "../../../../SillyStoreCommon/domain-objects/Product.ts";
+import { type User } from "../../../../SillyStoreCommon/domain-objects/User.ts";
+import { type PgOrder } from "../db_objects/PgOrder.ts";
+import { type PgOrderProduct } from "../db_objects/PgOrderProduct.ts";
+import { type PgProduct } from "../db_objects/PgProduct.ts";
+import { type PgUser } from "../db_objects/PgUser.ts";
 
-const pgToDomainMapper: DbToDomainMapper<Pg> = {
-    toUser: function <TDbUser>(dbUser: TDbUser): User {
-        throw new Error("Function not implemented.");
+const pgToDomainMapper: DbToDomainMapper<
+    PgUser,
+    PgOrder,
+    PgProduct,
+    PgOrderProduct
+> = {
+    toUser(dbUser: PgUser): User {
+        const { id, username, email, pw_hash } = dbUser;
+        return {
+            id,
+            username,
+            email,
+            pwHash: pw_hash,
+        };
     },
-    toOrder: function <TDbOrder>(dbOrder: TDbOrder): Order {
-        throw new Error("Function not implemented.");
+    toOrder(dbOrder: PgOrder): Order {
+        const { id, date, user_id } = dbOrder;
+        return {
+            id,
+            dateStr: date,
+            userId: user_id,
+        };
     },
-    toProduct: function <TDbProduct>(dbProduct: TDbProduct): Product {
-        throw new Error("Function not implemented.");
+    toProduct(dbProduct: PgProduct): Product {
+        const { id, title, description, price, image_src } = dbProduct;
+        return {
+            id,
+            title,
+            description,
+            price,
+            imageSrc: image_src,
+        };
     },
-    toOrderProduct: function <TOrderProduct>(
-        dbOrderProduct: TOrderProduct,
-    ): OrderProduct {
-        throw new Error("Function not implemented.");
+    toOrderProduct(dbOrderProduct: PgOrderProduct): OrderProduct {
+        const { order_id, product_id, quantity } = dbOrderProduct;
+        return {
+            orderId: order_id,
+            productId: product_id,
+            quantity,
+        };
     },
 };
 

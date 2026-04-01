@@ -6,6 +6,7 @@ import type {
     getUserAsyncInfo,
 } from "../../../domain/repositories/UserRepository.ts";
 import bcrypt from "bcrypt";
+import pgToDomainMapper from "../db_to_domain_mapping/PgToDomainMapper.ts";
 
 export default class PgUserRepository implements UserRepository {
     private static readonly numSaltRounds: number = 10;
@@ -41,7 +42,7 @@ export default class PgUserRepository implements UserRepository {
         const {
             rows: [result],
         } = await this.db.query(sql);
-        return result; // TODO: add dbToDomainMapper for user!
+        return null; // TODO: return token using jwt
     }
     /** TODO: stub */
 }
