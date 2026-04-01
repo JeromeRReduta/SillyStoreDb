@@ -6,7 +6,7 @@ export default interface OrderRepository {
     getAllAsync(): Promise<Order[] | null>;
     getByIdAsync(id: number): Promise<Order | null>;
     getProductsInOrderAsync(id: number): Promise<Product[] | null>;
-    createOrderAsync(dateStr: string): Promise<Order | null>;
+    createAsync(dateStr: string): Promise<Order | null>;
     addProductToOrderAsync({
         productId,
         orderId,
