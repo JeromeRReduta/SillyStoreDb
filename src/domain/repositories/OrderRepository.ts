@@ -1,6 +1,6 @@
-import { Order } from "../../../SillyStoreCommon/domain-objects/Order.ts";
-import { OrderProduct } from "../../../SillyStoreCommon/domain-objects/OrderProduct.ts";
-import { Product } from "../../../SillyStoreCommon/domain-objects/Product.ts";
+import { type Order } from "../../../SillyStoreCommon/domain-objects/Order.ts";
+import { type OrderProduct } from "../../../SillyStoreCommon/domain-objects/OrderProduct.ts";
+import { type Product } from "../../../SillyStoreCommon/domain-objects/Product.ts";
 
 export default interface OrderRepository {
     getAllAsync(): Promise<Order[] | null>;

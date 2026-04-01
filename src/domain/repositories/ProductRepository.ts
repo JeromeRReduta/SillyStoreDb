@@ -1,5 +1,5 @@
-import { Order } from "../../../SillyStoreCommon/domain-objects/Order.ts";
-import { Product } from "../../../SillyStoreCommon/domain-objects/Product.ts";
+import { type Order } from "../../../SillyStoreCommon/domain-objects/Order.ts";
+import { type Product } from "../../../SillyStoreCommon/domain-objects/Product.ts";
 
 export default interface ProductRepository {
     getAllAsync(): Promise<Product[] | null>;
