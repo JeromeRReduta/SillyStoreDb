@@ -6,7 +6,7 @@ import { type DbToDomainMapper } from "../../../../SillyStoreCommon/domain-objec
 //     toOrderProduct<TOrderProduct>(dbOrderProduct: TOrderProduct): OrderProduct;
 // }
 
-const pgToDomainMapper: DbToDomainMapper = {
+const pgToDomainMapper: DbToDomainMapper<Pg> = {
     toUser: function <TDbUser>(dbUser: TDbUser): User {
         throw new Error("Function not implemented.");
     },
