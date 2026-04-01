@@ -12,8 +12,8 @@ export interface createUserAsyncInfo {
 }
 
 export default interface UserRepository {
-    getUserAsync({ username, pw }: getUserAsyncInfo): Promise<token | null>;
-    createUserAsync({
+    getByInfoAsync({ username, pw }: getUserAsyncInfo): Promise<token | null>;
+    createAsync({
         username,
         pw,
         email,
