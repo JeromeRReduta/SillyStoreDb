@@ -1,1 +1,5 @@
-// TODO: stub
+export interface OrderProductResponse {
+    readonly orderId: number;
+    readonly productId: number;
+    readonly quantity: number;
+}
