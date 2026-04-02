@@ -1,4 +1,4 @@
-import { type token } from "../../../SillyStoreCommon/domain-objects/Token.ts";
+import { type TokenResponse } from "../../infrastructure/psql/dtos/responses/TokenResponse.ts";
 
 export interface getUserAsyncInfo {
     readonly username: string;
@@ -12,10 +12,13 @@ export interface createUserAsyncInfo {
 }
 
 export default interface UserRepository {
-    getByInfoAsync({ username, pw }: getUserAsyncInfo): Promise<token | null>;
+    getByInfoAsync({
+        username,
+        pw,
+    }: getUserAsyncInfo): Promise<TokenResponse | null>;
     createAsync({
         username,
         pw,
         email,
-    }: createUserAsyncInfo): Promise<token | null>;
+    }: createUserAsyncInfo): Promise<TokenResponse | null>;
 }
