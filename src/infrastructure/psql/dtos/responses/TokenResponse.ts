@@ -1,1 +1,1 @@
-// TODO: stub
+export type TokenResponse = string;
