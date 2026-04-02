@@ -3,7 +3,7 @@ import { type Order } from "../../../../SillyStoreCommon/domain-objects/Order.ts
 import { type Product } from "../../../../SillyStoreCommon/domain-objects/Product.ts";
 import type ProductRepository from "../../../domain/repositories/ProductRepository.ts";
 import pgToDomainMapper from "../db_to_domain_mapping/PgToDomainMapper.ts";
-import { PgProduct } from "../db_objects/PgProduct.ts";
+import { PgProduct } from "../entities/PgProduct.ts";
 
 export default class PgProductRepository implements ProductRepository {
     private readonly db: Client;

@@ -3,10 +3,10 @@ import { type Order } from "../../../../SillyStoreCommon/domain-objects/Order.ts
 import { type OrderProduct } from "../../../../SillyStoreCommon/domain-objects/OrderProduct.ts";
 import { type Product } from "../../../../SillyStoreCommon/domain-objects/Product.ts";
 import { type User } from "../../../../SillyStoreCommon/domain-objects/User.ts";
-import { type PgOrder } from "../db_objects/PgOrder.ts";
-import { type PgOrderProduct } from "../db_objects/PgOrderProduct.ts";
-import { type PgProduct } from "../db_objects/PgProduct.ts";
-import { type PgUser } from "../db_objects/PgUser.ts";
+import { type PgOrder } from "../entities/PgOrder.ts";
+import { type PgOrderProduct } from "../entities/PgOrderProduct.ts";
+import { type PgProduct } from "../entities/PgProduct.ts";
+import { type PgUser } from "../entities/PgUser.ts";
 
 const pgToDomainMapper: DbToDomainMapper<
     PgUser,
