@@ -6,7 +6,7 @@ import type {
     getUserAsyncInfo,
 } from "../../../domain/repositories/UserRepository.ts";
 import bcrypt from "bcrypt";
-import pgToDomainMapper from "../dto_mapping/PgDtoMapper.ts";
+import pgToDomainMapper from "../dtos/mapping/PgDtoMapper.ts";
 
 export default class PgUserRepository implements UserRepository {
     private static readonly numSaltRounds: number = 10;

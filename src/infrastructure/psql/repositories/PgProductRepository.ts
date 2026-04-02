@@ -2,7 +2,7 @@ import type { Client, QueryConfig } from "pg";
 import { type Order } from "../../../../SillyStoreCommon/domain-objects/Order.ts";
 import { type Product } from "../../../../SillyStoreCommon/domain-objects/Product.ts";
 import type ProductRepository from "../../../domain/repositories/ProductRepository.ts";
-import pgToDomainMapper from "../dto_mapping/PgDtoMapper.ts";
+import pgToDomainMapper from "../dtos/mapping/PgDtoMapper.ts";
 import { PgProduct } from "../entities/PgProduct.ts";
 
 export default class PgProductRepository implements ProductRepository {
