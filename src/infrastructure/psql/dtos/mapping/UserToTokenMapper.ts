@@ -7,3 +7,5 @@ const userToTokenMapper: PgDtoMapper<PgUser, TokenResponse> = {
         return "TODO"; // TODO: add jwt funcs
     },
 };
+
+export default userToTokenMapper;

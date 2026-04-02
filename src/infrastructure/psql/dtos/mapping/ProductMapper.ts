@@ -13,3 +13,5 @@ const productMapper: PgDtoMapper<PgProduct, ProductResponse> = {
         return { id, title, description, price, imageSrc: image_src };
     },
 };
+
+export default productMapper;
