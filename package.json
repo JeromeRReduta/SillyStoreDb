@@ -4,7 +4,7 @@
     "version": "0.0.0",
     "type": "module",
     "scripts": {
-        "dev": "NODE_ENV=development nodemon -w src/server -x tsx src/server/main.ts",
+        "dev": "nodemon -w src/server -x tsx --env-file=.env.development src/server/main.ts",
         "start": "NODE_ENV=production tsx src/server/main.ts",
         "build": "vite build",
         "db:schema": "psql -d silly_store_db -f src/infrastructure/psql/schema.sql -U practice",
