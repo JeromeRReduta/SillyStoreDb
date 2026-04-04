@@ -1,4 +1,3 @@
-// TODO
 export interface PgUser {
     readonly id: number;
     readonly username: string;
