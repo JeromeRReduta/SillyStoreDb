@@ -15,14 +15,15 @@
     "devDependencies": {
         "@eslint/js": "^10.0.1",
         "@types/bcrypt": "^6.0.0",
-        "@types/express": "^5.0.1",
+        "@types/express": "^5.0.6",
         "@types/jsonwebtoken": "^9.0.10",
-        "@types/node": "^22.15.2",
+        "@types/node": "^22.19.17",
         "@types/pg": "^8.20.0",
         "eslint": "^10.1.0",
         "globals": "^17.4.0",
         "jiti": "^2.6.1",
         "nodemon": "^3.1.10",
+        "typescript": "^6.0.2",
         "typescript-eslint": "^8.57.2",
         "vite": "^6.3.3"
     },
@@ -36,7 +37,6 @@
         "silly-store-common": "file:/SillyStoreCommon",
         "tslog": "^4.10.2",
         "tsx": "^4.19.3",
-        "typescript": "^5.8.3",
         "vite-express": "^0.22.1"
     }
 }
