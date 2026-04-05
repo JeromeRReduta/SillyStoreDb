@@ -4,15 +4,16 @@ import type { DeleteUserRequest } from "../../application/dtos/users/DeleteUserR
 import type { UserResponse } from "../../application/dtos/users/UserResponse.ts";
 import type { GetUserByCredentialsRequest } from "../../application/dtos/users/GetUserByCredentialsRequest.ts";
 import { CreateUserRequest } from "../../application/dtos/users/CreateUserRequest.ts";
+import { GetUserRequest } from "../../application/dtos/users/GetUserRequest.ts";
 
 export interface UserRepository extends GenericRepository<
     GetAllUsersRequest,
-    GetAllUsersRequest,
+    GetUserRequest,
     CreateUserRequest,
     DeleteUserRequest,
     UserResponse
 > {
     getByCredentialsAsync(
-        requestDto: GetUserByCredentialsRequest,
-    ): Promise<UserResponse>;
+        dto: GetUserByCredentialsRequest,
+    ): Promise<UserResponse | null>;
 }
