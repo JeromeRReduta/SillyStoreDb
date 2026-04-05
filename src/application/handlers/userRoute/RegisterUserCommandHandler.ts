@@ -25,18 +25,9 @@ export default class RegisterUserCommandHandler implements RouteCommandQueryHand
         next: NextFunction,
     ): Promise<void> {
         try {
-            requireBody(["username", "email", "password"])(
-                req,
-                res,
-                setUserIdAndTokenAsync,
-            );
+            requireBody(["username", "email", "password"])(req, res, next);
             await this.setUserIdAndTokenAsync(req);
             res.status(HttpStatus.CREATED).send(req.session.token);
-            // validate req body: "username", "email", "pw"
-            // const user: UserResponse = await repo.createUser(req.body)
-            // set req.userId to user.id
-            // set req.session.token to tokenOps.create({user.id})
-            // res.status(Http.CREATED).send(req.session.token)
         } catch (e) {
             next(e);
         }
@@ -44,8 +35,6 @@ export default class RegisterUserCommandHandler implements RouteCommandQueryHand
 
     async setUserIdAndTokenAsync(
         req: Request<object, TokenResponse, CreateUserRequest>,
-        _res: Response<TokenResponse>,
-        _next: NextFunction,
     ): Promise<void> {
         const user: UserResponse = await this.repo.createAsync(req.body);
         req.userId = user.id;
