@@ -7,8 +7,8 @@ import type { NextFunction, Request, Response } from "express";
  * @type {TResponseBody} what response body should have
  */
 export interface RouteCommandQueryHandler<
-    TRequestParams,
-    TRequestBody,
+    TRequestParams extends object,
+    TRequestBody extends object,
     TResponseBody,
 > {
     handleAsync(

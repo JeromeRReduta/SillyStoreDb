@@ -1,10 +1,12 @@
 export interface GenericRepository<
     TGetAllRequest,
     TGetRequest,
+    TCreateRequest,
     TDeleteRequest,
     TResponse,
 > {
-    getAllAsync(requestDto: TGetAllRequest): Promise<TResponse>;
-    getAsync(requestDto: TGetRequest): Promise<TResponse | null>;
-    deleteAsync(requestDto: TDeleteRequest): Promise<TResponse | null>;
+    getAllAsync(dto: TGetAllRequest): Promise<TResponse>;
+    getAsync(dto: TGetRequest): Promise<TResponse | null>;
+    createAsync(dto: TCreateRequest): Promise<TResponse>;
+    deleteAsync(dto: TDeleteRequest): Promise<TResponse | null>;
 }

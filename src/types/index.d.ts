@@ -6,7 +6,9 @@ import RegisterUserCommandHandler from "../application/register_user/RegisterUse
 declare global {
     namespace Express {
         interface Request {
-            token?: TokenResponse;
+            session: {
+                token?: TokenResponse;
+            };
             registerUserCommandHandler?: RegisterUserCommandHandler;
             userId?: number;
         }
