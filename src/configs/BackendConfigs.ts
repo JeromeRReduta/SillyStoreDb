@@ -44,42 +44,41 @@ export interface BackendConfigs<
     };
 }
 
-const backendConfigs: BackendConfigs<
-    PgOrder,
-    PgProduct,
-    PgUser,
-    PgOrderProduct
-> = {
-    db: new Client(configs.db.connectionString),
-    dataMapping: {
-        orderMapper: undefined,
-        productMapper: undefined,
-        userMapper: undefined,
-        orderProductMapper: undefined,
-    },
-    daos: {
-        orderDao: undefined,
-        productDao: undefined,
-        userDao: undefined,
-        orderProduct: undefined,
-    },
-    repos: {
-        orderRepo: undefined,
-        productRepo: undefined,
-        userRepo: undefined,
-    },
-    handlers: {
-        registerUserHandler: undefined,
-        loginUserHandler: undefined,
-        getAllProductsHandler: undefined,
-        getProductByIdHandler: undefined,
-        getOrdersIncludingProductHandler: undefined,
-        createOrderHandler: undefined,
-        getAllOrdersHandler: undefined,
-        getOrderByIdHandler: undefined,
-        addProductToOrderHandler: undefined,
-        getProductsInOrderHandler: undefined,
-    },
-};
+const backendConfigs: BackendConfigs<// PgOrder,
+// PgProduct,
+PgUser> =
+// PgOrderProduct
+    {
+        db: new Client(configs.db.connectionString),
+        dataMapping: {
+            // orderMapper: undefined,
+            // productMapper: undefined,
+            userMapper: undefined,
+            // orderProductMapper: undefined,
+        },
+        daos: {
+            // orderDao: undefined,
+            // productDao: undefined,
+            userDao: undefined,
+            // orderProduct: undefined,
+        },
+        repos: {
+            // orderRepo: undefined,
+            // productRepo: undefined,
+            userRepo: undefined,
+        },
+        handlers: {
+            registerUserHandler: undefined,
+            // loginUserHandler: undefined,
+            // getAllProductsHandler: undefined,
+            // getProductByIdHandler: undefined,
+            // getOrdersIncludingProductHandler: undefined,
+            // createOrderHandler: undefined,
+            // getAllOrdersHandler: undefined,
+            // getOrderByIdHandler: undefined,
+            // addProductToOrderHandler: undefined,
+            // getProductsInOrderHandler: undefined,
+        },
+    };
 
 export default backendConfigs;
