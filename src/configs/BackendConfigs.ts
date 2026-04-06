@@ -5,7 +5,8 @@ import { PgUser } from "../infrastructure/psql/db_entities/PgUser.ts";
 import configs from "../../SillyStoreCommon/configs/Configs.ts";
 import { DataMapper } from "../application/data_mapping/DataMapper.ts";
 import { UserResponse } from "../application/dtos/users/UserResponse.ts";
-import pgMapper from "../infrastructure/psql/data_mapping/PgMapper.ts";
+import PgMapper from "../infrastructure/psql/data_mapping/PgMapper.ts";
+
 export interface BackendConfigs<
     // TDbOrder,
     // TDbProduct,
@@ -56,7 +57,7 @@ PgUser> =
         dataMapping: {
             // orderMapper: undefined,
             // productMapper: undefined,
-            userMapper: pgMapper.toUser,
+            userMapper: PgMapper.toUser,
             // orderProductMapper: undefined,
         },
         daos: {
