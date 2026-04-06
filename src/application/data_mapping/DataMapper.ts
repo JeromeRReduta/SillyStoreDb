@@ -1,1 +1,3 @@
-export type DataMapper<TDbEntity, TResponse> = (entity: TDbEntity) => TResponse;
+export interface DataMapper<TDbEntity, TResponse> {
+    apply: (entity: TDbEntity) => TResponse;
+}

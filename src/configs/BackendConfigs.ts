@@ -3,6 +3,9 @@ import { Client, Pool } from "pg";
 import { UserRepository } from "../domain/repos/UserRepository.ts";
 import { PgUser } from "../infrastructure/psql/db_entities/PgUser.ts";
 import configs from "../../SillyStoreCommon/configs/Configs.ts";
+import { DataMapper } from "../application/data_mapping/DataMapper.ts";
+import { UserResponse } from "../application/dtos/users/UserResponse.ts";
+import pgMapper from "../infrastructure/psql/data_mapping/PgMapper.ts";
 export interface BackendConfigs<
     // TDbOrder,
     // TDbProduct,
@@ -47,13 +50,13 @@ export interface BackendConfigs<
 const backendConfigs: BackendConfigs<// PgOrder,
 // PgProduct,
 PgUser> =
-// PgOrderProduct
+    // PgOrderProduct
     {
         db: new Client(configs.db.connectionString),
         dataMapping: {
             // orderMapper: undefined,
             // productMapper: undefined,
-            userMapper: undefined,
+            userMapper: pgMapper.toUser,
             // orderProductMapper: undefined,
         },
         daos: {
