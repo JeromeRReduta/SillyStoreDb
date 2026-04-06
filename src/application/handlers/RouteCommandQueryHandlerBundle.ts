@@ -6,14 +6,14 @@ import type { NextFunction, Request, Response } from "express";
  * @type {TRequestBody} what request body should have
  * @type {TResponseBody} what response body should have
  */
-export interface RouteCommandQueryHandler<
+export interface RouteCommandQueryHandlerBundle<
     TRequestParams extends object,
     TRequestBody extends object,
     TResponseBody,
 > {
-    handleAsync(
+    handlers: (
         req: Request<TRequestParams, TResponseBody, TRequestBody>,
         res: Response<TResponseBody>,
         next: NextFunction,
-    ): Promise<void>;
+    ) => Promise<void> | void;
 }

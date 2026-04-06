@@ -1,7 +1,7 @@
 export class ApiError extends Error {
-    public readonly code: number;
+    public readonly code: string | number;
 
-    constructor(code: number, message?: string) {
+    constructor(code: string | number, message?: string) {
         super(message);
         this.code = code;
     }
