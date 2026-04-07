@@ -5,3 +5,7 @@ export type Handler<TRequestParams, TRequestBody, TResponseBody> = (
     res: Response<TResponseBody>,
     next: NextFunction,
 ) => void | Promise<void>;
+
+export interface UseCase<TRequestParams, TRequestBody, TResponseBody> {
+    getHandlers(): Handler<TRequestParams, TRequestBody, TResponseBody>[];
+}
