@@ -2,7 +2,7 @@ import { CreateUserRequest } from "../../../application/dtos/requests/CreateUser
 import { DeleteUserRequest } from "../../../application/dtos/requests/DeleteUserRequest.ts";
 import { GetAllUsersRequest } from "../../../application/dtos/requests/GetAllUsersRequest.ts";
 import { GetUserRequest } from "../../../application/dtos/requests/GetUserRequest.ts";
-import { UserResponse } from "../../../application/dtos/responses/UserResponse.ts";
+import { UserResponse } from "../../../application/dtos/responses/IUserResponse.ts";
 import { UserRepository } from "../../../domain/repos/UserRepository.ts";
 import { UserDao } from "../../data_access/UserDao.ts";
 import { PgUser } from "../entities/PgUser.ts";

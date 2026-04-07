@@ -7,7 +7,7 @@ import PgUserDao from "../infrastructure/psql/data_access/PgUserDao.ts";
 import { Client } from "pg";
 import configs from "../../SillyStoreCommon/configs/Configs.ts";
 import PgMapper from "../infrastructure/psql/data_mapping/PgMapper.ts";
-import { UserResponse } from "../application/dtos/responses/UserResponse.ts";
+import { UserResponse } from "../application/dtos/responses/IUserResponse.ts";
 import { UserRepository } from "../domain/repos/UserRepository.ts";
 import PgUserRepository from "../infrastructure/psql/repositories/PgUserRepository.ts";
 import requireBody from "../application/middleware/RequireBody.ts";
