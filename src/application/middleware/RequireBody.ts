@@ -10,7 +10,7 @@ export default function requireBody(fields: string[]) {
         TResponseBody,
     >(
         req: Request<TRequestParams, TResponseBody, TRequestBody>,
-        _res: Response<TResponseBody>,
+        res: Response<TResponseBody>,
         next: NextFunction,
     ) => {
         logger.debug("checking req for fields:", fields);

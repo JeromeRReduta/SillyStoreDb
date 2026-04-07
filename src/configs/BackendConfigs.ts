@@ -8,6 +8,7 @@ import { UserResponse } from "../application/dtos/users/UserResponse.ts";
 import PgMapper from "../infrastructure/psql/data_mapping/PgMapper.ts";
 import PgUserDao from "../infrastructure/psql/data_access/PgUserDao.ts";
 import PgUserRepository from "../infrastructure/psql/repositories/PgUserRepository.ts";
+import SimpleUserRepository from "../domain/repos/SimpleUserRepository.ts";
 
 export interface BackendConfigs<
     // TDbOrder,
@@ -50,7 +51,7 @@ export interface BackendConfigs<
     };
 }
 
-const db: Client | Pool = new Client(configs.db.connectionString);
+export const db: Client | Pool = new Client(configs.db.connectionString);
 
 const dataMapping = {
     // orderMapper: undefined,
@@ -66,7 +67,7 @@ const dataAccess = {
 const repos = {
     //             // orderRepo: undefined,
     //             // productRepo: undefined,
-    userRepo: new PgUserRepository(dataAccess.userDao),
+    userRepo: new SimpleUserRepository(dataAccess.userDao),
 };
 
 const handlers = {

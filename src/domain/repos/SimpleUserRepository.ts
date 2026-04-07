@@ -6,17 +6,16 @@ import { UserResponse } from "../../application/dtos/responses/UserResponse.ts";
 import { UserDao } from "../../infrastructure/data_access/UserDao.ts";
 import { Repository } from "./Repository.ts";
 
-export default class SimpleUserRepository<TDbEntity> implements Repository<
-    TDbEntity,
+export default class SimpleUserRepository implements Repository<
     UserResponse,
     CreateUserRequest,
     GetAllUsersRequest,
     GetUserRequest,
     DeleteUserRequest
 > {
-    private dao: UserDao<TDbEntity>;
+    private dao: UserDao<unknown>;
 
-    constructor(dao: UserDao<TDbEntity>) {
+    constructor(dao: UserDao<unknown>) {
         this.dao = dao;
     }
 

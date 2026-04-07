@@ -5,8 +5,7 @@ import { GetUserRequest } from "../../application/dtos/requests/GetUserRequest.t
 import { UserResponse } from "../../application/dtos/responses/UserResponse.ts";
 import { Repository } from "./Repository.ts";
 
-export interface UserRepository<TDbEntity> extends Repository<
-    TDbEntity,
+export interface UserRepository extends Repository<
     UserResponse,
     CreateUserRequest,
     GetAllUsersRequest,

@@ -1,6 +1,5 @@
 /**
  * Data access object
- * @type {_TDbEntity} Specified for data mapping
  * @type {TResponse}
  * @type {TCreateRequest}
  * @type {TGetAllRequest}
@@ -9,7 +8,6 @@
  */
 export interface Repository<
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _TDbEntity,
     TResponse,
     TCreateRequest,
     TGetAllRequest,

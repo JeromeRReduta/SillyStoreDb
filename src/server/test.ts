@@ -15,10 +15,11 @@ import HttpStatus from "../application/http/HttpStatus.ts";
 import { CreateUserRequest } from "../application/dtos/requests/CreateUserRequest.ts";
 import tokenOps from "../application/jwt/TokenOperations.ts";
 import HttpError from "../application/http/HttpError.ts";
+import userRouter from "../presentation/routes/users.ts";
+import { db } from "../configs/BackendConfigs.ts";
 
 const app = express();
 app.use(express.json());
-const db: Client = new Client(configs.db.connectionString);
 await db.connect();
 
 app.get("/hello", (_, res) => {
@@ -27,42 +28,22 @@ app.get("/hello", (_, res) => {
 
 ViteExpress.listen(app, 3000, async () => {
     logger.info("Server is listening on port 3000...");
-
-    logger.debug("done!");
 });
 
-app.route("/").post(
-    requireBody(["username", "email", "pw"]),
-    registerUserAndSetTokenAsync,
-    (
-        req: Request<object, UserResponse, CreateUserRequest>,
-        res: Response<string>,
-    ) => {
-        res.status(HttpStatus.CREATED).send(req.session.token);
-    },
-);
+// app.route("/").post(
+//     requireBody(["username", "email", "pw"]),
+//     registerUserAndSetTokenAsync,
+//     (
+//         req: Request<object, UserResponse, CreateUserRequest>,
+//         res: Response<string>,
+//     ) => {
+//         res.status(HttpStatus.CREATED).send(req.session.token);
+//     },
+// );
+
+app.use("/users", userRouter);
 
 app.use((err: HttpError, req, res, next) => {
     logger.error("ERROR IS", err);
     res.status(err.code || 500).send(err);
 });
-
-async function registerUserAndSetTokenAsync(
-    req: Request<object, UserResponse, CreateUserRequest>,
-    res: Response<UserResponse>,
-    next: NextFunction,
-) {
-    // const user: UserResponse = await new PgUserRepository().createAsync(
-    //     req.body,
-    // );
-
-    const user: UserResponse = {
-        id: 0,
-        username: "a",
-        email: "b",
-    };
-    req.session = {};
-    req.session.token = tokenOps.create({ id: user.id });
-    logger.debug("token is now", req.session.token);
-    next();
-}
