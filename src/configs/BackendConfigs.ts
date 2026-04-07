@@ -6,6 +6,8 @@ import configs from "../../SillyStoreCommon/configs/Configs.ts";
 import { DataMapper } from "../application/data_mapping/DataMapper.ts";
 import { UserResponse } from "../application/dtos/users/UserResponse.ts";
 import PgMapper from "../infrastructure/psql/data_mapping/PgMapper.ts";
+import PgUserDao from "../infrastructure/psql/data_access/PgUserDao.ts";
+import PgUserRepository from "../infrastructure/psql/repositories/PgUserRepository.ts";
 
 export interface BackendConfigs<
     // TDbOrder,
@@ -48,41 +50,54 @@ export interface BackendConfigs<
     };
 }
 
-const backendConfigs: BackendConfigs<// PgOrder,
-// PgProduct,
-PgUser> =
-    // PgOrderProduct
-    {
-        db: new Client(configs.db.connectionString),
-        dataMapping: {
-            // orderMapper: undefined,
-            // productMapper: undefined,
-            userMapper: PgMapper.toUser,
-            // orderProductMapper: undefined,
-        },
-        daos: {
-            // orderDao: undefined,
-            // productDao: undefined,
-            userDao: undefined,
-            // orderProduct: undefined,
-        },
-        repos: {
-            // orderRepo: undefined,
-            // productRepo: undefined,
-            userRepo: undefined,
-        },
-        handlers: {
-            registerUserHandler: undefined,
-            // loginUserHandler: undefined,
-            // getAllProductsHandler: undefined,
-            // getProductByIdHandler: undefined,
-            // getOrdersIncludingProductHandler: undefined,
-            // createOrderHandler: undefined,
-            // getAllOrdersHandler: undefined,
-            // getOrderByIdHandler: undefined,
-            // addProductToOrderHandler: undefined,
-            // getProductsInOrderHandler: undefined,
-        },
-    };
+const db: Client | Pool = new Client(configs.db.connectionString);
 
-export default backendConfigs;
+const dataMapping = {
+    // orderMapper: undefined,
+    // productMapper: undefined,
+    userMapper: PgMapper.toUser,
+    // orderProductMapper: undefined,
+};
+
+const dataAccess = {
+    userDao: new PgUserDao(db, dataMapping.userMapper),
+};
+
+const repos = {
+    //             // orderRepo: undefined,
+    //             // productRepo: undefined,
+    userRepo: new PgUserRepository(dataAccess.userDao),
+};
+
+const handlers = {
+    registerUserHandler: undefined,
+    //             // loginUserHandler: undefined,
+    //             // getAllProductsHandler: undefined,
+    //             // getProductByIdHandler: undefined,
+    //             // getOrdersIncludingProductHandler: undefined,
+    //             // createOrderHandler: undefined,
+    //             // getAllOrdersHandler: undefined,
+    //             // getOrderByIdHandler: undefined,
+    //             // addProductToOrderHandler: undefined,
+    //             // getProductsInOrderHandler: undefined,
+};
+
+// const backendConfigs: BackendConfigs<// PgOrder,
+// // PgProduct,
+// PgUser> =
+//     // PgOrderProduct
+//     {
+//         db: new Client(configs.db.connectionString),
+
+//         },
+//         daos: {
+//             // orderDao: undefined,
+//             // productDao: undefined,
+//             userDao: new PgUserDao(db, backendConfigs.dataMapping.userMapper),
+//             // orderProduct: undefined,
+//         },
+//         repos: {
+
+//         },
+
+//     };
