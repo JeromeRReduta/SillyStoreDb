@@ -1,4 +1,4 @@
-export interface PgUser {
+export interface IPgUser {
     readonly id: number;
     readonly username: string;
     readonly email: string;

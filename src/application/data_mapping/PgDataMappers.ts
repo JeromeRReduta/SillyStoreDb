@@ -1,4 +1,4 @@
-import { PgUser } from "../../infrastructure/psql/entities/PgUser.ts";
+import { PgUser } from "../../infrastructure/psql/entities/IPgUser.ts";
 import { IUserResponse } from "../dtos/responses/IUserResponse.ts";
 import { IDataMapper } from "./DataMapper.ts";
 

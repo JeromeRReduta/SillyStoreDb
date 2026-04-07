@@ -2,7 +2,7 @@ import express, { NextFunction, Request, Response } from "express";
 import ViteExpress from "vite-express";
 import logger from "../../SillyStoreCommon/logging/Logger.ts";
 import { UserDao } from "../infrastructure/data_access/UserDao.ts";
-import { PgUser } from "../infrastructure/psql/entities/PgUser.ts";
+import { PgUser } from "../infrastructure/psql/entities/IPgUser.ts";
 import PgUserDao from "../infrastructure/psql/data_access/PgUserDao.ts";
 import { Client } from "pg";
 import configs from "../../SillyStoreCommon/configs/Configs.ts";

@@ -5,7 +5,7 @@ import { GetUserRequest } from "../../../application/dtos/requests/GetUserReques
 import { UserResponse } from "../../../application/dtos/responses/UserResponse.ts";
 import { UserRepository } from "../../../domain/repos/UserRepository.ts";
 import { UserDao } from "../../data_access/UserDao.ts";
-import { PgUser } from "../entities/PgUser.ts";
+import { PgUser } from "../entities/IPgUser.ts";
 
 export default class PgUserRepository implements UserRepository<PgUser> {
     private dao: UserDao<PgUser>;

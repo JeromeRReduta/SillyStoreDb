@@ -1,25 +1,42 @@
+// import { Client, Pool, QueryConfig } from "pg";
+// import { CreateUserRequest } from "../../../application/dtos/requests/CreateUserRequest.ts";
+// import { DeleteUserRequest } from "../../../application/dtos/requests/DeleteUserRequest.ts";
+// import { GetAllUsersRequest } from "../../../application/dtos/requests/GetAllUsersRequest.ts";
+// import { GetUserRequest } from "../../../application/dtos/requests/GetUserRequest.ts";
+// import { UserResponse } from "../../../application/dtos/responses/UserResponse.ts";
+// import { UserDao } from "../../data_access/UserDao.ts";
+// import { PgUser } from "../entities/PgUser.ts";
+// import { DataMapper } from "../../../application/data_mapping/DataMapper.ts";
+// import * as bcrypt from "bcrypt";
+// import logger from "../../../../SillyStoreCommon/logging/Logger.ts";
+
 import { Client, Pool, QueryConfig } from "pg";
-import { CreateUserRequest } from "../../../application/dtos/requests/CreateUserRequest.ts";
-import { DeleteUserRequest } from "../../../application/dtos/requests/DeleteUserRequest.ts";
-import { GetAllUsersRequest } from "../../../application/dtos/requests/GetAllUsersRequest.ts";
-import { GetUserRequest } from "../../../application/dtos/requests/GetUserRequest.ts";
-import { UserResponse } from "../../../application/dtos/responses/UserResponse.ts";
-import { UserDao } from "../../data_access/UserDao.ts";
-import { PgUser } from "../entities/PgUser.ts";
-import { DataMapper } from "../../../application/data_mapping/DataMapper.ts";
+import { ICreateUserRequest } from "../../../application/dtos/requests/ICreateUserRequest.ts";
+import { IDeleteUserRequest } from "../../../application/dtos/requests/IDeleteUserRequest.ts";
+import { IGetAllUsersRequest } from "../../../application/dtos/requests/IGetAllUsersRequest.ts";
+import { IGetUserByCredentialsRequest } from "../../../application/dtos/requests/IGetUserByCredentialsRequest.ts";
+import { IGetUserRequest } from "../../../application/dtos/requests/IGetUserRequest.ts";
+import { IUserResponse } from "../../../application/dtos/responses/IUserResponse.ts";
+import { IUserDao } from "./IUserDao.ts";
+import { IDataMapper } from "../../../application/data_mapping/DataMapper.ts";
+import { IPgUser } from "../entities/IPgUser.ts";
 import * as bcrypt from "bcrypt";
 import logger from "../../../../SillyStoreCommon/logging/Logger.ts";
 
-export default class PgUserDao implements UserDao<PgUser> {
+export default class PgUserDao implements IUserDao {
     private db: Client | Pool;
-    private dataMapper: DataMapper<PgUser, UserResponse>;
+    private dataMapper: IDataMapper<IPgUser, IUserResponse>;
     private numSaltRounds: number;
 
-    constructor(
-        db: Client | Pool,
-        dataMapper: DataMapper<PgUser, UserResponse>,
-        numSaltRounds: number = 10,
-    ) {
+    constructor({
+        db,
+        dataMapper,
+        numSaltRounds = 10,
+    }: {
+        db: Client | Pool;
+        dataMapper: IDataMapper<IPgUser, IUserResponse>;
+        numSaltRounds: number;
+    }) {
         this.db = db;
         this.dataMapper = dataMapper;
         this.numSaltRounds = numSaltRounds;
@@ -29,7 +46,7 @@ export default class PgUserDao implements UserDao<PgUser> {
         username,
         pw,
         email,
-    }: CreateUserRequest): Promise<UserResponse> {
+    }: ICreateUserRequest): Promise<IUserResponse> {
         const pwHash: string = await bcrypt.hash(pw, this.numSaltRounds);
         const sql: QueryConfig = {
             text: `
@@ -39,20 +56,26 @@ export default class PgUserDao implements UserDao<PgUser> {
             `,
             values: [username, pwHash, email],
         };
-        logger.debug("sql:", sql);
+        logger.debug("running sql: ", sql);
         const {
             rows: [row],
         } = await this.db.query(sql);
-        logger.debug("result:", row);
-        return this.dataMapper.apply(row);
+        logger.debug("result: ", row);
+        return this.dataMapper(row);
     }
-    async getAllAsync(request: GetAllUsersRequest): Promise<UserResponse> {
+
+    async getAllAsync(dto: IGetAllUsersRequest): Promise<IUserResponse[]> {
         throw new Error("Method not implemented.");
     }
-    async getAsync(request: GetUserRequest): Promise<UserResponse> {
+    async getAsync(dto: IGetUserRequest): Promise<IUserResponse | null> {
         throw new Error("Method not implemented.");
     }
-    async deleteAsync(request: DeleteUserRequest): Promise<UserResponse> {
+    async deleteAsync(dto: IDeleteUserRequest): Promise<IUserResponse | null> {
+        throw new Error("Method not implemented.");
+    }
+    async getByCredentialsAsync(
+        dto: IGetUserByCredentialsRequest,
+    ): Promise<IUserResponse | null> {
         throw new Error("Method not implemented.");
     }
 }
