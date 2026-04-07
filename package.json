@@ -6,10 +6,12 @@
     "scripts": {
         "dev": "nodemon -w src/server -x tsx --env-file=.env.development src/server/main.ts",
         "start": "NODE_ENV=production tsx src/server/main.ts",
+        "test": "tsx --env-file=.env.development src/server/test.ts",
         "build": "vite build",
         "db:schema": "psql -d silly_store_db -f src/infrastructure/psql/schema.sql -U practice",
         "db:seed": "tsx --env-file=.env.development src/infrastructure/psql/seed.ts",
         "db:reset": "npm run db:schema && npm run db:seed",
+        "fresh-test": "npm run db:reset && npm run test",
         "see-big-number": "git ls-files | grep '\\.ts' | grep -v 'test' | xargs wc -l | sort -rn"
     },
     "devDependencies": {
