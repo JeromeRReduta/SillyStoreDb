@@ -4,17 +4,18 @@ import { GetAllUsersRequest } from "../../../application/dtos/requests/GetAllUse
 import { GetUserRequest } from "../../../application/dtos/requests/GetUserRequest.ts";
 import { UserResponse } from "../../../application/dtos/responses/UserResponse.ts";
 import { UserRepository } from "../../../domain/repos/UserRepository.ts";
+import { UserDao } from "../../data_access/UserDao.ts";
 import { PgUser } from "../entities/PgUser.ts";
 
 export default class PgUserRepository implements UserRepository<PgUser> {
-    cconst;
+    private dao: UserDao<PgUser>;
 
-    async createAsync({
-        username,
-        pw,
-        email,
-    }: CreateUserRequest): Promise<UserResponse> {
-        throw new Error("Method not implemented.");
+    constructor(dao: UserDao<PgUser>) {
+        this.dao = dao;
+    }
+
+    async createAsync(request: CreateUserRequest): Promise<UserResponse> {
+        return await this.dao.createAsync(request);
     }
     async getAllAsync(request: GetAllUsersRequest): Promise<UserResponse> {
         throw new Error("Method not implemented.");

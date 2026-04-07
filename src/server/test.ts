@@ -8,6 +8,8 @@ import { Client } from "pg";
 import configs from "../../SillyStoreCommon/configs/Configs.ts";
 import PgMapper from "../infrastructure/psql/data_mapping/PgMapper.ts";
 import { UserResponse } from "../application/dtos/responses/UserResponse.ts";
+import { UserRepository } from "../domain/repos/UserRepository.ts";
+import PgUserRepository from "../infrastructure/psql/repositories/PgUserRepository.ts";
 
 const app = express();
 app.use(express.json());
@@ -25,9 +27,11 @@ ViteExpress.listen(app, 3000, async () => {
 });
 
 app.route("/").get(async (req, res, next) => {
-    const userDao: UserDao<PgUser> = new PgUserDao(db, PgMapper.toUser);
+    const userRepo: UserRepository<PgUser> = new PgUserRepository(
+        new PgUserDao(db, PgMapper.toUser),
+    );
     logger.debug("working");
-    const response: UserResponse = await userDao.createAsync({
+    const response: UserResponse = await userRepo.createAsync({
         username: "a",
         pw: "b",
         email: "abbabbabb",
