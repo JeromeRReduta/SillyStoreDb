@@ -1,4 +1,8 @@
+import { ICreateUserRequest } from "../../dtos/requests/ICreateUserRequest.ts";
+import { IGetUserByCredentialsRequest } from "../../dtos/requests/IGetUserByCredentialsRequest.ts";
+import { TokenResponse } from "../../dtos/responses/TokenResponse.ts";
+
 export interface IClientUserService {
-    registerAsync(dto: IRegisterUserRequest): Promise<TokenResponse>;
-    loginAsync(dto: ILoginUserRequest): Promise<TokenResponse>;
+    registerAsync(dto: ICreateUserRequest): Promise<TokenResponse>;
+    loginAsync(dto: IGetUserByCredentialsRequest): Promise<TokenResponse>;
 }
