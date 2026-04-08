@@ -31,6 +31,7 @@ import UserRepository from "../domain/repos/UserRepository.ts";
 import { TokenResponse } from "../application/dtos/responses/TokenResponse.ts";
 import { IClientUserService } from "../application/services/client-user-service/IClientUserService.ts";
 import ClientUserService from "../application/services/client-user-service/ClientUserService.ts";
+import userRouter from "../presentation/routes/users.ts";
 
 const app = express();
 app.use(express.json());
@@ -66,17 +67,7 @@ ViteExpress.listen(app, 3000, async () => {
 //     },
 // )
 
-app.route("/users").post(
-    async (req: Request, res: Response, next: NextFunction) => {
-        try {
-            const dto: ICreateUserRequest = req.body;
-            const token: TokenResponse = await service.registerAsync(dto);
-            res.status(201).send({ token });
-        } catch (e) {
-            next(e);
-        }
-    },
-);
+app.use("/users", userRouter);
 
 app.use((err, req, res, next) => {
     logger.error("ERROR IS", err);
