@@ -1,6 +1,6 @@
-export interface PgProduct {
+export interface IProductResponse {
     readonly id: number;
-    readonly image_src: string;
+    readonly imageSrc: string;
     readonly title: string;
     readonly description: string;
     readonly price: number;
