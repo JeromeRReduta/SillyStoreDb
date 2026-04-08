@@ -1,4 +1,4 @@
-export interface PgProduct {
+export interface IPgProduct {
     readonly id: number;
     readonly image_src: string;
     readonly title: string;
