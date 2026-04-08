@@ -113,7 +113,7 @@ import ClientUserService from "../application/services/client-user-service/Clien
 
 // //     };
 
-const db: Client | Pool = new Client(configs.db.connectionString);
+export const db: Client | Pool = new Client(configs.db.connectionString);
 const pgUserDao: IUserDao = new PgUserDao({
     db,
     dataMapper: pgDataMappers.userMapper,

@@ -32,27 +32,18 @@ import { TokenResponse } from "../application/dtos/responses/TokenResponse.ts";
 import { IClientUserService } from "../application/services/client-user-service/IClientUserService.ts";
 import ClientUserService from "../application/services/client-user-service/ClientUserService.ts";
 import userRouter from "../presentation/routes/users.ts";
+import { db } from "../configs/BackendConfigs.ts";
 
 const app = express();
 app.use(express.json());
 app.use(morgan("dev"));
-const db: Client = new Client(configs.db.connectionString);
-await db.connect();
-
-const service: IClientUserService = new ClientUserService(
-    new UserRepository(
-        new PgUserDao({
-            db,
-            dataMapper: pgDataMappers.userMapper,
-        }),
-    ),
-);
 
 app.get("/hello", (_, res) => {
     res.send("Hello Vite + TypeScript!");
 });
 
 ViteExpress.listen(app, 3000, async () => {
+    await db.connect();
     logger.info("Server is listening on port 3000...");
 });
 
