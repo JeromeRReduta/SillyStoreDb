@@ -31,13 +31,13 @@ ViteExpress.listen(app, 3000, () => {
     logger.debug(process.env.LOG_LEVEL);
     logger.debug(process.env.thingy_thingy);
 });
-app.use((req, res, next) => {
-    const userRepository: UserRepository = new PgUserRepository(db, userMapper);
-    req.registerUserCommandHandler = new RegisterUserCommandHandler(
-        userRepository,
-    );
-    next();
-});
+// app.use((req, res, next) => {
+//     const userRepository: UserRepository = new PgUserRepository(db, userMapper);
+//     req.registerUserCommandHandler = new RegisterUserCommandHandler(
+//         userRepository,
+//     );
+//     next();
+// });
 
 app.use("/users", userRouter);
 

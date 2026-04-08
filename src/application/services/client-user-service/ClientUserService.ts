@@ -18,10 +18,16 @@ export default class ClientUserService implements IClientUserService {
         const token: TokenResponse = tokenOps.create({ id: user.id });
         return token;
     }
-    
+
     async loginAsync(
         dto: IGetUserByCredentialsRequest,
     ): Promise<TokenResponse> {
-        throw new Error("Method not implemented.");
+        const user: IUserResponse | null =
+            await this.repo.getByCredentialsAsync(dto);
+        if (!user) {
+            throw new Error("TODO - http error");
+        }
+        const token: TokenResponse = tokenOps.create({ id: user.id });
+        return token;
     }
 }

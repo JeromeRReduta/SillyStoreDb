@@ -32,7 +32,7 @@ import { TokenResponse } from "../application/dtos/responses/TokenResponse.ts";
 import { IClientUserService } from "../application/services/client-user-service/IClientUserService.ts";
 import ClientUserService from "../application/services/client-user-service/ClientUserService.ts";
 import userRouter from "../presentation/routes/users.ts";
-import { db } from "../configs/BackendConfigs.ts";
+import services, { db } from "../configs/BackendConfigs.ts";
 import { IGetUserByCredentialsRequest } from "../application/dtos/requests/IGetUserByCredentialsRequest.ts";
 
 const app = express();
@@ -62,18 +62,20 @@ ViteExpress.listen(app, 3000, async () => {
 app.use("/users", userRouter);
 
 app.route("/users/login").post(async (req, res, next) => {
-    const getUserByCredentialsRequest: IGetUserByCredentialsRequest = {
-        username: "user 1",
-        pw: "password 1",
-        email: "email1@email.com",
-    };
-    const pgUserDao: IUserDao = new PgUserDao({
-        db,
-        dataMapper: pgDataMappers.userMapper,
-    });
-    const userResponse: IUserResponse | null =
-        await pgUserDao.getByCredentialsAsync(getUserByCredentialsRequest);
-    return res.status(200).send(userResponse);
+    try {
+        const getUserByCredentialsRequest: IGetUserByCredentialsRequest = {
+            username: "user 1",
+            pw: "password 1",
+            email: "email1@email.com",
+        };
+        const token: TokenResponse =
+            await services.clientUserService.loginAsync(
+                getUserByCredentialsRequest,
+            );
+        return res.status(200).send({ token });
+    } catch (e) {
+        next(e);
+    }
 });
 
 app.use((err, req, res, next) => {

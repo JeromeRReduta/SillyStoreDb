@@ -11,7 +11,7 @@ export default async function tryRegisterAsync(
     try {
         const token: TokenResponse =
             await services.clientUserService.registerAsync(req.body);
-        return res.status(201).send({ token });
+        res.status(201).send({ token });
     } catch (e) {
         next(e);
     }

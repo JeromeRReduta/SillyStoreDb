@@ -29,6 +29,6 @@ export default class UserRepository implements IUserRepository {
     async getByCredentialsAsync(
         dto: IGetUserByCredentialsRequest,
     ): Promise<IUserResponse | null> {
-        throw new Error("Method not implemented.");
+        return await this.dao.getByCredentialsAsync(dto);
     }
 }
