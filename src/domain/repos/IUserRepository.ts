@@ -4,6 +4,7 @@ import { IGetAllUsersRequest } from "../../application/dtos/requests/IGetAllUser
 import { IGetUserByCredentialsRequest } from "../../application/dtos/requests/IGetUserByCredentialsRequest.ts";
 import { IGetUserRequest } from "../../application/dtos/requests/IGetUserRequest.ts";
 import { IUserResponse } from "../../application/dtos/responses/IUserResponse.ts";
+
 export interface IUserRepository {
     createAsync(dto: ICreateUserRequest): Promise<IUserResponse>;
     getAllAsync(dto: IGetAllUsersRequest): Promise<IUserResponse[]>;
