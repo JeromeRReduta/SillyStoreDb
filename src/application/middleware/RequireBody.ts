@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import logger from "../../../SillyStoreCommon/logging/Logger.ts";
+import HttpError from "../../errors/HttpError.ts";
+import { HttpStatus } from "../http/HttpStatus.ts";
 // import HttpError from "../http/HttpError.ts";
 // import HttpStatus from "../http/HttpStatus.ts";
 
@@ -15,22 +17,19 @@ export default function requireBody(fields: string[]) {
     ) => {
         logger.debug("checking req for fields:", fields);
         if (!req.body) {
-            throw new Error("TODO - http error");
-            // throw new HttpError(
-            //     HttpStatus.BAD_REQUEST,
-            //     "Request body is required",
-            // );
+            throw new HttpError(
+                HttpStatus.BAD_REQUEST,
+                "Request body is required",
+            );
         }
         const missing: string[] = fields.filter(
             (field) => !(field in req.body),
         );
         if (missing.length > 0) {
-            throw new Error("TODO - http error");
-
-            // throw new HttpError(
-            //     HttpStatus.BAD_REQUEST,
-            //     `Need fields: ${missing.join(", ")}`,
-            // );
+            throw new HttpError(
+                HttpStatus.BAD_REQUEST,
+                `Need fields: ${missing.join(", ")}`,
+            );
         }
         next();
     };

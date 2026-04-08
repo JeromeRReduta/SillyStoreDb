@@ -1,8 +1,10 @@
 import { IUserRepository } from "../../domain/repos/IUserRepository.ts";
+import HttpError from "../../errors/HttpError.ts";
 import { ICreateUserRequest } from "../dtos/requests/ICreateUserRequest.ts";
 import { IGetUserByCredentialsRequest } from "../dtos/requests/IGetUserByCredentialsRequest.ts";
 import { IUserResponse } from "../dtos/responses/IUserResponse.ts";
 import { TokenResponse } from "../dtos/responses/TokenResponse.ts";
+import { HttpStatus } from "../http/HttpStatus.ts";
 import tokenOps from "../jwt/TokenOperations.ts";
 import { IClientUserService } from "./IClientUserService.ts";
 
@@ -25,7 +27,10 @@ export default class ClientUserService implements IClientUserService {
         const user: IUserResponse | null =
             await this.repo.getByCredentialsAsync(dto);
         if (!user) {
-            throw new Error("TODO - http error");
+            throw new HttpError(
+                HttpStatus.NOT_FOUND,
+                "No matching user found!",
+            );
         }
         const token: TokenResponse = tokenOps.create({ id: user.id });
         return token;
