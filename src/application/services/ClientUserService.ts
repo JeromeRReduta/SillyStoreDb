@@ -1,9 +1,9 @@
-import { IUserRepository } from "../../../domain/repos/IUserRepository.ts";
-import { ICreateUserRequest } from "../../dtos/requests/ICreateUserRequest.ts";
-import { IGetUserByCredentialsRequest } from "../../dtos/requests/IGetUserByCredentialsRequest.ts";
-import { IUserResponse } from "../../dtos/responses/IUserResponse.ts";
-import { TokenResponse } from "../../dtos/responses/TokenResponse.ts";
-import tokenOps from "../../jwt/TokenOperations.ts";
+import { IUserRepository } from "../../domain/repos/IUserRepository.ts";
+import { ICreateUserRequest } from "../dtos/requests/ICreateUserRequest.ts";
+import { IGetUserByCredentialsRequest } from "../dtos/requests/IGetUserByCredentialsRequest.ts";
+import { IUserResponse } from "../dtos/responses/IUserResponse.ts";
+import { TokenResponse } from "../dtos/responses/TokenResponse.ts";
+import tokenOps from "../jwt/TokenOperations.ts";
 import { IClientUserService } from "./IClientUserService.ts";
 
 export default class ClientUserService implements IClientUserService {

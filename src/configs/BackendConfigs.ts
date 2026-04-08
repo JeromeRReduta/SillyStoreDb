@@ -17,8 +17,8 @@ import PgUserDao from "../infrastructure/psql/data_access/PgUserDao.ts";
 import pgDataMappers from "../application/data_mapping/PgDataMappers.ts";
 import { IUserRepository } from "../domain/repos/IUserRepository.ts";
 import UserRepository from "../domain/repos/UserRepository.ts";
-import { IClientUserService } from "../application/services/client-user-service/IClientUserService.ts";
-import ClientUserService from "../application/services/client-user-service/ClientUserService.ts";
+import { IClientUserService } from "../application/services/IClientUserService.ts";
+import ClientUserService from "../application/services/ClientUserService.ts";
 
 // export interface BackendConfigs<
 //     // TDbOrder,
