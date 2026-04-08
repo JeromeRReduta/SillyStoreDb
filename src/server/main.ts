@@ -14,6 +14,7 @@ import userMapper from "../infrastructure/psql/data_mapping/UserMapper.ts";
 import { UserRepository } from "../domain/repos/UserRepository.ts";
 import { ApiError } from "../application/ApiError.ts";
 
+// TODO: change logger to mask pw_hash fields
 const app = express();
 const db: Client = new Client(configs.db.connectionString);
 logger.info("Connecting to db...");
