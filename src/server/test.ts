@@ -26,16 +26,20 @@ import { IUserResponse } from "../application/dtos/responses/IUserResponse.ts";
 // import userRouter from "../presentation/routes/users.ts";
 // import { db } from "../configs/BackendConfigs.ts";
 import morgan from "morgan";
+import { IUserRepository } from "../domain/repos/IUserRepository.ts";
+import UserRepository from "../domain/repos/UserRepository.ts";
 
 const app = express();
 app.use(express.json());
 app.use(morgan("dev"));
 const db: Client = new Client(configs.db.connectionString);
 await db.connect();
-const pgUserDao: IUserDao = new PgUserDao({
-    db,
-    dataMapper: pgDataMappers.userMapper,
-});
+const repo: IUserRepository = new UserRepository(
+    new PgUserDao({
+        db,
+        dataMapper: pgDataMappers.userMapper,
+    }),
+);
 
 app.get("/hello", (_, res) => {
     res.send("Hello Vite + TypeScript!");
@@ -60,8 +64,7 @@ app.route("/users").post(
     async (req: Request, res: Response, next: NextFunction) => {
         try {
             const dto: ICreateUserRequest = req.body;
-            const userResponse: IUserResponse =
-                await pgUserDao.createAsync(dto);
+            const userResponse: IUserResponse = await repo.createAsync(dto);
             res.status(201).send({ userResponse });
         } catch (e) {
             next(e);
