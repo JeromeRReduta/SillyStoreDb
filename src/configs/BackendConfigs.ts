@@ -19,6 +19,13 @@ import { IUserRepository } from "../domain/repos/IUserRepository.ts";
 import UserRepository from "../domain/repos/UserRepository.ts";
 import { IClientUserService } from "../application/services/IClientUserService.ts";
 import ClientUserService from "../application/services/ClientUserService.ts";
+import { IClientProductService } from "../application/services/IClientProductService.ts";
+import { IProductDao } from "../infrastructure/psql/data_access/IProductDao.ts";
+import PgProductDao from "../infrastructure/psql/data_access/PgProductDao.ts";
+import { IOrderProductDao } from "../infrastructure/psql/data_access/IOrderProductDao.ts";
+import { IProductRepository } from "../domain/repos/IProductRepository.ts";
+import ProductRepository from "../domain/repos/ProductRepository.ts";
+import ClientProductService from "../application/services/ClientProductService.ts";
 
 // export interface BackendConfigs<
 //     // TDbOrder,
@@ -120,9 +127,22 @@ const pgUserDao: IUserDao = new PgUserDao({
 });
 const userRepo: IUserRepository = new UserRepository(pgUserDao);
 const clientUserService: IClientUserService = new ClientUserService(userRepo);
+const pgProductDao: IProductDao = new PgProductDao(
+    db,
+    pgDataMappers.productMapper,
+);
+const pgOrderProductDao: IOrderProductDao = {}; // TODO - implement
+const productRepo: IProductRepository = new ProductRepository({
+    orderProductDao: pgOrderProductDao,
+    productDao: pgProductDao,
+});
+const clientProductService: IClientProductService = new ClientProductService(
+    productRepo,
+);
 
 const services = {
     clientUserService,
+    clientProductService,
 };
 
 export default services;

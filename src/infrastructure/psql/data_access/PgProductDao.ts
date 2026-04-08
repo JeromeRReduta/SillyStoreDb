@@ -8,14 +8,15 @@ import { IProductDao } from "./IProductDao.ts";
 import { IDataMapper } from "../../../application/data_mapping/DataMapper.ts";
 import { IPgUser } from "../entities/IPgUser.ts";
 import logger from "../../../../SillyStoreCommon/logging/Logger.ts";
+import { IPgProduct } from "../entities/IPgProduct.ts";
 
 export default class PgProductDao implements IProductDao {
     private db: Client | Pool;
-    private dataMapper: IDataMapper<IPgUser, IProductResponse>;
+    private dataMapper: IDataMapper<IPgProduct, IProductResponse>;
 
     constructor(
         db: Client | Pool,
-        dataMapper: IDataMapper<IPgUser, IProductResponse>,
+        dataMapper: IDataMapper<IPgProduct, IProductResponse>,
     ) {
         this.db = db;
         this.dataMapper = dataMapper;
@@ -29,13 +30,20 @@ export default class PgProductDao implements IProductDao {
         _dto: IGetAllProductsRequest,
     ): Promise<IProductResponse[]> {
         const sql: QueryConfig = {
+            // thanks https://www.postgresql.org/docs/9.4/datatype-money.html
             text: `
-                SELECT * FROM products
+                SELECT
+                    id,
+                    title,
+                    description,
+                    price::decimal::float8
+                FROM products
                 `,
         };
         logger.debug("sql: ", sql);
         const { rows } = await this.db.query(sql);
         logger.debug("result: ", rows);
+        logger.debug("type of rounded price is", typeof rows[0].price);
         return rows.map(this.dataMapper);
     }
     async getAsync(dto: IGetProductRequest): Promise<IProductResponse | null> {

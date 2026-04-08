@@ -36,6 +36,8 @@ import services, { db } from "../configs/BackendConfigs.ts";
 import { IGetUserByCredentialsRequest } from "../application/dtos/requests/IGetUserByCredentialsRequest.ts";
 import PgProductDao from "../infrastructure/psql/data_access/PgProductDao.ts";
 import { IProductDao } from "../infrastructure/psql/data_access/IProductDao.ts";
+import { IProductRepository } from "../domain/repos/IProductRepository.ts";
+import ProductRepository from "../domain/repos/ProductRepository.ts";
 
 const app = express();
 app.use(express.json());
@@ -63,12 +65,16 @@ ViteExpress.listen(app, 3000, async () => {
 
 app.use("/users", userRouter);
 
+// app.use("/products", productsRouter);
+
 app.route("/products").get(async (req, res, next) => {
-    const productDao: IProductDao = new PgProductDao(
-        db,
-        pgDataMappers.productMapper,
-    );
-    res.status(200).send(await productDao.getAllAsync({}));
+    try {
+        res.status(200).send(
+            await services.clientProductService.getAllAsync({}),
+        );
+    } catch (e) {
+        next(e);
+    }
 });
 
 app.use((err, req, res, next) => {
