@@ -75,9 +75,32 @@ export default class PgUserDao implements IUserDao {
     async deleteAsync(dto: IDeleteUserRequest): Promise<IUserResponse | null> {
         throw new Error("Method not implemented.");
     }
-    async getByCredentialsAsync(
-        dto: IGetUserByCredentialsRequest,
-    ): Promise<IUserResponse | null> {
-        throw new Error("Method not implemented.");
+    async getByCredentialsAsync({
+        username,
+        pw,
+        email,
+    }: IGetUserByCredentialsRequest): Promise<IUserResponse | null> {
+        const sql: QueryConfig = {
+            text: `
+                SELECT * FROM users
+                WHERE username = $1
+                AND email = $2
+            `,
+            values: [username, email],
+        };
+        logger.debug("running sql: ", sql);
+        const { rows } = await this.db.query(sql);
+        logger.debug("result: ", rows);
+        for (const row of rows) {
+            const hasMatchingPassword: boolean = await bcrypt.compare(
+                pw,
+                row.pw_hash,
+            );
+            if (hasMatchingPassword) {
+                return this.dataMapper(row);
+            }
+        }
+        logger.debug("no match found!");
+        return null;
     }
 }
