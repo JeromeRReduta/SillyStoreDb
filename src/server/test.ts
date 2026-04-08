@@ -28,17 +28,23 @@ import { IUserResponse } from "../application/dtos/responses/IUserResponse.ts";
 import morgan from "morgan";
 import { IUserRepository } from "../domain/repos/IUserRepository.ts";
 import UserRepository from "../domain/repos/UserRepository.ts";
+import { TokenResponse } from "../application/dtos/responses/TokenResponse.ts";
+import { IClientUserService } from "../application/services/client-user-service/IClientUserService.ts";
+import ClientUserService from "../application/services/client-user-service/ClientUserService.ts";
 
 const app = express();
 app.use(express.json());
 app.use(morgan("dev"));
 const db: Client = new Client(configs.db.connectionString);
 await db.connect();
-const repo: IUserRepository = new UserRepository(
-    new PgUserDao({
-        db,
-        dataMapper: pgDataMappers.userMapper,
-    }),
+
+const service: IClientUserService = new ClientUserService(
+    new UserRepository(
+        new PgUserDao({
+            db,
+            dataMapper: pgDataMappers.userMapper,
+        }),
+    ),
 );
 
 app.get("/hello", (_, res) => {
@@ -64,8 +70,8 @@ app.route("/users").post(
     async (req: Request, res: Response, next: NextFunction) => {
         try {
             const dto: ICreateUserRequest = req.body;
-            const userResponse: IUserResponse = await repo.createAsync(dto);
-            res.status(201).send({ userResponse });
+            const token: TokenResponse = await service.registerAsync(dto);
+            res.status(201).send({ token });
         } catch (e) {
             next(e);
         }
