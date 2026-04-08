@@ -1,26 +1,41 @@
 import express, { NextFunction, Request, Response } from "express";
-import ViteExpress from "vite-express";
-import logger from "../../SillyStoreCommon/logging/Logger.ts";
-import { UserDao } from "../infrastructure/data_access/UserDao.ts";
-import { PgUser } from "../infrastructure/psql/entities/IPgUser.ts";
-import PgUserDao from "../infrastructure/psql/data_access/PgUserDao.ts";
-import { Client } from "pg";
+import PG, { Client } from "pg";
 import configs from "../../SillyStoreCommon/configs/Configs.ts";
-import PgMapper from "../infrastructure/psql/data_mapping/PgMapper.ts";
-import { UserResponse } from "../application/dtos/responses/UserResponse.ts";
-import { UserRepository } from "../domain/repos/UserRepository.ts";
-import PgUserRepository from "../infrastructure/psql/repositories/PgUserRepository.ts";
-import requireBody from "../application/middleware/RequireBody.ts";
-import HttpStatus from "../application/http/HttpStatus.ts";
-import { CreateUserRequest } from "../application/dtos/requests/CreateUserRequest.ts";
-import tokenOps from "../application/jwt/TokenOperations.ts";
-import HttpError from "../application/http/HttpError.ts";
-import userRouter from "../presentation/routes/users.ts";
-import { db } from "../configs/BackendConfigs.ts";
+import logger from "../../SillyStoreCommon/logging/Logger.ts";
+import ViteExpress from "vite-express";
+import { ICreateUserRequest } from "../application/dtos/requests/ICreateUserRequest.ts";
+import { IUserDao } from "../infrastructure/psql/data_access/IUserDao.ts";
+import PgUserDao from "../infrastructure/psql/data_access/PgUserDao.ts";
+import pgDataMappers from "../application/data_mapping/PgDataMappers.ts";
+import { IUserResponse } from "../application/dtos/responses/IUserResponse.ts";
+// import logger from "../../SillyStoreCommon/logging/Logger.ts";
+// import { UserDao } from "../infrastructure/data_access/UserDao.ts";
+// import { PgUser } from "../infrastructure/psql/entities/IPgUser.ts";
+// import PgUserDao from "../infrastructure/psql/data_access/PgUserDao.ts";
+// import { Client } from "pg";
+// import configs from "../../SillyStoreCommon/configs/Configs.ts";
+// import PgMapper from "../infrastructure/psql/data_mapping/PgMapper.ts";
+// import { UserResponse } from "../application/dtos/responses/UserResponse.ts";
+// import { UserRepository } from "../domain/repos/UserRepository.ts";
+// import PgUserRepository from "../infrastructure/psql/repositories/PgUserRepository.ts";
+// import requireBody from "../application/middleware/RequireBody.ts";
+// import HttpStatus from "../application/http/HttpStatus.ts";
+// import { CreateUserRequest } from "../application/dtos/requests/CreateUserRequest.ts";
+// import tokenOps from "../application/jwt/TokenOperations.ts";
+// import HttpError from "../application/http/HttpError.ts";
+// import userRouter from "../presentation/routes/users.ts";
+// import { db } from "../configs/BackendConfigs.ts";
+import morgan from "morgan";
 
 const app = express();
 app.use(express.json());
+app.use(morgan("dev"));
+const db: Client = new Client(configs.db.connectionString);
 await db.connect();
+const pgUserDao: IUserDao = new PgUserDao({
+    db,
+    dataMapper: pgDataMappers.userMapper,
+});
 
 app.get("/hello", (_, res) => {
     res.send("Hello Vite + TypeScript!");
@@ -39,11 +54,23 @@ ViteExpress.listen(app, 3000, async () => {
 //     ) => {
 //         res.status(HttpStatus.CREATED).send(req.session.token);
 //     },
-// );
+// )
 
-app.use("/users", userRouter);
+app.route("/users").post(
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const dto: ICreateUserRequest = req.body;
+            const userResponse: IUserResponse =
+                await pgUserDao.createAsync(dto);
+            res.status(201).send({ userResponse });
+        } catch (e) {
+            next(e);
+        }
+    },
+);
 
-app.use((err: HttpError, req, res, next) => {
+app.use((err, req, res, next) => {
     logger.error("ERROR IS", err);
-    res.status(err.code || 500).send(err);
+    const code: number = typeof err.code === "number" ? err.code : 500;
+    res.status(code).send(err);
 });

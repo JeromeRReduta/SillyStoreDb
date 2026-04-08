@@ -23,6 +23,7 @@ import { IPgUser } from "../entities/IPgUser.ts";
 import * as bcrypt from "bcrypt";
 import logger from "../../../../SillyStoreCommon/logging/Logger.ts";
 
+// TODO: test createAsync
 export default class PgUserDao implements IUserDao {
     private db: Client | Pool;
     private dataMapper: IDataMapper<IPgUser, IUserResponse>;
@@ -35,11 +36,12 @@ export default class PgUserDao implements IUserDao {
     }: {
         db: Client | Pool;
         dataMapper: IDataMapper<IPgUser, IUserResponse>;
-        numSaltRounds: number;
+        numSaltRounds?: number;
     }) {
         this.db = db;
         this.dataMapper = dataMapper;
         this.numSaltRounds = numSaltRounds;
+        logger.debug("SALT ROUNDS IS", this.numSaltRounds);
     }
 
     async createAsync({
