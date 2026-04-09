@@ -1,31 +1,22 @@
 // /* eslint-disable @typescript-eslint/no-empty-object-type */ // added so my eyes wouldn't bleed - TODO: remove
-// import { Client, Pool } from "pg";
-// import { UserRepository } from "../domain/repos/UserRepository.ts";
-// import { PgUser } from "../infrastructure/psql/db_entities/PgUser.ts";
-// import configs from "../../SillyStoreCommon/configs/Configs.ts";
-// import { DataMapper } from "../application/data_mapping/DataMapper.ts";
-// import { UserResponse } from "../application/dtos/users/UserResponse.ts";
-// import PgMapper from "../infrastructure/psql/data_mapping/PgMapper.ts";
-// import PgUserDao from "../infrastructure/psql/data_access/PgUserDao.ts";
-// import PgUserRepository from "../infrastructure/psql/repositories/PgUserRepository.ts";
-// import SimpleUserRepository from "../domain/repos/SimpleUserRepository.ts";
 
 import { Client, Pool } from "pg";
 import configs from "../../SillyStoreCommon/configs/Configs.ts";
-import { IUserDao } from "../infrastructure/psql/data_access/IUserDao.ts";
-import PgUserDao from "../infrastructure/psql/data_access/PgUserDao.ts";
 import pgDataMappers from "../application/data_mapping/PgDataMappers.ts";
-import { IUserRepository } from "../domain/repos/IUserRepository.ts";
-import UserRepository from "../domain/repos/UserRepository.ts";
-import { IClientUserService } from "../application/services/IClientUserService.ts";
+import ClientProductService from "../application/services/ClientProductService.ts";
 import ClientUserService from "../application/services/ClientUserService.ts";
 import { IClientProductService } from "../application/services/IClientProductService.ts";
-import { IProductDao } from "../infrastructure/psql/data_access/IProductDao.ts";
-import PgProductDao from "../infrastructure/psql/data_access/PgProductDao.ts";
-import { IOrderProductDao } from "../infrastructure/psql/data_access/IOrderProductDao.ts";
+import { IClientUserService } from "../application/services/IClientUserService.ts";
 import { IProductRepository } from "../domain/repos/IProductRepository.ts";
+import { IUserRepository } from "../domain/repos/IUserRepository.ts";
 import ProductRepository from "../domain/repos/ProductRepository.ts";
-import ClientProductService from "../application/services/ClientProductService.ts";
+import UserRepository from "../domain/repos/UserRepository.ts";
+import { IOrderProductDao } from "../infrastructure/data_access/IOrderProductDao.ts";
+import { IProductDao } from "../infrastructure/data_access/IProductDao.ts";
+import { IUserDao } from "../infrastructure/data_access/IUserDao.ts";
+import PgProductDao from "../infrastructure/psql/data_access/PgProductDao.ts";
+import PgUserDao from "../infrastructure/psql/data_access/PgUserDao.ts";
+import PgOrderProductDao from "../infrastructure/psql/data_access/PgOrderProductDao.ts";
 
 // export interface BackendConfigs<
 //     // TDbOrder,
@@ -121,17 +112,21 @@ import ClientProductService from "../application/services/ClientProductService.t
 // //     };
 
 export const db: Client | Pool = new Client(configs.db.connectionString);
+const { userMapper, orderMapper, productMapper, orderProductMapper } =
+    pgDataMappers;
 const pgUserDao: IUserDao = new PgUserDao({
     db,
-    dataMapper: pgDataMappers.userMapper,
+    dataMapper: userMapper,
 });
 const userRepo: IUserRepository = new UserRepository(pgUserDao);
 const clientUserService: IClientUserService = new ClientUserService(userRepo);
-const pgProductDao: IProductDao = new PgProductDao(
+const pgProductDao: IProductDao = new PgProductDao(db, productMapper);
+const pgOrderProductDao: IOrderProductDao = new PgOrderProductDao({
     db,
-    pgDataMappers.productMapper,
-);
-const pgOrderProductDao: IOrderProductDao = {}; // TODO - implement
+    orderMapper,
+    productMapper,
+    orderProductMapper,
+});
 const productRepo: IProductRepository = new ProductRepository({
     orderProductDao: pgOrderProductDao,
     productDao: pgProductDao,

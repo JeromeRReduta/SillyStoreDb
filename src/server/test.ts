@@ -46,9 +46,9 @@ const productRepo: IProductRepository = new ProductRepository({
 app.route("/products/:id/orders").get(async (req, res, next) => {
     try {
         const orders: IOrderResponse[] =
-            await productRepo.getOrdersIncludingProduct({
-                userId: null,
+            await services.clientProductService.getOrdersIncludingProduct({
                 productId: parseInt(req.params.id),
+                userId: null,
             });
         res.status(HttpStatus.OK).send(orders);
     } catch (e) {

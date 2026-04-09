@@ -35,6 +35,6 @@ export default class ClientProductService implements IClientProductService {
     async getOrdersIncludingProduct(
         dto: IGetOrdersIncludingProductRequest,
     ): Promise<IOrderResponse[]> {
-        throw new Error("Method not implemented.");
+        return await this.repo.getOrdersIncludingProduct(dto);
     }
 }
