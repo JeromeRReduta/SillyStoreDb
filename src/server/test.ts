@@ -2,7 +2,7 @@ import express, { NextFunction, Request, Response } from "express";
 import logger from "../../SillyStoreCommon/logging/Logger.ts";
 import ViteExpress from "vite-express";
 import pgDataMappers from "../application/data_mapping/PgDataMappers.ts";
-import morgan from "morgan";
+import morgan, { token } from "morgan";
 import services, { db } from "../configs/BackendConfigs.ts";
 import PgProductDao from "../infrastructure/psql/data_access/PgProductDao.ts";
 import { IProductRepository } from "../domain/repos/IProductRepository.ts";
@@ -14,10 +14,22 @@ import { IOrderProductDao } from "../infrastructure/data_access/IOrderProductDao
 import PgOrderProductDao from "../infrastructure/psql/data_access/PgOrderProductDao.ts";
 import { IOrderResponse } from "../application/dtos/responses/IOrderResponse.ts";
 import { IProductDao } from "../infrastructure/data_access/IProductDao.ts";
+import userRouter from "../presentation/routes/users.ts";
+import cookieParser from "cookie-parser";
+import cors from "cors";
+import { TokenResponse } from "../application/dtos/responses/TokenResponse.ts";
+import tokenOps from "../application/jwt/TokenOperations.ts";
 
 const app = express();
 app.use(express.json());
 app.use(morgan("dev"));
+app.use(cookieParser());
+app.use(
+    cors({
+        origin: ["http://localhost:3000"],
+        credentials: true,
+    }),
+);
 
 app.get("/hello", (_, res) => {
     res.send("Hello Vite + TypeScript!");
@@ -45,15 +57,25 @@ const productRepo: IProductRepository = new ProductRepository({
 
 app.route("/products/:id/orders").get(async (req, res, next) => {
     try {
+        const { id: userId } = tokenOps.verify(req.cookies.token) as {
+            id: number;
+        }; // TODO: turn this into middleware - requireSignedIn, which throws if we cannot parse a token for tokenOps.verify
         const orders: IOrderResponse[] =
             await services.clientProductService.getOrdersIncludingProduct({
                 productId: parseInt(req.params.id),
-                userId: null,
+                userId,
             });
         res.status(HttpStatus.OK).send(orders);
     } catch (e) {
         next(e);
     }
+});
+
+app.use("/users", userRouter);
+
+app.route("/users").get((req, res, next) => {
+    logger.debug("cookies", req.cookies);
+    res.status(200).send("a");
 });
 
 app.use((err, req, res, next) => {

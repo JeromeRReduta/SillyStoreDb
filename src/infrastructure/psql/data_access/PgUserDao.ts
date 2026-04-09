@@ -9,6 +9,7 @@ import { IGetUserRequest } from "../../../application/dtos/requests/IGetUserRequ
 import { IUserResponse } from "../../../application/dtos/responses/IUserResponse.ts";
 import { IPgUser } from "../entities/IPgUser.ts";
 import { IUserDao } from "./IUserDao.ts";
+import * as bcrypt from "bcrypt";
 
 export default class PgUserDao implements IUserDao {
     private db: Client | Pool;
