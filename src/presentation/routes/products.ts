@@ -9,4 +9,6 @@ productRouter.route("/").get(tryGetAllProductsAsync);
 
 // don't have to validate id is in param, since this route literally won't be called if it's missing
 productRouter.route("/:id").get(tryGetProductAsync);
+
+productRouter.route("/:id/orders").get(setUser);
 export default productRouter;

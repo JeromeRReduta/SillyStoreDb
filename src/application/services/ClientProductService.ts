@@ -1,3 +1,4 @@
+import logger from "../../../SillyStoreCommon/logging/Logger.ts";
 import { IProductRepository } from "../../domain/repos/IProductRepository.ts";
 import HttpError from "../../errors/HttpError.ts";
 import { IGetAllProductsRequest } from "../dtos/requests/IGetAllProductsRequest.ts";
@@ -35,6 +36,13 @@ export default class ClientProductService implements IClientProductService {
     async getOrdersIncludingProduct(
         dto: IGetOrdersIncludingProductRequest,
     ): Promise<IOrderResponse[]> {
+        const isAdmin: boolean = dto.userId === null;
+        if (isAdmin) {
+            throw new HttpError(
+                HttpStatus.UNAUTHORIZED,
+                "Attempting to access client service w/o token. If you're an admin, use the admin service (PENDING). If you're not, sign in.",
+            );
+        }
         return await this.repo.getOrdersIncludingProduct(dto);
     }
 }
