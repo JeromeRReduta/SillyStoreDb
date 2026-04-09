@@ -19,6 +19,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import { TokenResponse } from "../application/dtos/responses/TokenResponse.ts";
 import tokenOps from "../application/jwt/TokenOperations.ts";
+import requireSignedIn from "../application/middleware/RequireSignedIn.ts";
 
 const app = express();
 app.use(express.json());
@@ -55,21 +56,21 @@ const productRepo: IProductRepository = new ProductRepository({
     productDao,
 });
 
-app.route("/products/:id/orders").get(async (req, res, next) => {
-    try {
-        const { id: userId } = tokenOps.verify(req.cookies.token) as {
-            id: number;
-        }; // TODO: turn this into middleware - requireSignedIn, which throws if we cannot parse a token for tokenOps.verify
-        const orders: IOrderResponse[] =
-            await services.clientProductService.getOrdersIncludingProduct({
-                productId: parseInt(req.params.id),
-                userId,
-            });
-        res.status(HttpStatus.OK).send(orders);
-    } catch (e) {
-        next(e);
-    }
-});
+app.route("/products/:id/orders").get(
+    requireSignedIn,
+    async (req: Request<{ id: string }, object, object>, res, next) => {
+        try {
+            const orders: IOrderResponse[] =
+                await services.clientProductService.getOrdersIncludingProduct({
+                    productId: parseInt(req.params.id),
+                    userId: req.userId!,
+                });
+            res.status(HttpStatus.OK).send(orders);
+        } catch (e) {
+            next(e);
+        }
+    },
+);
 
 app.use("/users", userRouter);
 
