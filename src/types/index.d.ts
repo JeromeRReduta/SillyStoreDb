@@ -8,7 +8,7 @@ declare global {
                 token?: string;
             };
             // registerUserCommandHandler?: RegisterUserCommandHandler;
-            userId?: number;
+            userId?: number | null;
         }
     }
 }
