@@ -5,11 +5,13 @@
 // import { IProductResponse } from "../dtos/responses/IProductResponse.ts";
 
 import { IProductRepository } from "../../domain/repos/IProductRepository.ts";
+import HttpError from "../../errors/HttpError.ts";
 import { IGetAllProductsRequest } from "../dtos/requests/IGetAllProductsRequest.ts";
 import { IGetOrdersIncludingProductRequest } from "../dtos/requests/IGetOrdersIncludingProductRequest.ts";
 import { IGetProductRequest } from "../dtos/requests/IGetProductRequest.ts";
 import { IOrderResponse } from "../dtos/responses/IOrderResponse.ts";
 import { IProductResponse } from "../dtos/responses/IProductResponse.ts";
+import { HttpStatus } from "../http/HttpStatus.ts";
 import { IClientProductService } from "./IClientProductService.ts";
 
 // export interface IClientProductService {
@@ -34,7 +36,14 @@ export default class ClientProductService implements IClientProductService {
     }
 
     async getAsync(dto: IGetProductRequest): Promise<IProductResponse | null> {
-        throw new Error("Method not implemented.");
+        const found: IProductResponse | null = await this.repo.getAsync(dto);
+        if (!found) {
+            throw new HttpError(
+                HttpStatus.NOT_FOUND,
+                "No matching product found!",
+            );
+        }
+        return found;
     }
 
     async getOrdersIncludingProduct(
