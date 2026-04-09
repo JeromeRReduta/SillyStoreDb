@@ -52,29 +52,14 @@ ViteExpress.listen(app, 3000, async () => {
     logger.info("Server is listening on port 3000...");
 });
 
-// app.route("/").post(
-//     requireBody(["username", "email", "pw"]),
-//     registerUserAndSetTokenAsync,
-//     (
-//         req: Request<object, UserResponse, CreateUserRequest>,
-//         res: Response<string>,
-//     ) => {
-//         res.status(HttpStatus.CREATED).send(req.session.token);
-//     },
-// )
-
-app.use("/users", userRouter);
-
-// app.use("/products", productsRouter);
-
-app.route("/products").get(async (req, res, next) => {
-    try {
-        res.status(200).send(
-            await services.clientProductService.getAllAsync({}),
-        );
-    } catch (e) {
-        next(e);
-    }
+app.route("/products/:id").get(async (req, res, next) => {
+    const repo: IProductRepository = new ProductRepository({
+        orderProductDao: {},
+        productDao: new PgProductDao(db, pgDataMappers.productMapper),
+    });
+    res.status(200).send(
+        await repo.getAsync({ id: Number.parseInt(req.params.id!) }),
+    );
 });
 
 app.use((err, req, res, next) => {

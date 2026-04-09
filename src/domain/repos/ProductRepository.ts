@@ -35,7 +35,7 @@ export default class ProductRepository implements IProductRepository {
     }
 
     async getAsync(dto: IGetProductRequest): Promise<IProductResponse | null> {
-        throw new Error("Method not implemented.");
+        return await this.productDao.getAsync(dto);
     }
 
     async deleteAsync(

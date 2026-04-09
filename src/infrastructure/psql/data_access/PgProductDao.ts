@@ -43,12 +43,30 @@ export default class PgProductDao implements IProductDao {
         logger.debug("sql: ", sql);
         const { rows } = await this.db.query(sql);
         logger.debug("result: ", rows);
-        logger.debug("type of rounded price is", typeof rows[0].price);
         return rows.map(this.dataMapper);
     }
 
-    async getAsync(dto: IGetProductRequest): Promise<IProductResponse | null> {
-        throw new Error("Method not implemented.");
+    async getAsync({
+        id,
+    }: IGetProductRequest): Promise<IProductResponse | null> {
+        const sql: QueryConfig = {
+            text: `
+                SELECT
+                    id,
+                    title,
+                    description,
+                    price::decimal::float8
+                FROM products
+                WHERE id = $1
+            `,
+            values: [id],
+        };
+        logger.debug("sql:", sql);
+        const {
+            rows: [row],
+        } = await this.db.query(sql);
+        logger.debug("result: ", row);
+        return row ? this.dataMapper(row) : null;
     }
 
     async deleteAsync(
