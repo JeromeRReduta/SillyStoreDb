@@ -10,6 +10,9 @@ import ProductRepository from "../domain/repos/ProductRepository.ts";
 import { IGetProductRequest } from "../application/dtos/requests/IGetProductRequest.ts";
 import { IProductResponse } from "../application/dtos/responses/IProductResponse.ts";
 import { HttpStatus } from "../application/http/HttpStatus.ts";
+import { IOrderProductDao } from "../infrastructure/data_access/IOrderProductDao.ts";
+import PgOrderProductDao from "../infrastructure/psql/data_access/PgOrderProductDao.ts";
+import { IOrderResponse } from "../application/dtos/responses/IOrderResponse.ts";
 
 const app = express();
 app.use(express.json());
@@ -24,26 +27,25 @@ ViteExpress.listen(app, 3000, async () => {
     logger.info("Server is listening on port 3000...");
 });
 
-const repo: IProductRepository = new ProductRepository({
-    orderProductDao: {},
-    productDao: new PgProductDao(db, pgDataMappers.productMapper),
+const orderProductDao: IOrderProductDao = new PgOrderProductDao({
+    db,
+    orderMapper: pgDataMappers.orderMapper,
+    orderProductMapper: pgDataMappers.orderProductMapper,
+    productMapper: pgDataMappers.productMapper,
 });
 
-app.route("/products/:id").get(
-    async (
-        req: Request<IGetProductRequest, IProductResponse, object>,
-        res: Response<IProductResponse>,
-        next: NextFunction,
-    ) => {
-        try {
-            const found: IProductResponse =
-                await services.clientProductService.getAsync(req.params);
-            res.status(HttpStatus.OK).send(found);
-        } catch (e) {
-            next(e);
-        }
-    },
-);
+app.route("/products/:id/orders").get(async (req, res, next) => {
+    try {
+        const orders: IOrderResponse[] =
+            await orderProductDao.getOrdersIncludingProductAsync({
+                productId: parseInt(req.params.id),
+                userId: 1,
+            });
+        res.status(HttpStatus.OK).send(orders);
+    } catch (e) {
+        next(e);
+    }
+});
 
 app.use((err, req, res, next) => {
     // TODO - fix error returning
