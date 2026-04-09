@@ -6,7 +6,7 @@ import { IProductResponse } from "../dtos/responses/IProductResponse.ts";
 
 export interface IClientProductService {
     getAllAsync(dto: IGetAllProductsRequest): Promise<IProductResponse[]>;
-    getAsync(dto: IGetProductRequest): Promise<IProductResponse | null>;
+    getAsync(dto: IGetProductRequest): Promise<IProductResponse>;
     getOrdersIncludingProduct(
         dto: IGetOrdersIncludingProductRequest,
     ): Promise<IOrderResponse[]>;
