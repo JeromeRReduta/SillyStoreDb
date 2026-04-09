@@ -1,22 +1,27 @@
 import express from "express";
-import ViteExpress from "vite-express";
-import logger from "../../SillyStoreCommon/logging/Logger.ts";
-import userRouter from "../presentation/users.ts";
-import RegisterUserCommandHandler from "../application/handlers/userRoute/RegisterUserCommandHandlerBundle.ts";
-import PgUserRepository from "../infrastructure/psql/repos/PgUserRepository.ts";
 import { Client } from "pg";
-import configs from "../../SillyStoreCommon/configs/Configs.ts";
-import userMapper from "../infrastructure/psql/data_mapping/UserMapper.ts";
-import { DataMapper } from "../infrastructure/psql/data_mapping/DataMapper.ts";
-import { PgUser } from "../infrastructure/psql/db_entities/PgUser.ts";
-import { UserResponse } from "../application/dtos/users/UserResponse.ts";
-import userMapper from "../infrastructure/psql/data_mapping/UserMapper.ts";
-import { UserRepository } from "../domain/repos/UserRepository.ts";
-import { ApiError } from "../application/ApiError.ts";
+import logger from "../../SillyStoreCommon/logging/Logger.ts";
+import userRouter from "../presentation/routes/users.ts";
+import ViteExpress from "vite-express";
+import HttpError from "../errors/HttpError.ts";
+import { db } from "../configs/BackendConfigs.ts";
+import productRouter from "../presentation/routes/products.ts";
+// import logger from "../../SillyStoreCommon/logging/Logger.ts";
+// import userRouter from "../presentation/users.ts";
+// import RegisterUserCommandHandler from "../application/handlers/userRoute/RegisterUserCommandHandlerBundle.ts";
+// import PgUserRepository from "../infrastructure/psql/repos/PgUserRepository.ts";
+// import { Client } from "pg";
+// import configs from "../../SillyStoreCommon/configs/Configs.ts";
+// import userMapper from "../infrastructure/psql/data_mapping/UserMapper.ts";
+// import { DataMapper } from "../infrastructure/psql/data_mapping/DataMapper.ts";
+// import { PgUser } from "../infrastructure/psql/db_entities/PgUser.ts";
+// import { UserResponse } from "../application/dtos/users/UserResponse.ts";
+// import userMapper from "../infrastructure/psql/data_mapping/UserMapper.ts";
+// import { UserRepository } from "../domain/repos/UserRepository.ts";
+// import { ApiError } from "../application/ApiError.ts";
 
 // TODO: change logger to mask pw_hash fields
 const app = express();
-const db: Client = new Client(configs.db.connectionString);
 logger.info("Connecting to db...");
 await db.connect();
 
@@ -28,18 +33,9 @@ app.use(express.json());
 
 ViteExpress.listen(app, 3000, () => {
     logger.info("Server is listening on port 3000...");
-    logger.debug("node_env is:", process.env.NODE_ENV);
-    logger.debug(process.env.LOG_LEVEL);
-    logger.debug(process.env.thingy_thingy);
 });
-// app.use((req, res, next) => {
-//     const userRepository: UserRepository = new PgUserRepository(db, userMapper);
-//     req.registerUserCommandHandler = new RegisterUserCommandHandler(
-//         userRepository,
-//     );
-//     next();
-// });
 
+app.use("/products", productRouter);
 app.use("/users", userRouter);
 
 /** Just gonna add these 2 error handlers from assignments */
@@ -60,7 +56,7 @@ app.use((err, req, res, next) => {
     }
 });
 
-app.use((err: ApiError, req, res, next) => {
+app.use((err: HttpError, req, res, next) => {
     logger.error(err);
     let code: number;
     if (typeof err.code === "string") {
