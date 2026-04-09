@@ -8,7 +8,7 @@ export function getIdFromUserToken(
 ): void {
     req.userId = req.session?.token
         ? (tokenOps.verify(req.session.token) as { id: number }).id
-        : null;
+        : undefined;
     next();
 }
 

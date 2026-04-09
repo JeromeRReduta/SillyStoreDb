@@ -39,8 +39,14 @@ export default class ClientProductService implements IClientProductService {
         const isAdmin: boolean = dto.userId === null;
         if (isAdmin) {
             throw new HttpError(
+                HttpStatus.FORBIDDEN,
+                "Wait a minute; you're supposed to be on the admin service (PENDING). How'd you get here?",
+            );
+        }
+        if (dto.userId === undefined) {
+            throw new HttpError(
                 HttpStatus.UNAUTHORIZED,
-                "Attempting to access client service w/o token. If you're an admin, use the admin service (PENDING). If you're not, sign in.",
+                "You must be signed in to access this resource!",
             );
         }
         return await this.repo.getOrdersIncludingProduct(dto);
