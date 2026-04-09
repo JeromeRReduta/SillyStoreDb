@@ -1,15 +1,14 @@
 import { Client, Pool, QueryConfig } from "pg";
+import logger from "../../../../SillyStoreCommon/logging/Logger.ts";
+import { IDataMapper } from "../../../application/data_mapping/DataMapper.ts";
 import { ICreateUserRequest } from "../../../application/dtos/requests/ICreateUserRequest.ts";
 import { IDeleteUserRequest } from "../../../application/dtos/requests/IDeleteUserRequest.ts";
 import { IGetAllUsersRequest } from "../../../application/dtos/requests/IGetAllUsersRequest.ts";
 import { IGetUserByCredentialsRequest } from "../../../application/dtos/requests/IGetUserByCredentialsRequest.ts";
 import { IGetUserRequest } from "../../../application/dtos/requests/IGetUserRequest.ts";
 import { IUserResponse } from "../../../application/dtos/responses/IUserResponse.ts";
-import { IUserDao } from "./IUserDao.ts";
-import { IDataMapper } from "../../../application/data_mapping/DataMapper.ts";
 import { IPgUser } from "../entities/IPgUser.ts";
-import * as bcrypt from "bcrypt";
-import logger from "../../../../SillyStoreCommon/logging/Logger.ts";
+import { IUserDao } from "./IUserDao.ts";
 
 export default class PgUserDao implements IUserDao {
     private db: Client | Pool;

@@ -1,13 +1,13 @@
 import { Client, Pool, QueryConfig } from "pg";
+import logger from "../../../../SillyStoreCommon/logging/Logger.ts";
+import { IDataMapper } from "../../../application/data_mapping/DataMapper.ts";
 import { ICreateProductRequest } from "../../../application/dtos/requests/ICreateProductRequest.ts";
 import { IDeleteProductRequest } from "../../../application/dtos/requests/IDeleteProductRequest.ts";
 import { IGetAllProductsRequest } from "../../../application/dtos/requests/IGetAllProductsRequest.ts";
 import { IGetProductRequest } from "../../../application/dtos/requests/IGetProductRequest.ts";
 import { IProductResponse } from "../../../application/dtos/responses/IProductResponse.ts";
-import { IProductDao } from "./IProductDao.ts";
-import { IDataMapper } from "../../../application/data_mapping/DataMapper.ts";
-import logger from "../../../../SillyStoreCommon/logging/Logger.ts";
 import { IPgProduct } from "../entities/IPgProduct.ts";
+import { IProductDao } from "./IProductDao.ts";
 
 export default class PgProductDao implements IProductDao {
     private db: Client | Pool;
