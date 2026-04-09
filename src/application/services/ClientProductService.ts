@@ -35,7 +35,7 @@ export default class ClientProductService implements IClientProductService {
         return await this.repo.getAllAsync(dto);
     }
 
-    async getAsync(dto: IGetProductRequest): Promise<IProductResponse | null> {
+    async getAsync(dto: IGetProductRequest): Promise<IProductResponse> {
         const found: IProductResponse | null = await this.repo.getAsync(dto);
         if (!found) {
             throw new HttpError(
