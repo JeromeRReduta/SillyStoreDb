@@ -6,7 +6,6 @@ import { IGetProductRequest } from "../../../application/dtos/requests/IGetProdu
 import { IProductResponse } from "../../../application/dtos/responses/IProductResponse.ts";
 import { IProductDao } from "./IProductDao.ts";
 import { IDataMapper } from "../../../application/data_mapping/DataMapper.ts";
-import { IPgUser } from "../entities/IPgUser.ts";
 import logger from "../../../../SillyStoreCommon/logging/Logger.ts";
 import { IPgProduct } from "../entities/IPgProduct.ts";
 
@@ -25,6 +24,7 @@ export default class PgProductDao implements IProductDao {
     async createAsync(dto: ICreateProductRequest): Promise<IProductResponse> {
         throw new Error("Method not implemented.");
     }
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async getAllAsync(
         _dto: IGetAllProductsRequest,
@@ -46,9 +46,11 @@ export default class PgProductDao implements IProductDao {
         logger.debug("type of rounded price is", typeof rows[0].price);
         return rows.map(this.dataMapper);
     }
+
     async getAsync(dto: IGetProductRequest): Promise<IProductResponse | null> {
         throw new Error("Method not implemented.");
     }
+
     async deleteAsync(
         dto: IDeleteProductRequest,
     ): Promise<IProductResponse | null> {
