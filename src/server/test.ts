@@ -13,6 +13,7 @@ import { HttpStatus } from "../application/http/HttpStatus.ts";
 import { IOrderProductDao } from "../infrastructure/data_access/IOrderProductDao.ts";
 import PgOrderProductDao from "../infrastructure/psql/data_access/PgOrderProductDao.ts";
 import { IOrderResponse } from "../application/dtos/responses/IOrderResponse.ts";
+import { IProductDao } from "../infrastructure/data_access/IProductDao.ts";
 
 const app = express();
 app.use(express.json());
@@ -33,13 +34,21 @@ const orderProductDao: IOrderProductDao = new PgOrderProductDao({
     orderProductMapper: pgDataMappers.orderProductMapper,
     productMapper: pgDataMappers.productMapper,
 });
+const productDao: IProductDao = new PgProductDao(
+    db,
+    pgDataMappers.productMapper,
+);
+const productRepo: IProductRepository = new ProductRepository({
+    orderProductDao,
+    productDao,
+});
 
 app.route("/products/:id/orders").get(async (req, res, next) => {
     try {
         const orders: IOrderResponse[] =
-            await orderProductDao.getOrdersIncludingProductAsync({
+            await productRepo.getOrdersIncludingProduct({
+                userId: null,
                 productId: parseInt(req.params.id),
-                userId: 1,
             });
         res.status(HttpStatus.OK).send(orders);
     } catch (e) {

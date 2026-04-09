@@ -5,8 +5,8 @@ import { IGetOrdersIncludingProductRequest } from "../../application/dtos/reques
 import { IGetProductRequest } from "../../application/dtos/requests/IGetProductRequest.ts";
 import { IOrderResponse } from "../../application/dtos/responses/IOrderResponse.ts";
 import { IProductResponse } from "../../application/dtos/responses/IProductResponse.ts";
-import { IOrderProductDao } from "../../infrastructure/psql/data_access/IOrderProductDao.ts";
-import { IProductDao } from "../../infrastructure/psql/data_access/IProductDao.ts";
+import { IOrderProductDao } from "../../infrastructure/data_access/IOrderProductDao.ts";
+import { IProductDao } from "../../infrastructure/data_access/IProductDao.ts";
 import { IProductRepository } from "./IProductRepository.ts";
 
 export default class ProductRepository implements IProductRepository {
@@ -47,6 +47,6 @@ export default class ProductRepository implements IProductRepository {
     async getOrdersIncludingProduct(
         dto: IGetOrdersIncludingProductRequest,
     ): Promise<IOrderResponse[]> {
-        throw new Error("Method not implemented.");
+        return await this.orderProductDao.getOrdersIncludingProductAsync(dto);
     }
 }
