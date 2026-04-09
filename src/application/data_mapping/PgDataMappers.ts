@@ -1,4 +1,3 @@
-import { IPgOrder } from "../../infrastructure/psql/entities/IPgOrder.ts";
 import { IPgProduct } from "../../infrastructure/psql/entities/IPgProduct.ts";
 import { IPgUser } from "../../infrastructure/psql/entities/IPgUser.ts";
 import { IProductResponse } from "../dtos/responses/IProductResponse.ts";
@@ -22,13 +21,6 @@ const productMapper: IDataMapper<IPgProduct, IProductResponse> = ({
 }: IPgProduct) => {
     return { id, imageSrc: image_src, title, description, price };
 };
-// export interface IPgProduct {
-//     readonly id: number;
-//     readonly image_src: string;
-//     readonly title: string;
-//     readonly description: string;
-//     readonly price: number;
-// }
 
 const pgDataMappers = {
     userMapper,

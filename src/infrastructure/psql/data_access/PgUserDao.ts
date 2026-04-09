@@ -1,15 +1,3 @@
-// import { Client, Pool, QueryConfig } from "pg";
-// import { CreateUserRequest } from "../../../application/dtos/requests/CreateUserRequest.ts";
-// import { DeleteUserRequest } from "../../../application/dtos/requests/DeleteUserRequest.ts";
-// import { GetAllUsersRequest } from "../../../application/dtos/requests/GetAllUsersRequest.ts";
-// import { GetUserRequest } from "../../../application/dtos/requests/GetUserRequest.ts";
-// import { UserResponse } from "../../../application/dtos/responses/UserResponse.ts";
-// import { UserDao } from "../../data_access/UserDao.ts";
-// import { PgUser } from "../entities/PgUser.ts";
-// import { DataMapper } from "../../../application/data_mapping/DataMapper.ts";
-// import * as bcrypt from "bcrypt";
-// import logger from "../../../../SillyStoreCommon/logging/Logger.ts";
-
 import { Client, Pool, QueryConfig } from "pg";
 import { ICreateUserRequest } from "../../../application/dtos/requests/ICreateUserRequest.ts";
 import { IDeleteUserRequest } from "../../../application/dtos/requests/IDeleteUserRequest.ts";
@@ -23,7 +11,6 @@ import { IPgUser } from "../entities/IPgUser.ts";
 import * as bcrypt from "bcrypt";
 import logger from "../../../../SillyStoreCommon/logging/Logger.ts";
 
-// TODO: test createAsync
 export default class PgUserDao implements IUserDao {
     private db: Client | Pool;
     private dataMapper: IDataMapper<IPgUser, IUserResponse>;

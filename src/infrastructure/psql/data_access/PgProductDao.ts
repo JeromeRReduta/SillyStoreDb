@@ -25,8 +25,8 @@ export default class PgProductDao implements IProductDao {
         throw new Error("Method not implemented.");
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async getAllAsync(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _dto: IGetAllProductsRequest,
     ): Promise<IProductResponse[]> {
         const sql: QueryConfig = {

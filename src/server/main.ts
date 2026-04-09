@@ -1,24 +1,10 @@
 import express from "express";
-import { Client } from "pg";
 import logger from "../../SillyStoreCommon/logging/Logger.ts";
 import userRouter from "../presentation/routes/users.ts";
 import ViteExpress from "vite-express";
 import HttpError from "../errors/HttpError.ts";
 import { db } from "../configs/BackendConfigs.ts";
 import productRouter from "../presentation/routes/products.ts";
-// import logger from "../../SillyStoreCommon/logging/Logger.ts";
-// import userRouter from "../presentation/users.ts";
-// import RegisterUserCommandHandler from "../application/handlers/userRoute/RegisterUserCommandHandlerBundle.ts";
-// import PgUserRepository from "../infrastructure/psql/repos/PgUserRepository.ts";
-// import { Client } from "pg";
-// import configs from "../../SillyStoreCommon/configs/Configs.ts";
-// import userMapper from "../infrastructure/psql/data_mapping/UserMapper.ts";
-// import { DataMapper } from "../infrastructure/psql/data_mapping/DataMapper.ts";
-// import { PgUser } from "../infrastructure/psql/db_entities/PgUser.ts";
-// import { UserResponse } from "../application/dtos/users/UserResponse.ts";
-// import userMapper from "../infrastructure/psql/data_mapping/UserMapper.ts";
-// import { UserRepository } from "../domain/repos/UserRepository.ts";
-// import { ApiError } from "../application/ApiError.ts";
 
 // TODO: change logger to mask pw_hash fields
 const app = express();
