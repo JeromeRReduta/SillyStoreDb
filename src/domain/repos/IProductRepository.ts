@@ -5,12 +5,15 @@ import { IGetOrdersIncludingProductRequest } from "../../application/dtos/reques
 import { IGetProductRequest } from "../../application/dtos/requests/IGetProductRequest.ts";
 import { IOrderResponse } from "../../application/dtos/responses/IOrderResponse.ts";
 import { IProductResponse } from "../../application/dtos/responses/IProductResponse.ts";
+import { IGenericRepository } from "./ICrudRepository.ts";
 
-export interface IProductRepository {
-    createAsync(dto: ICreateProductRequest): Promise<IProductResponse>;
-    getAllAsync(dto: IGetAllProductsRequest): Promise<IProductResponse[]>;
-    getAsync(dto: IGetProductRequest): Promise<IProductResponse | null>;
-    deleteAsync(dto: IDeleteProductRequest): Promise<IProductResponse | null>;
+export interface IProductRepository extends IGenericRepository<
+    ICreateProductRequest,
+    IGetAllProductsRequest,
+    IGetProductRequest,
+    IDeleteProductRequest,
+    IProductResponse
+> {
     getOrdersIncludingProduct(
         dto: IGetOrdersIncludingProductRequest,
     ): Promise<IOrderResponse[]>;

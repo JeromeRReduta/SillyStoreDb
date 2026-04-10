@@ -4,12 +4,15 @@ import { IGetAllUsersRequest } from "../../application/dtos/requests/IGetAllUser
 import { IGetUserByCredentialsRequest } from "../../application/dtos/requests/IGetUserByCredentialsRequest.ts";
 import { IGetUserRequest } from "../../application/dtos/requests/IGetUserRequest.ts";
 import { IUserResponse } from "../../application/dtos/responses/IUserResponse.ts";
+import { IGenericRepository } from "./ICrudRepository.ts";
 
-export interface IUserRepository {
-    createAsync(dto: ICreateUserRequest): Promise<IUserResponse>;
-    getAllAsync(dto: IGetAllUsersRequest): Promise<IUserResponse[]>;
-    getAsync(dto: IGetUserRequest): Promise<IUserResponse | null>;
-    deleteAsync(dto: IDeleteUserRequest): Promise<IUserResponse | null>;
+export interface IUserRepository extends IGenericRepository<
+    ICreateUserRequest,
+    IGetAllUsersRequest,
+    IGetUserRequest,
+    IDeleteUserRequest,
+    IUserResponse
+> {
     getByCredentialsAsync(
         dto: IGetUserByCredentialsRequest,
     ): Promise<IUserResponse | null>;

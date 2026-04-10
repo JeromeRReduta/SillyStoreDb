@@ -7,13 +7,15 @@ import { IGetProductsInOrderRequest } from "../../application/dtos/requests/IGet
 import { IOrderProductResponse } from "../../application/dtos/responses/IOrderProductResponse.ts";
 import { IOrderResponse } from "../../application/dtos/responses/IOrderResponse.ts";
 import { IProductResponse } from "../../application/dtos/responses/IProductResponse.ts";
+import { IGenericRepository } from "./ICrudRepository.ts";
 
-export interface IOrderRepository {
-    // todo: make ICrudRepository
-    createAsync(dto: ICreateOrderRequest): Promise<IOrderResponse>;
-    getAllAsync(dto: IGetAllOrdersRequest): Promise<IOrderResponse[]>;
-    getAsync(dto: IGetOrderRequest): Promise<IOrderResponse | null>;
-    deleteAsync(dto: IDeleteOrderRequest): Promise<IOrderResponse | null>;
+export interface IOrderRepository extends IGenericRepository<
+    ICreateOrderRequest,
+    IGetAllOrdersRequest,
+    IGetOrderRequest,
+    IDeleteOrderRequest,
+    IOrderResponse
+> {
     addProductToOrderAsync(
         dto: IAddOrderToProductRequest,
     ): Promise<IOrderProductResponse>; // TODO: change to "add product to order request"
