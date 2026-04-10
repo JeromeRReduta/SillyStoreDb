@@ -21,7 +21,7 @@ export default class OrderRepository implements IOrderRepository {
     }
 
     async createAsync(dto: ICreateOrderRequest): Promise<IOrderResponse> {
-        throw new Error("Method not implemented.");
+        return await this.orderDao.createAsync(dto);
     }
     async getAllAsync(dto: IGetAllOrdersRequest): Promise<IOrderResponse[]> {
         return await this.orderDao.getAllAsync(dto);
