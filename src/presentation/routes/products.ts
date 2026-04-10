@@ -14,5 +14,5 @@ productRouter.route("/:id").get(tryGetProductAsync);
 
 productRouter
     .route("/:id/orders")
-    .get(requireSignedIn, tryGetOrdersIncludingProductAsync);
+    .get(requireSignedIn("CLIENT"), tryGetOrdersIncludingProductAsync);
 export default productRouter;
