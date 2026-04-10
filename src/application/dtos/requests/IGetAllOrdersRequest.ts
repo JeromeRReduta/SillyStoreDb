@@ -1,1 +1,3 @@
-//TODO - orders
+export interface IGetAllOrdersRequest {
+    readonly userId: number | null;
+}
