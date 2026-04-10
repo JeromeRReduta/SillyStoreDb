@@ -13,6 +13,7 @@ const app = express();
 app.use(morgan("dev"), express.json(), cookieParser());
 app.use("/products", productRouter);
 app.use("/users", userRouter);
+app.use("/orders", orderRouter);
 
 /** Just gonna add these 2 error handlers from assignments */
 app.use(psqlErrorHandler, finalErrorHandler);
