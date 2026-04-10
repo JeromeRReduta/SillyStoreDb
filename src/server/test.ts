@@ -25,6 +25,7 @@ import finalErrorHandler from "../application/middleware/FinalErrorHandler.ts";
 import { IOrderDao } from "../infrastructure/data_access/IOrderDao.ts";
 import PgOrderDao from "../infrastructure/psql/data_access/PgOrderDao.ts";
 import { IGetAllOrdersRequest } from "../application/dtos/requests/IGetAllOrdersRequest.ts";
+import HttpError from "../errors/HttpError.ts";
 
 const app = express();
 app.use(
@@ -57,13 +58,19 @@ const pgOrderDao: IOrderDao = new PgOrderDao(db, pgDataMappers.orderMapper);
 // });
 
 app.route("/orders/:id").get(async (req, res, next) => {
+    const userId: number = (
+        tokenOps.verify(req.cookies.token) as { id: number }
+    ).id;
     const orderId: number = parseInt(req.params.id);
-    const order: IOrderResponse | null = await pgOrderDao.getAsync({
-        userId: null,
-        orderId,
-    });
-    const status: number = order ? HttpStatus.OK : HttpStatus.NOT_FOUND;
-    res.status(status).send(order);
+    const order: IOrderResponse | null =
+        await services.clientOrderService.getAsync({
+            orderId,
+            userId,
+        });
+    if (!order) {
+        throw new HttpError(HttpStatus.NOT_FOUND, "NOT FOUND");
+    }
+    res.status(HttpStatus.OK).send(order);
 });
 
 app.use(psqlErrorHandler, finalErrorHandler);

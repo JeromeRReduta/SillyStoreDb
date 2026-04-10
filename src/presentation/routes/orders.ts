@@ -2,11 +2,13 @@ import * as express from "express";
 import { Router } from "express";
 import requireSignedIn from "../../application/middleware/RequireSignedIn.ts";
 import tryGetAllOwnedOrdersAsync from "../../application/middleware/TryGetAllOwnedOrdersAsync.ts";
+import tryGetOwnedOrderAsync from "../../application/middleware/TryGetOwnedOrderAsync.ts";
 
 const orderRouter: Router = express.Router();
 orderRouter.use(requireSignedIn); // universal requirement - must be signed in
 
 orderRouter.route("/").get(tryGetAllOwnedOrdersAsync);
+orderRouter.route("/:id").get(tryGetOwnedOrderAsync);
 
 export default orderRouter;
 

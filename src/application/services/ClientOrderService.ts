@@ -43,9 +43,39 @@ export default class ClientOrderService implements IClientOrderService {
         return await this.repo.getAllAsync(dto);
     }
 
-    async getAsync(dto: IGetOrderRequest): Promise<IOrderResponse | null> {
-        throw new Error("Method not implemented.");
+    async getAsync(dto: IGetOrderRequest): Promise<IOrderResponse> {
+        // TODO: make first 2 checks middleware - requireSignedIn and requireNotAdmin
+        const isAdmin: boolean = dto.userId === null;
+        const isSignedIn: boolean =
+            dto.userId !== undefined && dto.userId !== null;
+        if (isAdmin) {
+            throw new HttpError(
+                HttpStatus.FORBIDDEN,
+                "Wait a minute; you're supposed to be on the admin service (PENDING). How'd you get here?",
+            );
+        }
+        if (!isSignedIn) {
+            throw new HttpError(
+                HttpStatus.UNAUTHORIZED,
+                "You must be signed in to access this resource!",
+            );
+        }
+        const found: IOrderResponse | null = await this.repo.getAsync(dto);
+        if (!found) {
+            throw new HttpError(
+                HttpStatus.NOT_FOUND,
+                "No matching order found!",
+            );
+        }
+        if (found.userId !== dto.userId) {
+            throw new HttpError(
+                HttpStatus.FORBIDDEN,
+                "You do not own this order!",
+            );
+        }
+        return found;
     }
+
     async addProductToOrderAsync(
         dto: IAddProductToOrderRequest,
     ): Promise<IOrderProductResponse> {
