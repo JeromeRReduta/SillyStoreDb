@@ -7,22 +7,15 @@ import { IGetProductsInOrderRequest } from "../../application/dtos/requests/IGet
 import { IOrderProductResponse } from "../../application/dtos/responses/IOrderProductResponse.ts";
 import { IOrderResponse } from "../../application/dtos/responses/IOrderResponse.ts";
 import { IProductResponse } from "../../application/dtos/responses/IProductResponse.ts";
+import { IGenericDao } from "./IGenericDao.ts";
 
-export interface IOrderProductDao {
-    createAsync(
-        dto: ICreateOrderProductRequest,
-    ): Promise<IOrderProductResponse>;
-
-    getAllAsync(
-        dto: IGetAllOrderProductsRequest,
-    ): Promise<IOrderProductResponse>;
-
-    getAsync(dto: IGetOrderProductRequest): Promise<IOrderProductDao | null>;
-
-    deleteAsync(
-        dto: IDeleteOrderProductRequest,
-    ): Promise<IOrderProductResponse>;
-
+export interface IOrderProductDao extends IGenericDao<
+    ICreateOrderProductRequest,
+    IGetAllOrderProductsRequest,
+    IGetOrderProductRequest,
+    IDeleteOrderProductRequest,
+    IOrderProductResponse
+> {
     getOrdersIncludingProductAsync(
         dto: IGetOrdersIncludingProductRequest,
     ): Promise<IOrderResponse[]>;

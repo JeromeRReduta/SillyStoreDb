@@ -3,10 +3,12 @@ import { IDeleteProductRequest } from "../../application/dtos/requests/IDeletePr
 import { IGetAllProductsRequest } from "../../application/dtos/requests/IGetAllProductsRequest.ts";
 import { IGetProductRequest } from "../../application/dtos/requests/IGetProductRequest.ts";
 import { IProductResponse } from "../../application/dtos/responses/IProductResponse.ts";
+import { IGenericDao } from "./IGenericDao.ts";
 
-export interface IProductDao {
-    createAsync(dto: ICreateProductRequest): Promise<IProductResponse>;
-    getAllAsync(dto: IGetAllProductsRequest): Promise<IProductResponse[]>;
-    getAsync(dto: IGetProductRequest): Promise<IProductResponse | null>;
-    deleteAsync(dto: IDeleteProductRequest): Promise<IProductResponse | null>;
-}
+export type IProductDao = IGenericDao<
+    ICreateProductRequest,
+    IGetAllProductsRequest,
+    IGetProductRequest,
+    IDeleteProductRequest,
+    IProductResponse
+>;

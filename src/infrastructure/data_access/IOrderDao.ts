@@ -3,10 +3,12 @@ import { IDeleteOrderRequest } from "../../application/dtos/requests/IDeleteOrde
 import { IGetAllOrdersRequest } from "../../application/dtos/requests/IGetAllOrdersRequest.ts";
 import { IGetOrderRequest } from "../../application/dtos/requests/IGetOrderRequest.ts";
 import { IOrderResponse } from "../../application/dtos/responses/IOrderResponse.ts";
+import { IGenericDao } from "./IGenericDao.ts";
 
-export interface IOrderDao {
-    createAsync(dto: ICreateOrderRequest): Promise<IOrderResponse>;
-    getAllAsync(dto: IGetAllOrdersRequest): Promise<IOrderResponse[]>;
-    getAsync(dto: IGetOrderRequest): Promise<IGetOrderRequest | null>;
-    deleteAsync(dto: IDeleteOrderRequest): Promise<IGetOrderRequest>;
-}
+export type IOrderDao = IGenericDao<
+    ICreateOrderRequest,
+    IGetAllOrdersRequest,
+    IGetOrderRequest,
+    IDeleteOrderRequest,
+    IOrderResponse
+>;
