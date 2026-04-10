@@ -38,22 +38,32 @@ app.use(
 );
 const pgOrderDao: IOrderDao = new PgOrderDao(db, pgDataMappers.orderMapper);
 
-app.route("/orders").get(async (req, res, next) => {
-    const dto: IGetAllOrdersRequest = {
-        userId: 1,
-    };
-    logger.debug("running w/ service");
-    const orders = await services.clientOrderService.getAllOwnedAsync(dto);
-    res.status(HttpStatus.OK).send(orders);
-});
+// app.route("/orders").get(async (req, res, next) => {
+//     const dto: IGetAllOrdersRequest = {
+//         userId: 1,
+//     };
+//     logger.debug("running w/ service");
+//     const orders = await services.clientOrderService.getAllOwnedAsync(dto);
+//     res.status(HttpStatus.OK).send(orders);
+// });
 
-app.route("/admin/orders").get(async (req, res, next) => {
-    const dto: IGetAllOrdersRequest = {
+// app.route("/admin/orders").get(async (req, res, next) => {
+//     const dto: IGetAllOrdersRequest = {
+//         userId: null,
+//     };
+//     logger.debug("running w/ service");
+//     const orders = await services.clientOrderService.getAllOwnedAsync(dto);
+//     res.status(HttpStatus.OK).send(orders);
+// });
+
+app.route("/orders/:id").get(async (req, res, next) => {
+    const orderId: number = parseInt(req.params.id);
+    const order: IOrderResponse | null = await pgOrderDao.getAsync({
         userId: null,
-    };
-    logger.debug("running w/ service");
-    const orders = await services.clientOrderService.getAllOwnedAsync(dto);
-    res.status(HttpStatus.OK).send(orders);
+        orderId,
+    });
+    const status: number = order ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+    res.status(status).send(order);
 });
 
 app.use(psqlErrorHandler, finalErrorHandler);
