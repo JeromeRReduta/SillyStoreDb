@@ -19,7 +19,7 @@ export default class ClientOrderService implements IClientOrderService {
     }
 
     async createAsync(dto: ICreateOrderRequest): Promise<IOrderResponse> {
-        throw new Error("Method not implemented.");
+        return await this.repo.createAsync(dto);
     }
 
     async getAllOwnedAsync(
