@@ -25,41 +25,10 @@ export default class ClientOrderService implements IClientOrderService {
     async getAllOwnedAsync(
         dto: IGetAllOrdersRequest,
     ): Promise<IOrderResponse[]> {
-        const isAdmin: boolean = dto.userId === null;
-        const isSignedIn: boolean =
-            dto.userId !== undefined && dto.userId !== null; // need to check this way *just* in case userId = 0
-        if (isAdmin) {
-            throw new HttpError(
-                HttpStatus.FORBIDDEN,
-                "Wait a minute; you're supposed to be on the admin service (PENDING). How'd you get here?",
-            );
-        }
-        if (!isSignedIn) {
-            throw new HttpError(
-                HttpStatus.UNAUTHORIZED,
-                "You must be signed in to access this resource!",
-            );
-        }
         return await this.repo.getAllAsync(dto);
     }
 
     async getAsync(dto: IGetOrderRequest): Promise<IOrderResponse> {
-        // TODO: make first 2 checks middleware - requireSignedIn and requireNotAdmin
-        const isAdmin: boolean = dto.userId === null;
-        const isSignedIn: boolean =
-            dto.userId !== undefined && dto.userId !== null;
-        if (isAdmin) {
-            throw new HttpError(
-                HttpStatus.FORBIDDEN,
-                "Wait a minute; you're supposed to be on the admin service (PENDING). How'd you get here?",
-            );
-        }
-        if (!isSignedIn) {
-            throw new HttpError(
-                HttpStatus.UNAUTHORIZED,
-                "You must be signed in to access this resource!",
-            );
-        }
         const found: IOrderResponse | null = await this.repo.getAsync(dto);
         if (!found) {
             throw new HttpError(
@@ -86,23 +55,4 @@ export default class ClientOrderService implements IClientOrderService {
     ): Promise<IProductResponse[]> {
         throw new Error("Method not implemented.");
     }
-
-    // async getOrdersIncludingProduct(
-    //     dto: IGetOrdersIncludingProductRequest,
-    // ): Promise<IOrderResponse[]> {
-    //     const isAdmin: boolean = dto.userId === null;
-    //     if (isAdmin) {
-    //         throw new HttpError(
-    //             HttpStatus.FORBIDDEN,
-    //             "Wait a minute; you're supposed to be on the admin service (PENDING). How'd you get here?",
-    //         );
-    //     }
-    //     if (dto.userId === undefined) {
-    //         throw new HttpError(
-    //             HttpStatus.UNAUTHORIZED,
-    //             "You must be signed in to access this resource!",
-    //         );
-    //     }
-    //     return await this.repo.getOrdersIncludingProduct(dto);
-    // }
 }

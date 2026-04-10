@@ -26,6 +26,7 @@ import { IOrderDao } from "../infrastructure/data_access/IOrderDao.ts";
 import PgOrderDao from "../infrastructure/psql/data_access/PgOrderDao.ts";
 import { IGetAllOrdersRequest } from "../application/dtos/requests/IGetAllOrdersRequest.ts";
 import HttpError from "../errors/HttpError.ts";
+import { ICreateOrderRequest } from "../application/dtos/requests/ICreateOrderRequest.ts";
 
 const app = express();
 app.use(
@@ -71,6 +72,23 @@ app.route("/orders/:id").get(async (req, res, next) => {
         throw new HttpError(HttpStatus.NOT_FOUND, "NOT FOUND");
     }
     res.status(HttpStatus.OK).send(order);
+});
+
+app.route("/orders").get(async (req, res, next) => {
+    const dto: IGetAllOrdersRequest = {
+        userId: (tokenOps.verify(req.cookies.token) as { id: number }).id,
+    };
+    const orders: IOrderResponse[] = await pgOrderDao.getAllAsync(dto);
+    res.status(HttpStatus.OK).send(orders);
+});
+
+app.route("/orders").post(async (req, res, next) => {
+    const dto: ICreateOrderRequest = {
+        userId: (tokenOps.verify(req.cookies.token) as { id: number }).id,
+        dateStr: "2000-06-09",
+    };
+    const created: IOrderResponse = await pgOrderDao.createAsync(dto);
+    res.status(HttpStatus.CREATED).send(created);
 });
 
 app.use(psqlErrorHandler, finalErrorHandler);

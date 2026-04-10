@@ -21,8 +21,24 @@ export default class PgOrderDao implements IOrderDao {
         this.dataMapper = dataMapper;
     }
 
-    async createAsync(dto: ICreateOrderRequest): Promise<IOrderResponse> {
-        throw new Error("Method not implemented.");
+    async createAsync({
+        dateStr,
+        userId,
+    }: ICreateOrderRequest): Promise<IOrderResponse> {
+        const sql: QueryConfig = {
+            text: `
+                INSERT INTO orders (date, user_id)
+                VALUES ($1, $2)
+                RETURNING *
+            `,
+            values: [dateStr, userId],
+        };
+        logger.debug("sql: ", sql);
+        const {
+            rows: [row],
+        } = await this.db.query(sql);
+        logger.debug("result: ", row);
+        return this.dataMapper(row);
     }
     async getAllAsync({
         userId,
