@@ -1,4 +1,4 @@
-import { IAddOrderToProductRequest } from "../../application/dtos/requests/IAddProductToOrderRequest.ts";
+import { IAddProductToOrderRequest } from "../../application/dtos/requests/IAddProductToOrderRequest.ts";
 import { ICreateOrderRequest } from "../../application/dtos/requests/ICreateOrderRequest.ts";
 import { IDeleteOrderRequest } from "../../application/dtos/requests/IDeleteOrderRequest.ts";
 import { IGetAllOrdersRequest } from "../../application/dtos/requests/IGetAllOrdersRequest.ts";
@@ -17,8 +17,8 @@ export interface IOrderRepository extends IGenericRepository<
     IOrderResponse
 > {
     addProductToOrderAsync(
-        dto: IAddOrderToProductRequest,
-    ): Promise<IOrderProductResponse>; // TODO: change to "add product to order request"
+        dto: IAddProductToOrderRequest,
+    ): Promise<IOrderProductResponse>;
     getProductsInOrderAsync(
         dto: IGetProductsInOrderRequest,
     ): Promise<IProductResponse[]>;

@@ -1,4 +1,4 @@
-import { IAddOrderToProductRequest } from "../../application/dtos/requests/IAddProductToOrderRequest.ts";
+import { IAddProductToOrderRequest } from "../../application/dtos/requests/IAddProductToOrderRequest.ts";
 import { ICreateOrderRequest } from "../../application/dtos/requests/ICreateOrderRequest.ts";
 import { IDeleteOrderRequest } from "../../application/dtos/requests/IDeleteOrderRequest.ts";
 import { IGetAllOrdersRequest } from "../../application/dtos/requests/IGetAllOrdersRequest.ts";
@@ -35,7 +35,7 @@ export default class OrderRepository implements IOrderRepository {
         throw new Error("Method not implemented.");
     }
     async addProductToOrderAsync(
-        dto: IAddOrderToProductRequest,
+        dto: IAddProductToOrderRequest,
     ): Promise<IOrderProductResponse> {
         throw new Error("Method not implemented.");
     }

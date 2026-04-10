@@ -1,4 +1,4 @@
-export interface IAddOrderToProductRequest {
+export interface IAddProductToOrderRequest {
     readonly orderId: number;
     readonly productId: number;
     readonly quantity: number;

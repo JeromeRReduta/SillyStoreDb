@@ -12,10 +12,10 @@ export default async function tryGetOrdersIncludingProductAsync(
         const userId: number = req.userId!;
         const productId: number = parseInt(req.params.id);
         const orders: IOrderResponse[] =
-            await services.clientProductService.getOrdersIncludingProduct({
+            await services.clientProductService.getOrdersIncludingProductAsync({
                 userId,
                 productId,
-            }); // todo: rename w/ async
+            });
         res.status(HttpStatus.OK).send(orders);
     } catch (e) {
         next(e);

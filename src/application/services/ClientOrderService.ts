@@ -1,6 +1,6 @@
 import { IOrderRepository } from "../../domain/repos/IOrderRepository.ts";
 import HttpError from "../../errors/HttpError.ts";
-import { IAddOrderToProductRequest } from "../dtos/requests/IAddProductToOrderRequest.ts";
+import { IAddProductToOrderRequest } from "../dtos/requests/IAddProductToOrderRequest.ts";
 import { ICreateOrderRequest } from "../dtos/requests/ICreateOrderRequest.ts";
 import { IGetAllOrdersRequest } from "../dtos/requests/IGetAllOrdersRequest.ts";
 import { IGetOrderRequest } from "../dtos/requests/IGetOrderRequest.ts";
@@ -47,7 +47,7 @@ export default class ClientOrderService implements IClientOrderService {
         throw new Error("Method not implemented.");
     }
     async addProductToOrderAsync(
-        dto: IAddOrderToProductRequest,
+        dto: IAddProductToOrderRequest,
     ): Promise<IOrderProductResponse> {
         throw new Error("Method not implemented.");
     }

@@ -1,4 +1,4 @@
-import { IAddOrderToProductRequest } from "../dtos/requests/IAddProductToOrderRequest.ts";
+import { IAddProductToOrderRequest } from "../dtos/requests/IAddProductToOrderRequest.ts";
 import { ICreateOrderRequest } from "../dtos/requests/ICreateOrderRequest.ts";
 import { IGetAllOrdersRequest } from "../dtos/requests/IGetAllOrdersRequest.ts";
 import { IGetOrderRequest } from "../dtos/requests/IGetOrderRequest.ts";
@@ -13,7 +13,7 @@ export interface IClientOrderService {
     getAllOwnedAsync(dto: IGetAllOrdersRequest): Promise<IOrderResponse[]>;
     getAsync(dto: IGetOrderRequest): Promise<IOrderResponse | null>;
     addProductToOrderAsync(
-        dto: IAddOrderToProductRequest,
+        dto: IAddProductToOrderRequest,
     ): Promise<IOrderProductResponse>;
     getProductsInOrderAsync(
         dto: IGetProductsInOrderRequest,

@@ -33,9 +33,7 @@ export default class ClientProductService implements IClientProductService {
         return found;
     }
 
-    // todo: make middleware requireSignedIn that explicitly throws error if we cannot get userid from token
-
-    async getOrdersIncludingProduct(
+    async getOrdersIncludingProductAsync(
         dto: IGetOrdersIncludingProductRequest,
     ): Promise<IOrderResponse[]> {
         const isAdmin: boolean = dto.userId === null;
