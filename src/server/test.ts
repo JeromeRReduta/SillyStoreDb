@@ -62,6 +62,7 @@ app.route("/products/:id/orders").get(
         try {
             const orders: IOrderResponse[] =
                 await services.clientProductService.getOrdersIncludingProduct({
+                    // todo: make actual route in products - validate w/ requireSignedIn, but DON'T have to validate req.params.id since it's literally guaranteed by express
                     productId: parseInt(req.params.id),
                     userId: req.userId!,
                 });
