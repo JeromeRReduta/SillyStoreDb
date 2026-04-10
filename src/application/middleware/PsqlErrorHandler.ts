@@ -9,7 +9,7 @@ const psqlUniqueViolation: string = "23505";
 
 export default function psqlErrorHandler(
     err: { code?: string; message?: string; detail?: string } & HttpError,
-    req: Request<object, string, object>,
+    _req: Request<object, string, object>,
     res: Response<string>,
     next: NextFunction,
 ): void {

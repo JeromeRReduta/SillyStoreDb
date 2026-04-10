@@ -6,6 +6,7 @@ export default function finalErrorHandler(
     err: HttpError,
     _req: Request<object, string, object>,
     res: Response<string>,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _next: NextFunction,
 ): void {
     logger.error(err);
