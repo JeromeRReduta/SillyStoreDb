@@ -17,6 +17,12 @@ import { IUserDao } from "../infrastructure/data_access/IUserDao.ts";
 import PgProductDao from "../infrastructure/psql/data_access/PgProductDao.ts";
 import PgUserDao from "../infrastructure/psql/data_access/PgUserDao.ts";
 import PgOrderProductDao from "../infrastructure/psql/data_access/PgOrderProductDao.ts";
+import { IOrderDao } from "../infrastructure/data_access/IOrderDao.ts";
+import PgOrderDao from "../infrastructure/psql/data_access/PgOrderDao.ts";
+import { IOrderRepository } from "../domain/repos/IOrderRepository.ts";
+import OrderRepository from "../domain/repos/OrderRepository.ts";
+import { IClientOrderService } from "../application/services/IClientOrderService.ts";
+import ClientOrderService from "../application/services/ClientOrderService.ts";
 
 // export interface BackendConfigs<
 //     // TDbOrder,
@@ -135,9 +141,19 @@ const clientProductService: IClientProductService = new ClientProductService(
     productRepo,
 );
 
+const pgOrderDao: IOrderDao = new PgOrderDao(db, pgDataMappers.orderMapper);
+const orderRepo: IOrderRepository = new OrderRepository(
+    pgOrderDao,
+    pgOrderProductDao,
+);
+const clientOrderService: IClientOrderService = new ClientOrderService(
+    orderRepo,
+);
+
 const services = {
     clientUserService,
     clientProductService,
+    clientOrderService,
 };
 
 export default services;

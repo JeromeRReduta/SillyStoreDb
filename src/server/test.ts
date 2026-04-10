@@ -42,7 +42,8 @@ app.route("/orders").get(async (req, res, next) => {
     const dto: IGetAllOrdersRequest = {
         userId: 1,
     };
-    const orders: IOrderResponse[] = await pgOrderDao.getAllAsync(dto);
+    logger.debug("running w/ service");
+    const orders = await services.clientOrderService.getAllOwnedAsync(dto);
     res.status(HttpStatus.OK).send(orders);
 });
 
@@ -50,7 +51,8 @@ app.route("/admin/orders").get(async (req, res, next) => {
     const dto: IGetAllOrdersRequest = {
         userId: null,
     };
-    const orders: IOrderResponse[] = await pgOrderDao.getAllAsync(dto);
+    logger.debug("running w/ service");
+    const orders = await services.clientOrderService.getAllOwnedAsync(dto);
     res.status(HttpStatus.OK).send(orders);
 });
 

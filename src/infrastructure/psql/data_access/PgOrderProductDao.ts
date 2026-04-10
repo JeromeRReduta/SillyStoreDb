@@ -41,27 +41,24 @@ export default class PgOrderProductDao implements IOrderProductDao {
         this.orderProductMapper = orderProductMapper;
     }
 
-    async createAsync(
+    createAsync(
         dto: ICreateOrderProductRequest,
     ): Promise<IOrderProductResponse> {
         throw new Error("Method not implemented.");
     }
-
-    async getAllAsync(
+    getAllAsync(
         dto: IGetAllOrderProductsRequest,
-    ): Promise<IOrderProductResponse> {
+    ): Promise<IOrderProductResponse[]> {
         throw new Error("Method not implemented.");
     }
-
-    async getAsync(
+    getAsync(
         dto: IGetOrderProductRequest,
-    ): Promise<IOrderProductDao | null> {
+    ): Promise<IOrderProductResponse | null> {
         throw new Error("Method not implemented.");
     }
-
-    async deleteAsync(
+    deleteAsync(
         dto: IDeleteOrderProductRequest,
-    ): Promise<IOrderProductResponse> {
+    ): Promise<IOrderProductResponse | null> {
         throw new Error("Method not implemented.");
     }
 
@@ -89,7 +86,7 @@ export default class PgOrderProductDao implements IOrderProductDao {
         return rows.map(this.orderMapper);
     }
 
-    async getProductsInOrderAsync(
+    getProductsInOrderAsync(
         dto: IGetProductsInOrderRequest,
     ): Promise<IProductResponse[]> {
         throw new Error("Method not implemented.");
