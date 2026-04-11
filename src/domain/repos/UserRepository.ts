@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ICreateUserRequest } from "../../application/dtos/requests/ICreateUserRequest.ts";
 import { IDeleteUserRequest } from "../../application/dtos/requests/IDeleteUserRequest.ts";
 import { IGetAllUsersRequest } from "../../application/dtos/requests/IGetAllUsersRequest.ts";
@@ -17,13 +18,13 @@ export default class UserRepository implements IUserRepository {
     async createAsync(dto: ICreateUserRequest): Promise<IUserResponse> {
         return await this.dao.createAsync(dto);
     }
-    async getAllAsync(dto: IGetAllUsersRequest): Promise<IUserResponse[]> {
+    async getAllAsync(_dto: IGetAllUsersRequest): Promise<IUserResponse[]> {
         throw new Error("Method not implemented.");
     }
-    async getAsync(dto: IGetUserRequest): Promise<IUserResponse | null> {
+    async getAsync(_dto: IGetUserRequest): Promise<IUserResponse | null> {
         throw new Error("Method not implemented.");
     }
-    async deleteAsync(dto: IDeleteUserRequest): Promise<IUserResponse | null> {
+    async deleteAsync(_dto: IDeleteUserRequest): Promise<IUserResponse | null> {
         throw new Error("Method not implemented.");
     }
     async getByCredentialsAsync(

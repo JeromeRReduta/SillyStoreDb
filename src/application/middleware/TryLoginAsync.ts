@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from "express";
 import { TokenResponse } from "../dtos/responses/TokenResponse.ts";
 import { IGetUserByCredentialsRequest } from "../dtos/requests/IGetUserByCredentialsRequest.ts";
 import services from "../../configs/BackendConfigs.ts";
-import { Token } from "typescript";
 import { saveToken } from "./SaveToken.ts";
 
 export default async function tryLoginAsync(

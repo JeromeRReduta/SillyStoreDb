@@ -1,7 +1,8 @@
 import js from "@eslint/js";
 import globals from "globals";
 import tseslint from "typescript-eslint";
-import { defineConfig } from "eslint/config";
+// eslint-disable-next-line import-x/extensions
+import { defineConfig, globalIgnores } from "eslint/config";
 import commonConfig from "./SillyStoreCommon/eslint.config.ts";
 
 export default defineConfig([
@@ -12,4 +13,5 @@ export default defineConfig([
         languageOptions: { globals: { ...globals.browser, ...globals.node } },
     },
     tseslint.configs.recommended,
+    globalIgnores([".config/*", "dist/"]),
 ]);

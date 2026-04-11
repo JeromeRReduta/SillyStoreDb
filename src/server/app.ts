@@ -1,7 +1,5 @@
 import express from "express";
-import logger from "../../SillyStoreCommon/logging/Logger.ts";
 import userRouter from "../presentation/routes/users.ts";
-import HttpError from "../errors/HttpError.ts";
 import productRouter from "../presentation/routes/products.ts";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";

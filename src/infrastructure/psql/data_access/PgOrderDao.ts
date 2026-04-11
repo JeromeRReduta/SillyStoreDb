@@ -75,7 +75,8 @@ export default class PgOrderDao implements IOrderDao {
         return row ? this.dataMapper(row) : null;
     }
     async deleteAsync(
-        dto: IDeleteOrderRequest,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        _dto: IDeleteOrderRequest,
     ): Promise<IOrderResponse | null> {
         throw new Error("Method not implemented.");
     }

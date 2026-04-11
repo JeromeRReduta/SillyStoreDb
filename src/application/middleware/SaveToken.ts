@@ -1,6 +1,5 @@
 import { Response } from "express";
 import { TokenResponse } from "../dtos/responses/TokenResponse.ts";
-import logger from "../../../SillyStoreCommon/logging/Logger.ts";
 
 export function saveToken(
     token: TokenResponse,
