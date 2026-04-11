@@ -21,6 +21,10 @@ import PgOrderProductDao from "../infrastructure/psql/data_access/PgOrderProduct
 import ViteExpress from "vite-express";
 import cors from "cors";
 import requireSignedIn from "../application/middleware/RequireSignedIn.ts";
+import { ICreateOrderProductRequest } from "../application/dtos/requests/ICreateOrderProductRequest.ts";
+import { IOrderProductResponse } from "../application/dtos/responses/IOrderProductResponse.ts";
+import { IOrderRepository } from "../domain/repos/IOrderRepository.ts";
+import OrderRepository from "../domain/repos/OrderRepository.ts";
 
 const app = express();
 app.use(
@@ -41,6 +45,10 @@ const pgOrderProductDao: IOrderProductDao = new PgOrderProductDao({
     productMapper,
     orderProductMapper,
 });
+const orderRepo: IOrderRepository = new OrderRepository(
+    pgOrderDao,
+    pgOrderProductDao,
+);
 
 // app.route("/orders").get(async (req, res, next) => {
 //     const dto: IGetAllOrdersRequest = {
@@ -93,17 +101,20 @@ app.route("/orders").post(async (req, res, next) => {
     res.status(HttpStatus.CREATED).send(created);
 });
 
-app.route("/orders/:id/products").get(
+app.route("/orders/:id/products").post(
     requireSignedIn("CLIENT"),
     async (req, res, next) => {
         try {
-            const dto: IGetProductsInOrderRequest = {
+            const dto: ICreateOrderProductRequest = {
                 orderId: parseInt(req.params.id),
-                userId: req.userId!,
+                productId: req.body.productId,
+                quantity: req.body.quantity,
+                userId: null,
             };
-            const products: IProductResponse[] =
-                await services.clientOrderService.getProductsInOrderAsync(dto);
-            res.status(HttpStatus.OK).send(products);
+            const created: IOrderProductResponse =
+                await orderRepo.addProductToOrderAsync(dto);
+            res.status(HttpStatus.CREATED).send(created); // TODO - test
+            // const created: I
         } catch (e) {
             next(e);
         }

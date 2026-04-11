@@ -1,4 +1,5 @@
 import { IAddProductToOrderRequest } from "../../application/dtos/requests/IAddProductToOrderRequest.ts";
+import { ICreateOrderProductRequest } from "../../application/dtos/requests/ICreateOrderProductRequest.ts";
 import { ICreateOrderRequest } from "../../application/dtos/requests/ICreateOrderRequest.ts";
 import { IDeleteOrderRequest } from "../../application/dtos/requests/IDeleteOrderRequest.ts";
 import { IGetAllOrdersRequest } from "../../application/dtos/requests/IGetAllOrdersRequest.ts";
@@ -37,7 +38,10 @@ export default class OrderRepository implements IOrderRepository {
     async addProductToOrderAsync(
         dto: IAddProductToOrderRequest,
     ): Promise<IOrderProductResponse> {
-        throw new Error("Method not implemented.");
+        const createOrderProductRequest: ICreateOrderProductRequest = dto; // done in case the two requests are de-synced for some reason
+        return await this.orderProductDao.createAsync(
+            createOrderProductRequest,
+        );
     }
     async getProductsInOrderAsync(
         dto: IGetProductsInOrderRequest,
