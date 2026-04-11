@@ -6,7 +6,7 @@ export default async function seedProducts(
     db: Client,
     { products }: Quantities,
 ): Promise<void> {
-    for (let i = 0; i < products; i++) {
+    for (let i = 1; i < products + 1; i++) {
         const title: string = `title ${i}`;
         const description: string = `description ${i}`;
         const price: number = i * 1.11;

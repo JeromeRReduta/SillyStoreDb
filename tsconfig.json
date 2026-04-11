@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "typeRoots": ["./types"],
         "target": "ESNext",
         "useDefineForClassFields": true,
         "module": "nodenext",
@@ -14,7 +15,8 @@
         "noUnusedParameters": true,
         "noImplicitReturns": true,
         "skipLibCheck": true,
-        "allowImportingTsExtensions": true
+        "allowImportingTsExtensions": true,
+        "outDir": "./dist"
     },
-    "include": ["src", "vite-env.d.ts"]
+    "include": ["src", "vite-env.d.ts", "SillyStoreCommon"]
 }
