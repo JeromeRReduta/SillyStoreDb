@@ -86,9 +86,21 @@ export default class PgOrderProductDao implements IOrderProductDao {
         return rows.map(this.orderMapper);
     }
 
-    getProductsInOrderAsync(
-        dto: IGetProductsInOrderRequest,
-    ): Promise<IProductResponse[]> {
-        throw new Error("Method not implemented.");
+    async getProductsInOrderAsync({
+        orderId,
+    }: IGetProductsInOrderRequest): Promise<IProductResponse[]> {
+        const sql: QueryConfig = {
+            text: `
+            SELECT p.* FROM orders_products AS op
+            JOIN products AS p
+                ON op.product_id = p.id
+            WHERE op.order_id = $1
+        `,
+            values: [orderId],
+        };
+        logger.debug("sql: ", sql);
+        const { rows } = await this.db.query(sql);
+        logger.debug("result: ", rows);
+        return rows.map(this.productMapper);
     }
 }

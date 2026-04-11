@@ -1,4 +1,4 @@
 export interface IGetProductsInOrderRequest {
-    readonly productId: number;
+    readonly orderId: number;
     readonly userId: number | null;
 }
