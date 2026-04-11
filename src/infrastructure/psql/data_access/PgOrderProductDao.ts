@@ -1,4 +1,5 @@
-import { Client, Pool, Query, QueryConfig } from "pg";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Client, Pool, QueryConfig } from "pg";
 import { ICreateOrderProductRequest } from "../../../application/dtos/requests/ICreateOrderProductRequest.ts";
 import { IDeleteOrderProductRequest } from "../../../application/dtos/requests/IDeleteOrderProductRequest.ts";
 import { IGetAllOrderProductsRequest } from "../../../application/dtos/requests/IGetAllOrderProductsRequest.ts";
@@ -63,19 +64,19 @@ export default class PgOrderProductDao implements IOrderProductDao {
     }
 
     getAllAsync(
-        dto: IGetAllOrderProductsRequest,
+        _dto: IGetAllOrderProductsRequest,
     ): Promise<IOrderProductResponse[]> {
         throw new Error("Method not implemented.");
     }
 
     getAsync(
-        dto: IGetOrderProductRequest,
+        _dto: IGetOrderProductRequest,
     ): Promise<IOrderProductResponse | null> {
         throw new Error("Method not implemented.");
     }
 
     deleteAsync(
-        dto: IDeleteOrderProductRequest,
+        _dto: IDeleteOrderProductRequest,
     ): Promise<IOrderProductResponse | null> {
         throw new Error("Method not implemented.");
     }
