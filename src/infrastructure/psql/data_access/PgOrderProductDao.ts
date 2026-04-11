@@ -106,10 +106,14 @@ export default class PgOrderProductDao implements IOrderProductDao {
 
     async getProductsInOrderAsync({
         orderId,
+        includingQuantities,
     }: IGetProductsInOrderRequest): Promise<IProductResponse[]> {
+        const selected: string = includingQuantities
+            ? "p.*, op.quantity"
+            : "p.*";
         const sql: QueryConfig = {
             text: `
-            SELECT p.* FROM orders_products AS op
+            SELECT ${selected} FROM orders_products AS op
             JOIN products AS p
                 ON op.product_id = p.id
             WHERE op.order_id = $1
@@ -119,6 +123,10 @@ export default class PgOrderProductDao implements IOrderProductDao {
         logger.debug("sql: ", sql);
         const { rows } = await this.db.query(sql);
         logger.debug("result: ", rows);
-        return rows.map(this.productMapper);
+        return includingQuantities
+            ? rows.map((row) => {
+                  return { ...this.productMapper(row), quantity: row.quantity };
+              })
+            : rows.map(this.productMapper);
     }
 }

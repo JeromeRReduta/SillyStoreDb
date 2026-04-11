@@ -5,7 +5,7 @@ import tryGetAllOwnedOrdersAsync from "../../application/middleware/TryGetAllOwn
 import tryGetOwnedOrderAsync from "../../application/middleware/TryGetOwnedOrderAsync.ts";
 import requireBody from "../../application/middleware/RequireBody.ts";
 import tryCreateOrderAsync from "../../application/middleware/TryCreateOrderAsync.ts";
-import tryGetProductsInOrderAsync from "../../application/middleware/TryGetProductsInOrderAsync.ts";
+import tryGetProductsInOrder from "../../application/middleware/TryGetProductsInOrderAsync.ts";
 import tryAddProductToOrderAsync from "../../application/middleware/TryAddProductToOrderAsync.ts";
 
 const orderRouter: Router = express.Router();
@@ -19,14 +19,15 @@ orderRouter.route("/:id").get(tryGetOwnedOrderAsync);
 
 orderRouter
     .route("/:id/products")
-    .get(tryGetProductsInOrderAsync)
+    .get(tryGetProductsInOrder(false))
     .post(requireBody(["productId", "quantity"]), tryAddProductToOrderAsync);
 
+orderRouter.route("/:id/cart").get(tryGetProductsInOrder(true));
 export default orderRouter;
 
 // const productRouter: Router = express.Router();
 
-// productRouter.route("/").get(tryGetAllProductsAsync);
+// productRouter.route("/").get(tryGetAllsProductsAsync);
 
 // // don't have to validate id is in param, since this route literally won't be called if it's missing
 // productRouter.route("/:id").get(tryGetProductAsync);
