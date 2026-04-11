@@ -20,6 +20,7 @@ import PgOrderDao from "../infrastructure/psql/data_access/PgOrderDao.ts";
 import PgOrderProductDao from "../infrastructure/psql/data_access/PgOrderProductDao.ts";
 import ViteExpress from "vite-express";
 import cors from "cors";
+import requireSignedIn from "../application/middleware/RequireSignedIn.ts";
 
 const app = express();
 app.use(
@@ -92,15 +93,22 @@ app.route("/orders").post(async (req, res, next) => {
     res.status(HttpStatus.CREATED).send(created);
 });
 
-app.route("/orders/:id/products").get(async (req, res, next) => {
-    const dto: IGetProductsInOrderRequest = {
-        orderId: parseInt(req.params.id),
-        userId: null,
-    };
-    const products: IProductResponse[] =
-        await pgOrderProductDao.getProductsInOrderAsync(dto);
-    res.status(HttpStatus.OK).send(products);
-});
+app.route("/orders/:id/products").get(
+    requireSignedIn("CLIENT"),
+    async (req, res, next) => {
+        try {
+            const dto: IGetProductsInOrderRequest = {
+                orderId: parseInt(req.params.id),
+                userId: req.userId!,
+            };
+            const products: IProductResponse[] =
+                await services.clientOrderService.getProductsInOrderAsync(dto);
+            res.status(HttpStatus.OK).send(products);
+        } catch (e) {
+            next(e);
+        }
+    },
+);
 
 app.use(psqlErrorHandler, finalErrorHandler);
 

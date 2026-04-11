@@ -5,6 +5,7 @@ import tryGetAllOwnedOrdersAsync from "../../application/middleware/TryGetAllOwn
 import tryGetOwnedOrderAsync from "../../application/middleware/TryGetOwnedOrderAsync.ts";
 import requireBody from "../../application/middleware/RequireBody.ts";
 import tryCreateOrderAsync from "../../application/middleware/TryCreateOrderAsync.ts";
+import tryGetProductsInOrderAsync from "../../application/middleware/TryGetProductsInOrderAsync.ts";
 
 const orderRouter: Router = express.Router();
 orderRouter.use(requireSignedIn("CLIENT")); // universal requirement - must be signed in
@@ -14,6 +15,8 @@ orderRouter
     .get(tryGetAllOwnedOrdersAsync)
     .post(requireBody(["dateStr"]), tryCreateOrderAsync);
 orderRouter.route("/:id").get(tryGetOwnedOrderAsync);
+
+orderRouter.route("/:id/products").get(tryGetProductsInOrderAsync);
 
 export default orderRouter;
 

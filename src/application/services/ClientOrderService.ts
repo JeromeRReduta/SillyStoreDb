@@ -50,9 +50,24 @@ export default class ClientOrderService implements IClientOrderService {
     ): Promise<IOrderProductResponse> {
         throw new Error("Method not implemented.");
     }
+
     async getProductsInOrderAsync(
         dto: IGetProductsInOrderRequest,
     ): Promise<IProductResponse[]> {
-        throw new Error("Method not implemented.");
+        const { orderId, userId } = dto;
+        const order: IOrderResponse | null = await this.repo.getAsync({
+            orderId: orderId,
+            userId: userId,
+        });
+        if (!order) {
+            throw new HttpError(HttpStatus.NOT_FOUND, "No matching order!");
+        }
+        if (order.id !== userId) {
+            throw new HttpError(
+                HttpStatus.FORBIDDEN,
+                "You do not own this order!",
+            );
+        }
+        return await this.repo.getProductsInOrderAsync(dto);
     }
 }
