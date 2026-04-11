@@ -25,6 +25,7 @@ import { ICreateOrderProductRequest } from "../application/dtos/requests/ICreate
 import { IOrderProductResponse } from "../application/dtos/responses/IOrderProductResponse.ts";
 import { IOrderRepository } from "../domain/repos/IOrderRepository.ts";
 import OrderRepository from "../domain/repos/OrderRepository.ts";
+import { IAddProductToOrderRequest } from "../application/dtos/requests/IAddProductToOrderRequest.ts";
 
 const app = express();
 app.use(
@@ -105,14 +106,14 @@ app.route("/orders/:id/products").post(
     requireSignedIn("CLIENT"),
     async (req, res, next) => {
         try {
-            const dto: ICreateOrderProductRequest = {
+            const dto: IAddProductToOrderRequest = {
                 orderId: parseInt(req.params.id),
                 productId: req.body.productId,
                 quantity: req.body.quantity,
-                userId: null,
+                userId: req.userId!,
             };
             const created: IOrderProductResponse =
-                await orderRepo.addProductToOrderAsync(dto);
+                await services.clientOrderService.addProductToOrderAsync(dto);
             res.status(HttpStatus.CREATED).send(created); // TODO - test
             // const created: I
         } catch (e) {
