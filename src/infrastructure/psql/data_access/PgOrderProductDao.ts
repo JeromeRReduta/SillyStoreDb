@@ -46,16 +46,19 @@ export default class PgOrderProductDao implements IOrderProductDao {
     ): Promise<IOrderProductResponse> {
         throw new Error("Method not implemented.");
     }
+
     getAllAsync(
         dto: IGetAllOrderProductsRequest,
     ): Promise<IOrderProductResponse[]> {
         throw new Error("Method not implemented.");
     }
+
     getAsync(
         dto: IGetOrderProductRequest,
     ): Promise<IOrderProductResponse | null> {
         throw new Error("Method not implemented.");
     }
+
     deleteAsync(
         dto: IDeleteOrderProductRequest,
     ): Promise<IOrderProductResponse | null> {
