@@ -1,13 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import cookieParser from "cookie-parser";
-import express, { NextFunction, Request, Response } from "express";
+import express from "express";
 import morgan from "morgan";
 import logger from "../../SillyStoreCommon/logging/Logger.ts";
 import pgDataMappers from "../application/data_mapping/PgDataMappers.ts";
 import { ICreateOrderRequest } from "../application/dtos/requests/ICreateOrderRequest.ts";
 import { IGetAllOrdersRequest } from "../application/dtos/requests/IGetAllOrdersRequest.ts";
-import { IGetProductsInOrderRequest } from "../application/dtos/requests/IGetProductsInOrder.ts";
 import { IOrderResponse } from "../application/dtos/responses/IOrderResponse.ts";
-import { IProductResponse } from "../application/dtos/responses/IProductResponse.ts";
 import { HttpStatus } from "../application/http/HttpStatus.ts";
 import tokenOps from "../application/jwt/TokenOperations.ts";
 import finalErrorHandler from "../application/middleware/FinalErrorHandler.ts";
@@ -21,7 +20,6 @@ import PgOrderProductDao from "../infrastructure/psql/data_access/PgOrderProduct
 import ViteExpress from "vite-express";
 import cors from "cors";
 import requireSignedIn from "../application/middleware/RequireSignedIn.ts";
-import { ICreateOrderProductRequest } from "../application/dtos/requests/ICreateOrderProductRequest.ts";
 import { IOrderProductResponse } from "../application/dtos/responses/IOrderProductResponse.ts";
 import { IOrderRepository } from "../domain/repos/IOrderRepository.ts";
 import OrderRepository from "../domain/repos/OrderRepository.ts";
