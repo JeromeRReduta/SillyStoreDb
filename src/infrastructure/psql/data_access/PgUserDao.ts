@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Client, Pool, QueryConfig } from "pg";
+import * as bcrypt from "bcrypt";
 import logger from "../../../../SillyStoreCommon/logging/Logger.ts";
 import { IDataMapper } from "../../../application/data_mapping/DataMapper.ts";
 import { ICreateUserRequest } from "../../../application/dtos/requests/ICreateUserRequest.ts";
@@ -7,9 +9,8 @@ import { IGetAllUsersRequest } from "../../../application/dtos/requests/IGetAllU
 import { IGetUserByCredentialsRequest } from "../../../application/dtos/requests/IGetUserByCredentialsRequest.ts";
 import { IGetUserRequest } from "../../../application/dtos/requests/IGetUserRequest.ts";
 import { IUserResponse } from "../../../application/dtos/responses/IUserResponse.ts";
+import { IUserDao } from "../../data_access/IUserDao.ts";
 import { IPgUser } from "../entities/IPgUser.ts";
-import { IUserDao } from "./IUserDao.ts";
-import * as bcrypt from "bcrypt";
 
 export default class PgUserDao implements IUserDao {
     private db: Client | Pool;
@@ -28,7 +29,6 @@ export default class PgUserDao implements IUserDao {
         this.db = db;
         this.dataMapper = dataMapper;
         this.numSaltRounds = numSaltRounds;
-        logger.debug("SALT ROUNDS IS", this.numSaltRounds);
     }
 
     async createAsync({
@@ -53,13 +53,13 @@ export default class PgUserDao implements IUserDao {
         return this.dataMapper(row);
     }
 
-    async getAllAsync(dto: IGetAllUsersRequest): Promise<IUserResponse[]> {
+    async getAllAsync(_dto: IGetAllUsersRequest): Promise<IUserResponse[]> {
         throw new Error("Method not implemented.");
     }
-    async getAsync(dto: IGetUserRequest): Promise<IUserResponse | null> {
+    async getAsync(_dto: IGetUserRequest): Promise<IUserResponse | null> {
         throw new Error("Method not implemented.");
     }
-    async deleteAsync(dto: IDeleteUserRequest): Promise<IUserResponse | null> {
+    async deleteAsync(_dto: IDeleteUserRequest): Promise<IUserResponse | null> {
         throw new Error("Method not implemented.");
     }
     async getByCredentialsAsync({

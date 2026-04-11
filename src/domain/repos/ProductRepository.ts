@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ICreateProductRequest } from "../../application/dtos/requests/ICreateProductRequest.ts";
 import { IDeleteProductRequest } from "../../application/dtos/requests/IDeleteProductRequest.ts";
 import { IGetAllProductsRequest } from "../../application/dtos/requests/IGetAllProductsRequest.ts";
@@ -24,7 +25,7 @@ export default class ProductRepository implements IProductRepository {
         this.productDao = productDao;
     }
 
-    async createAsync(dto: ICreateProductRequest): Promise<IProductResponse> {
+    async createAsync(_dto: ICreateProductRequest): Promise<IProductResponse> {
         throw new Error("Method not implemented.");
     }
 
@@ -39,7 +40,7 @@ export default class ProductRepository implements IProductRepository {
     }
 
     async deleteAsync(
-        dto: IDeleteProductRequest,
+        _dto: IDeleteProductRequest,
     ): Promise<IProductResponse | null> {
         throw new Error("Method not implemented.");
     }

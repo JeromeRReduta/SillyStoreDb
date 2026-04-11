@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Client, Pool, QueryConfig } from "pg";
 import logger from "../../../../SillyStoreCommon/logging/Logger.ts";
 import { IDataMapper } from "../../../application/data_mapping/DataMapper.ts";
@@ -7,7 +8,7 @@ import { IGetAllProductsRequest } from "../../../application/dtos/requests/IGetA
 import { IGetProductRequest } from "../../../application/dtos/requests/IGetProductRequest.ts";
 import { IProductResponse } from "../../../application/dtos/responses/IProductResponse.ts";
 import { IPgProduct } from "../entities/IPgProduct.ts";
-import { IProductDao } from "./IProductDao.ts";
+import { IProductDao } from "../../data_access/IProductDao.ts";
 
 export default class PgProductDao implements IProductDao {
     private db: Client | Pool;
@@ -21,12 +22,11 @@ export default class PgProductDao implements IProductDao {
         this.dataMapper = dataMapper;
     }
 
-    async createAsync(dto: ICreateProductRequest): Promise<IProductResponse> {
+    async createAsync(_dto: ICreateProductRequest): Promise<IProductResponse> {
         throw new Error("Method not implemented.");
     }
 
     async getAllAsync(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _dto: IGetAllProductsRequest,
     ): Promise<IProductResponse[]> {
         const sql: QueryConfig = {
@@ -70,7 +70,7 @@ export default class PgProductDao implements IProductDao {
     }
 
     async deleteAsync(
-        dto: IDeleteProductRequest,
+        _dto: IDeleteProductRequest,
     ): Promise<IProductResponse | null> {
         throw new Error("Method not implemented.");
     }
