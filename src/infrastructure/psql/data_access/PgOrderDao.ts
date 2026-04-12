@@ -29,7 +29,10 @@ export default class PgOrderDao implements IOrderDao {
             text: `
                 INSERT INTO orders (date, user_id)
                 VALUES ($1, $2)
-                RETURNING *
+                RETURNING
+                    id,
+                    TO_CHAR(date, 'yyyy-mm-dd') AS date,
+                    user_id
             `,
             values: [dateStr, userId],
         };
@@ -46,7 +49,11 @@ export default class PgOrderDao implements IOrderDao {
         const isClient: boolean = userId !== null;
         const sql: QueryConfig = {
             text: `
-                SELECT * FROM orders
+                SELECT                  
+                    id,
+                    TO_CHAR(date, 'yyyy-mm-dd') AS date,
+                    user_id
+                FROM orders
                 ${isClient ? "WHERE user_id = $1" : ""}
             `,
             values: isClient ? [userId] : [],
@@ -62,7 +69,11 @@ export default class PgOrderDao implements IOrderDao {
     }: IGetOrderRequest): Promise<IOrderResponse | null> {
         const sql: QueryConfig = {
             text: `
-                SELECT * from orders
+                SELECT 
+                    id,
+                    TO_CHAR(date, 'yyyy-mm-dd') AS date,
+                    user_id
+                FROM orders
                 WHERE id = $1
             `,
             values: [orderId],

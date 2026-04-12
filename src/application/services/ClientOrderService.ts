@@ -1,3 +1,4 @@
+import logger from "../../../SillyStoreCommon/logging/Logger.ts";
 import { IOrderRepository } from "../../domain/repos/IOrderRepository.ts";
 import HttpError from "../../errors/HttpError.ts";
 import { IAddProductToOrderRequest } from "../dtos/requests/IAddProductToOrderRequest.ts";
@@ -56,7 +57,7 @@ export default class ClientOrderService implements IClientOrderService {
         if (!order) {
             throw new HttpError(HttpStatus.NOT_FOUND, "No matching order!");
         }
-        if (order.id !== userId) {
+        if (order.userId !== userId) {
             throw new HttpError(
                 HttpStatus.FORBIDDEN,
                 "You do not own this order!",
@@ -76,7 +77,7 @@ export default class ClientOrderService implements IClientOrderService {
         if (!order) {
             throw new HttpError(HttpStatus.NOT_FOUND, "No matching order!");
         }
-        if (order.id !== userId) {
+        if (order.userId !== userId) {
             throw new HttpError(
                 HttpStatus.FORBIDDEN,
                 "You do not own this order!",

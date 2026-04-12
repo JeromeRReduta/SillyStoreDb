@@ -4,7 +4,8 @@
     "version": "0.0.0",
     "type": "module",
     "scripts": {
-        "dev": "npx eslint . && nodemon -w src/server -x tsx --env-file=.env.development src/server/main.ts",
+        "dev": "nodemon -w src/server -x tsx --env-file=.env.development src/server/main.ts",
+        "dev:strict": "npx eslint . && npm run dev",
         "start": "vite build && NODE_ENV=production tsx --env-file=.env.production src/server/main.ts",
         "test": "tsx --env-file=.env.development src/server/test.ts",
         "build": "vite build",
