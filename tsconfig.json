@@ -18,5 +18,11 @@
         "allowImportingTsExtensions": true,
         "outDir": "./dist"
     },
-    "include": ["src", "vite-env.d.ts", "SillyStoreCommon", "eslint.config.ts"]
+    "include": [
+        "src",
+        "vite-env.d.ts",
+        "SillyStoreCommon",
+        "eslint.config.ts",
+        "src/configs/.ts"
+    ]
 }
