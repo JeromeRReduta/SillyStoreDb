@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { IOrderResponse } from "../dtos/responses/IOrderResponse.ts";
-import services from "../../configs/BackendConfigs.ts";
 import { HttpStatus } from "../http/HttpStatus.ts";
+import apiConfigs from "../../configs/ApiConfigs.ts";
 
 export default async function tryGetOrdersIncludingProductAsync(
     req: Request<{ id: string }, IOrderResponse[], object>,
@@ -9,10 +9,12 @@ export default async function tryGetOrdersIncludingProductAsync(
     next: NextFunction,
 ): Promise<void> {
     try {
+        const { clientProductService } = apiConfigs.services;
+
         const userId: number = req.userId!;
         const productId: number = parseInt(req.params.id);
         const orders: IOrderResponse[] =
-            await services.clientProductService.getOrdersIncludingProductAsync({
+            await clientProductService.getOrdersIncludingProductAsync({
                 userId,
                 productId,
             });
