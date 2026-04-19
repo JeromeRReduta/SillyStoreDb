@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import { IProductResponse } from "../dtos/responses/IProductResponse.ts";
 import { HttpStatus } from "../http/HttpStatus.ts";
-import { IGetProductRequest } from "../dtos/requests/IGetProductRequest.ts";
 import apiConfigs from "../../configs/ApiConfigs.ts";
+import { IGetProductRequest } from "../../../SillyStoreCommon/dtos/requests/IGetProductRequest.ts";
+import { IProductResponse } from "../../../SillyStoreCommon/dtos/responses/IProductResponse.ts";
 
 export default async function tryGetProductAsync(
     req: Request<IGetProductRequest, IProductResponse, object>,

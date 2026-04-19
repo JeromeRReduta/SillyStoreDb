@@ -65,7 +65,7 @@ const { clientOrderService, clientProductService, clientUserService } =
 //     };
 //     logger.debug("running w/ service");
 //     const orders = await services.clientOrderService.getAllOwnedAsync(dto);
-//     res.status(HttpStatus.OK).send(orders);
+// res.status(HttpStatus.OK).send(orders);
 // });
 
 app.route("/orders/:id").get(async (req, res, next) => {

@@ -1,11 +1,11 @@
+import { IOrderProductResponse } from "../../../SillyStoreCommon/dtos/responses/IOrderProductResponse.ts";
+import { IOrderResponse } from "../../../SillyStoreCommon/dtos/responses/IOrderResponse.ts";
+import { IProductResponse } from "../../../SillyStoreCommon/dtos/responses/IProductResponse.ts";
+import { IUserResponse } from "../../../SillyStoreCommon/dtos/responses/IUserResponse.ts";
 import { IPgOrder } from "../../infrastructure/psql/entities/IPgOrder.ts";
 import { IPgOrderProduct } from "../../infrastructure/psql/entities/IPgOrderProduct.ts";
 import { IPgProduct } from "../../infrastructure/psql/entities/IPgProduct.ts";
 import { IPgUser } from "../../infrastructure/psql/entities/IPgUser.ts";
-import { IOrderProductResponse } from "../dtos/responses/IOrderProductResponse.ts";
-import { IOrderResponse } from "../dtos/responses/IOrderResponse.ts";
-import { IProductResponse } from "../dtos/responses/IProductResponse.ts";
-import { IUserResponse } from "../dtos/responses/IUserResponse.ts";
 import { IDataMapper } from "./DataMapper.ts";
 
 const userMapper: IDataMapper<IPgUser, IUserResponse> = ({

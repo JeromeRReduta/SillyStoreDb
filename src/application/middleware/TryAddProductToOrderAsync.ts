@@ -1,6 +1,7 @@
-import { NextFunction, Request, Response } from "express";
-import { IOrderProductResponse } from "../dtos/responses/IOrderProductResponse.ts";
-import { IAddProductToOrderRequest } from "../dtos/requests/IAddProductToOrderRequest.ts";
+import { Request, Response } from "express";
+import { NextFunction } from "express";
+import { IAddProductToOrderRequest } from "../../../SillyStoreCommon/dtos/requests/IAddProductToOrderRequest.ts";
+import { IOrderProductResponse } from "../../../SillyStoreCommon/dtos/responses/IOrderProductResponse.ts";
 import apiConfigs from "../../configs/ApiConfigs.ts";
 import { HttpStatus } from "../http/HttpStatus.ts";
 

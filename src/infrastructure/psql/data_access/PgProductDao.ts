@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Client, Pool, QueryConfig } from "pg";
+import { ICreateProductRequest } from "../../../../SillyStoreCommon/dtos/requests/ICreateProductRequest.ts";
+import { IDeleteProductRequest } from "../../../../SillyStoreCommon/dtos/requests/IDeleteProductRequest.ts";
+import { IGetAllProductsRequest } from "../../../../SillyStoreCommon/dtos/requests/IGetAllProductsRequest.ts";
+import { IGetProductRequest } from "../../../../SillyStoreCommon/dtos/requests/IGetProductRequest.ts";
+import { IProductResponse } from "../../../../SillyStoreCommon/dtos/responses/IProductResponse.ts";
 import { IDataMapper } from "../../../application/data_mapping/DataMapper.ts";
-import { ICreateProductRequest } from "../../../application/dtos/requests/ICreateProductRequest.ts";
-import { IDeleteProductRequest } from "../../../application/dtos/requests/IDeleteProductRequest.ts";
-import { IGetAllProductsRequest } from "../../../application/dtos/requests/IGetAllProductsRequest.ts";
-import { IGetProductRequest } from "../../../application/dtos/requests/IGetProductRequest.ts";
-import { IProductResponse } from "../../../application/dtos/responses/IProductResponse.ts";
-import { IPgProduct } from "../entities/IPgProduct.ts";
-import { IProductDao } from "../../data_access/IProductDao.ts";
 import backendLogger from "../../../configs/BackendLogger.ts";
+import { IProductDao } from "../../data_access/IProductDao.ts";
+import { IPgProduct } from "../entities/IPgProduct.ts";
 
 export default class PgProductDao implements IProductDao {
     private db: Client | Pool;

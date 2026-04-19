@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Client, Pool, QueryConfig } from "pg";
-import { ICreateOrderProductRequest } from "../../../application/dtos/requests/ICreateOrderProductRequest.ts";
-import { IDeleteOrderProductRequest } from "../../../application/dtos/requests/IDeleteOrderProductRequest.ts";
-import { IGetAllOrderProductsRequest } from "../../../application/dtos/requests/IGetAllOrderProductsRequest.ts";
-import { IGetOrderProductRequest } from "../../../application/dtos/requests/IGetOrderProductRequest.ts";
-import { IGetOrdersIncludingProductRequest } from "../../../application/dtos/requests/IGetOrdersIncludingProductRequest.ts";
-import { IGetProductsInOrderRequest } from "../../../application/dtos/requests/IGetProductsInOrderRequest.ts";
-import { IOrderProductResponse } from "../../../application/dtos/responses/IOrderProductResponse.ts";
-import { IOrderResponse } from "../../../application/dtos/responses/IOrderResponse.ts";
-import { IProductResponse } from "../../../application/dtos/responses/IProductResponse.ts";
-import { IOrderProductDao } from "../../data_access/IOrderProductDao.ts";
+import { ICreateOrderProductRequest } from "../../../../SillyStoreCommon/dtos/requests/ICreateOrderProductRequest.ts";
+import { IDeleteOrderProductRequest } from "../../../../SillyStoreCommon/dtos/requests/IDeleteOrderProductRequest.ts";
+import { IGetAllOrderProductsRequest } from "../../../../SillyStoreCommon/dtos/requests/IGetAllOrderProductsRequest.ts";
+import { IGetOrderProductRequest } from "../../../../SillyStoreCommon/dtos/requests/IGetOrderProductRequest.ts";
+import { IGetOrdersIncludingProductRequest } from "../../../../SillyStoreCommon/dtos/requests/IGetOrdersIncludingProductRequest.ts";
+import { IGetProductsInOrderRequest } from "../../../../SillyStoreCommon/dtos/requests/IGetProductsInOrderRequest.ts";
+import { IOrderProductResponse } from "../../../../SillyStoreCommon/dtos/responses/IOrderProductResponse.ts";
+import { IOrderResponse } from "../../../../SillyStoreCommon/dtos/responses/IOrderResponse.ts";
+import { IProductResponse } from "../../../../SillyStoreCommon/dtos/responses/IProductResponse.ts";
 import { IDataMapper } from "../../../application/data_mapping/DataMapper.ts";
+import backendLogger from "../../../configs/BackendLogger.ts";
+import { IOrderProductDao } from "../../data_access/IOrderProductDao.ts";
 import { IPgOrder } from "../entities/IPgOrder.ts";
 import { IPgOrderProduct } from "../entities/IPgOrderProduct.ts";
 import { IPgProduct } from "../entities/IPgProduct.ts";
-import backendLogger from "../../../configs/BackendLogger.ts";
 
 export default class PgOrderProductDao implements IOrderProductDao {
     private db: Client | Pool;

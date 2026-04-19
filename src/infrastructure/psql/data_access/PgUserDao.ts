@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Client, Pool, QueryConfig } from "pg";
-import * as bcrypt from "bcrypt";
+import { ICreateUserRequest } from "../../../../SillyStoreCommon/dtos/requests/ICreateUserRequest.ts";
+import { IDeleteUserRequest } from "../../../../SillyStoreCommon/dtos/requests/IDeleteUserRequest.ts";
+import { IGetAllUsersRequest } from "../../../../SillyStoreCommon/dtos/requests/IGetAllUsersRequest.ts";
+import { IGetUserByCredentialsRequest } from "../../../../SillyStoreCommon/dtos/requests/IGetUserByCredentialsRequest.ts";
+import { IGetUserRequest } from "../../../../SillyStoreCommon/dtos/requests/IGetUserRequest.ts";
+import { IUserResponse } from "../../../../SillyStoreCommon/dtos/responses/IUserResponse.ts";
 import { IDataMapper } from "../../../application/data_mapping/DataMapper.ts";
-import { ICreateUserRequest } from "../../../application/dtos/requests/ICreateUserRequest.ts";
-import { IDeleteUserRequest } from "../../../application/dtos/requests/IDeleteUserRequest.ts";
-import { IGetAllUsersRequest } from "../../../application/dtos/requests/IGetAllUsersRequest.ts";
-import { IGetUserByCredentialsRequest } from "../../../application/dtos/requests/IGetUserByCredentialsRequest.ts";
-import { IGetUserRequest } from "../../../application/dtos/requests/IGetUserRequest.ts";
-import { IUserResponse } from "../../../application/dtos/responses/IUserResponse.ts";
+import backendLogger from "../../../configs/BackendLogger.ts";
 import { IUserDao } from "../../data_access/IUserDao.ts";
 import { IPgUser } from "../entities/IPgUser.ts";
-import backendLogger from "../../../configs/BackendLogger.ts";
+import * as bcrypt from "bcrypt";
 
 export default class PgUserDao implements IUserDao {
     private db: Client | Pool;
