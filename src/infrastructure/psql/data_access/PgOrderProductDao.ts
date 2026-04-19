@@ -10,11 +10,11 @@ import { IOrderProductResponse } from "../../../application/dtos/responses/IOrde
 import { IOrderResponse } from "../../../application/dtos/responses/IOrderResponse.ts";
 import { IProductResponse } from "../../../application/dtos/responses/IProductResponse.ts";
 import { IOrderProductDao } from "../../data_access/IOrderProductDao.ts";
-import logger from "../../../../SillyStoreCommon/logging/Logger.ts";
 import { IDataMapper } from "../../../application/data_mapping/DataMapper.ts";
 import { IPgOrder } from "../entities/IPgOrder.ts";
 import { IPgOrderProduct } from "../entities/IPgOrderProduct.ts";
 import { IPgProduct } from "../entities/IPgProduct.ts";
+import backendLogger from "../../../configs/BackendLogger.ts";
 
 export default class PgOrderProductDao implements IOrderProductDao {
     private db: Client | Pool;
@@ -55,11 +55,11 @@ export default class PgOrderProductDao implements IOrderProductDao {
             `,
             values: [orderId, productId, quantity],
         };
-        logger.debug("sql: ", sql);
+        backendLogger.debug("sql: ", sql);
         const {
             rows: [row],
         } = await this.db.query(sql);
-        logger.debug("result: ", row);
+        backendLogger.debug("result: ", row);
         return this.orderProductMapper(row);
     }
 
@@ -99,9 +99,9 @@ export default class PgOrderProductDao implements IOrderProductDao {
             sql.text += "\nAND o.user_id = $2";
             sql.values!.push(userId);
         }
-        logger.debug("sql: ", sql);
+        backendLogger.debug("sql: ", sql);
         const { rows } = await this.db.query(sql);
-        logger.debug("Result: ", rows);
+        backendLogger.debug("Result: ", rows);
         return rows.map(this.orderMapper);
     }
 
@@ -121,9 +121,9 @@ export default class PgOrderProductDao implements IOrderProductDao {
         `,
             values: [orderId],
         };
-        logger.debug("sql: ", sql);
+        backendLogger.debug("sql: ", sql);
         const { rows } = await this.db.query(sql);
-        logger.debug("result: ", rows);
+        backendLogger.debug("result: ", rows);
         return includingQuantities
             ? rows.map((row) => {
                   return { ...this.productMapper(row), quantity: row.quantity };

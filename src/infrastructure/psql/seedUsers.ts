@@ -1,7 +1,7 @@
 import { Client, QueryConfig } from "pg";
 import { Quantities } from "./seed.ts";
-import logger from "../../../SillyStoreCommon/logging/Logger.ts";
 import bcrypt from "bcrypt";
+import backendLogger from "../../configs/BackendLogger.ts";
 
 export default async function seedUsers(
     db: Client,
@@ -19,10 +19,10 @@ export default async function seedUsers(
             `,
             values: [username, pwHash, email],
         };
-        logger.debug("running sql: ", sql);
+        backendLogger.debug("running sql: ", sql);
         const {
             rows: [pgUser],
         } = await db.query(sql);
-        logger.debug("result", pgUser);
+        backendLogger.debug("result", pgUser);
     }
 }

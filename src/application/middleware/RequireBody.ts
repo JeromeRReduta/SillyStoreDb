@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import logger from "../../../SillyStoreCommon/logging/Logger.ts";
+import backendLogger from "../../configs/BackendLogger.ts";
 import HttpError from "../../errors/HttpError.ts";
 import { HttpStatus } from "../http/HttpStatus.ts";
 
@@ -13,7 +13,7 @@ export default function requireBody(fields: string[]) {
         _res: Response<TResponseBody>,
         next: NextFunction,
     ) => {
-        logger.debug("checking req for fields:", fields);
+        backendLogger.debug("checking req for fields:", fields);
         if (!req.body) {
             throw new HttpError(
                 HttpStatus.BAD_REQUEST,

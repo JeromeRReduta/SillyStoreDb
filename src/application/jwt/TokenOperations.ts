@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
-import configs from "../../../SillyStoreCommon/configs/Configs.ts";
+import backendConfigs from "../../configs/BackendConfigs.ts";
 
-const SECRET: jwt.Secret = configs.jwt.secret;
+const SECRET: jwt.Secret = backendConfigs.jwt.secret;
 
 /**
  * From FullStack Academy assignment

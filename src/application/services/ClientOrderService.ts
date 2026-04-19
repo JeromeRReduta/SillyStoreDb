@@ -1,4 +1,3 @@
-import logger from "../../../SillyStoreCommon/logging/Logger.ts";
 import { IOrderRepository } from "../../domain/repos/IOrderRepository.ts";
 import HttpError from "../../errors/HttpError.ts";
 import { IAddProductToOrderRequest } from "../dtos/requests/IAddProductToOrderRequest.ts";

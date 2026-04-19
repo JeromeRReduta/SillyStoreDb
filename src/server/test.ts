@@ -2,7 +2,6 @@
 import cookieParser from "cookie-parser";
 import express from "express";
 import morgan from "morgan";
-import logger from "../../SillyStoreCommon/logging/Logger.ts";
 import pgDataMappers from "../application/data_mapping/PgDataMappers.ts";
 import { ICreateOrderRequest } from "../application/dtos/requests/ICreateOrderRequest.ts";
 import { IGetAllOrdersRequest } from "../application/dtos/requests/IGetAllOrdersRequest.ts";
@@ -24,6 +23,7 @@ import { IOrderProductResponse } from "../application/dtos/responses/IOrderProdu
 import { IOrderRepository } from "../domain/repos/IOrderRepository.ts";
 import OrderRepository from "../domain/repos/OrderRepository.ts";
 import { IAddProductToOrderRequest } from "../application/dtos/requests/IAddProductToOrderRequest.ts";
+import backendLogger from "../configs/BackendLogger.ts";
 
 const app = express();
 app.use(
@@ -124,7 +124,7 @@ app.use(psqlErrorHandler, finalErrorHandler);
 
 ViteExpress.listen(app, 3000, async () => {
     await db.connect();
-    logger.info("Server is listening on port 3000...");
+    backendLogger.info("Server is listening on port 3000...");
 });
 
 // const orderProductDao: IOrderProductDao = new PgOrderProductDao({

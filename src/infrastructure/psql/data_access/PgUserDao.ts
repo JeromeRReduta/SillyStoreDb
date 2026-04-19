@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Client, Pool, QueryConfig } from "pg";
 import * as bcrypt from "bcrypt";
-import logger from "../../../../SillyStoreCommon/logging/Logger.ts";
 import { IDataMapper } from "../../../application/data_mapping/DataMapper.ts";
 import { ICreateUserRequest } from "../../../application/dtos/requests/ICreateUserRequest.ts";
 import { IDeleteUserRequest } from "../../../application/dtos/requests/IDeleteUserRequest.ts";
@@ -11,6 +10,7 @@ import { IGetUserRequest } from "../../../application/dtos/requests/IGetUserRequ
 import { IUserResponse } from "../../../application/dtos/responses/IUserResponse.ts";
 import { IUserDao } from "../../data_access/IUserDao.ts";
 import { IPgUser } from "../entities/IPgUser.ts";
+import backendLogger from "../../../configs/BackendLogger.ts";
 
 export default class PgUserDao implements IUserDao {
     private db: Client | Pool;
@@ -45,11 +45,11 @@ export default class PgUserDao implements IUserDao {
             `,
             values: [username, pwHash, email],
         };
-        logger.debug("running sql: ", sql);
+        backendLogger.debug("running sql: ", sql);
         const {
             rows: [row],
         } = await this.db.query(sql);
-        logger.debug("result: ", row);
+        backendLogger.debug("result: ", row);
         return this.dataMapper(row);
     }
 
@@ -75,9 +75,9 @@ export default class PgUserDao implements IUserDao {
             `,
             values: [username, email],
         };
-        logger.debug("running sql: ", sql);
+        backendLogger.debug("running sql: ", sql);
         const { rows } = await this.db.query(sql);
-        logger.debug("result: ", rows);
+        backendLogger.debug("result: ", rows);
         for (const row of rows) {
             const hasMatchingPassword: boolean = await bcrypt.compare(
                 pw,
@@ -87,7 +87,7 @@ export default class PgUserDao implements IUserDao {
                 return this.dataMapper(row);
             }
         }
-        logger.debug("no match found!");
+        backendLogger.debug("no match found!");
         return null;
     }
 }

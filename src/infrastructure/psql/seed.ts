@@ -1,10 +1,11 @@
-import configs from "../../../SillyStoreCommon/configs/Configs.ts";
-import logger from "../../../SillyStoreCommon/logging/Logger.ts";
-import pg, { type Client } from "pg";
+import backendLogger from "../../configs/BackendLogger.ts";
+import { type Client } from "pg";
 import seedUsers from "./seedUsers.ts";
 import seedProducts from "./seedProducts.ts";
 import seedOrders from "./seedOrders.ts";
 import seedOrdersProducts from "./seedOrdersProducts.ts";
+import apiConfigs from "../../configs/ApiConfigs.ts";
+
 export interface Quantities {
     readonly users: number;
     readonly products: number;
@@ -22,21 +23,21 @@ const quantities: Quantities = {
 };
 
 async function main(): Promise<void> {
-    const db: Client = new pg.Client(configs.db.connectionString);
-    logger.info("Connecting to db...");
+    const { db } = apiConfigs as { db: Client };
+    backendLogger.info("Connecting to db...");
     await db.connect();
-    logger.info("Begin seeding...");
-    logger.info("Seeding users...");
+    backendLogger.info("Begin seeding...");
+    backendLogger.info("Seeding users...");
     await seedUsers(db, quantities);
-    logger.info("Seeding products...");
+    backendLogger.info("Seeding products...");
     await seedProducts(db, quantities);
-    logger.info("Seeding orders...");
+    backendLogger.info("Seeding orders...");
     await seedOrders(db, quantities);
-    logger.info("Adding orders to products...");
+    backendLogger.info("Adding orders to products...");
     await seedOrdersProducts(db, quantities);
-    logger.info("Closing db connection...");
+    backendLogger.info("Closing db connection...");
     await db.end();
-    logger.info("Seeding complete! Ending process.");
+    backendLogger.info("Seeding complete! Ending process.");
 }
 
 main();

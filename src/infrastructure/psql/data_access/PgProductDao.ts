@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Client, Pool, QueryConfig } from "pg";
-import logger from "../../../../SillyStoreCommon/logging/Logger.ts";
 import { IDataMapper } from "../../../application/data_mapping/DataMapper.ts";
 import { ICreateProductRequest } from "../../../application/dtos/requests/ICreateProductRequest.ts";
 import { IDeleteProductRequest } from "../../../application/dtos/requests/IDeleteProductRequest.ts";
@@ -9,6 +8,7 @@ import { IGetProductRequest } from "../../../application/dtos/requests/IGetProdu
 import { IProductResponse } from "../../../application/dtos/responses/IProductResponse.ts";
 import { IPgProduct } from "../entities/IPgProduct.ts";
 import { IProductDao } from "../../data_access/IProductDao.ts";
+import backendLogger from "../../../configs/BackendLogger.ts";
 
 export default class PgProductDao implements IProductDao {
     private db: Client | Pool;
@@ -40,9 +40,9 @@ export default class PgProductDao implements IProductDao {
                 FROM products
                 `,
         };
-        logger.debug("sql: ", sql);
+        backendLogger.debug("sql: ", sql);
         const { rows } = await this.db.query(sql);
-        logger.debug("result: ", rows);
+        backendLogger.debug("result: ", rows);
         return rows.map(this.dataMapper);
     }
 
@@ -61,11 +61,11 @@ export default class PgProductDao implements IProductDao {
             `,
             values: [id],
         };
-        logger.debug("sql:", sql);
+        backendLogger.debug("sql:", sql);
         const {
             rows: [row],
         } = await this.db.query(sql);
-        logger.debug("result: ", row);
+        backendLogger.debug("result: ", row);
         return row ? this.dataMapper(row) : null;
     }
 

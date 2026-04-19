@@ -1,7 +1,6 @@
 import { Client, QueryConfig } from "pg";
 import { Quantities } from "./seed.ts";
-import logger from "../../../SillyStoreCommon/logging/Logger.ts";
-
+import backendLogger from "../../configs/BackendLogger.ts";
 export default async function seedProducts(
     db: Client,
     { products }: Quantities,
@@ -17,10 +16,10 @@ export default async function seedProducts(
             RETURNING *`,
             values: [title, description, price],
         };
-        logger.debug("running sql: ", sql);
+        backendLogger.debug("running sql: ", sql);
         const {
             rows: [pgProduct],
         } = await db.query(sql);
-        logger.debug("result", pgProduct);
+        backendLogger.debug("result", pgProduct);
     }
 }

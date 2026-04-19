@@ -7,7 +7,7 @@ import { IOrderResponse } from "../../../application/dtos/responses/IOrderRespon
 import { IOrderDao } from "../../data_access/IOrderDao.ts";
 import { IDataMapper } from "../../../application/data_mapping/DataMapper.ts";
 import { IPgOrder } from "../entities/IPgOrder.ts";
-import logger from "../../../../SillyStoreCommon/logging/Logger.ts";
+import backendLogger from "../../../configs/BackendLogger.ts";
 
 export default class PgOrderDao implements IOrderDao {
     private db: Client | Pool;
@@ -36,11 +36,11 @@ export default class PgOrderDao implements IOrderDao {
             `,
             values: [dateStr, userId],
         };
-        logger.debug("sql: ", sql);
+        backendLogger.debug("sql: ", sql);
         const {
             rows: [row],
         } = await this.db.query(sql);
-        logger.debug("result: ", row);
+        backendLogger.debug("result: ", row);
         return this.dataMapper(row);
     }
     async getAllAsync({
@@ -58,9 +58,9 @@ export default class PgOrderDao implements IOrderDao {
             `,
             values: isClient ? [userId] : [],
         };
-        logger.debug("sql: ", sql);
+        backendLogger.debug("sql: ", sql);
         const { rows } = await this.db.query(sql);
-        logger.debug("result: ", rows);
+        backendLogger.debug("result: ", rows);
         return rows.map(this.dataMapper);
     }
 
@@ -78,11 +78,11 @@ export default class PgOrderDao implements IOrderDao {
             `,
             values: [orderId],
         };
-        logger.debug("sql", sql);
+        backendLogger.debug("sql", sql);
         const {
             rows: [row],
         } = await this.db.query(sql);
-        logger.debug("result: ", row);
+        backendLogger.debug("result: ", row);
         return row ? this.dataMapper(row) : null;
     }
     async deleteAsync(
