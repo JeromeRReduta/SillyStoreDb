@@ -1,29 +1,28 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import cookieParser from "cookie-parser";
 import express from "express";
 import morgan from "morgan";
+import cookieParser from "cookie-parser";
+import cors from "cors";
 import pgDataMappers from "../application/data_mapping/PgDataMappers.ts";
+import { IAddProductToOrderRequest } from "../application/dtos/requests/IAddProductToOrderRequest.ts";
 import { ICreateOrderRequest } from "../application/dtos/requests/ICreateOrderRequest.ts";
 import { IGetAllOrdersRequest } from "../application/dtos/requests/IGetAllOrdersRequest.ts";
+import { IOrderProductResponse } from "../application/dtos/responses/IOrderProductResponse.ts";
 import { IOrderResponse } from "../application/dtos/responses/IOrderResponse.ts";
 import { HttpStatus } from "../application/http/HttpStatus.ts";
 import tokenOps from "../application/jwt/TokenOperations.ts";
 import finalErrorHandler from "../application/middleware/FinalErrorHandler.ts";
 import psqlErrorHandler from "../application/middleware/PsqlErrorHandler.ts";
-import services, { db } from "../configs/BackendConfigs.ts";
+import requireSignedIn from "../application/middleware/RequireSignedIn.ts";
+import backendLogger from "../configs/BackendLogger.ts";
+import { IOrderRepository } from "../domain/repos/IOrderRepository.ts";
+import OrderRepository from "../domain/repos/OrderRepository.ts";
 import HttpError from "../errors/HttpError.ts";
 import { IOrderDao } from "../infrastructure/data_access/IOrderDao.ts";
 import { IOrderProductDao } from "../infrastructure/data_access/IOrderProductDao.ts";
 import PgOrderDao from "../infrastructure/psql/data_access/PgOrderDao.ts";
 import PgOrderProductDao from "../infrastructure/psql/data_access/PgOrderProductDao.ts";
-import ViteExpress from "vite-express";
-import cors from "cors";
-import requireSignedIn from "../application/middleware/RequireSignedIn.ts";
-import { IOrderProductResponse } from "../application/dtos/responses/IOrderProductResponse.ts";
-import { IOrderRepository } from "../domain/repos/IOrderRepository.ts";
-import OrderRepository from "../domain/repos/OrderRepository.ts";
-import { IAddProductToOrderRequest } from "../application/dtos/requests/IAddProductToOrderRequest.ts";
-import backendLogger from "../configs/BackendLogger.ts";
+import apiConfigs from "../configs/ApiConfigs.ts";
 
 const app = express();
 app.use(
@@ -35,7 +34,7 @@ app.use(
         credentials: true,
     }),
 );
-
+const { db } = apiConfigs;
 const { orderMapper, productMapper, orderProductMapper } = pgDataMappers;
 const pgOrderDao: IOrderDao = new PgOrderDao(db, orderMapper);
 const pgOrderProductDao: IOrderProductDao = new PgOrderProductDao({
@@ -48,6 +47,8 @@ const orderRepo: IOrderRepository = new OrderRepository(
     pgOrderDao,
     pgOrderProductDao,
 );
+const { clientOrderService, clientProductService, clientUserService } =
+    apiConfigs.services;
 
 // app.route("/orders").get(async (req, res, next) => {
 //     const dto: IGetAllOrdersRequest = {
@@ -72,11 +73,10 @@ app.route("/orders/:id").get(async (req, res, next) => {
         tokenOps.verify(req.cookies.token) as { id: number }
     ).id;
     const orderId: number = parseInt(req.params.id);
-    const order: IOrderResponse | null =
-        await services.clientOrderService.getAsync({
-            orderId,
-            userId,
-        });
+    const order: IOrderResponse | null = await clientOrderService.getAsync({
+        orderId,
+        userId,
+    });
     if (!order) {
         throw new HttpError(HttpStatus.NOT_FOUND, "NOT FOUND");
     }
@@ -111,7 +111,7 @@ app.route("/orders/:id/products").post(
                 userId: req.userId!,
             };
             const created: IOrderProductResponse =
-                await services.clientOrderService.addProductToOrderAsync(dto);
+                await clientOrderService.addProductToOrderAsync(dto);
             res.status(HttpStatus.CREATED).send(created); // TODO - test
             // const created: I
         } catch (e) {
@@ -122,7 +122,7 @@ app.route("/orders/:id/products").post(
 
 app.use(psqlErrorHandler, finalErrorHandler);
 
-ViteExpress.listen(app, 3000, async () => {
+app.listen(3000, async () => {
     await db.connect();
     backendLogger.info("Server is listening on port 3000...");
 });
