@@ -19,9 +19,9 @@
         "outDir": "./dist"
     },
     "include": [
-        "src",
+        "src/**/*.ts",
         "vite-env.d.ts",
-        "SillyStoreCommon",
+        "SillyStoreCommon/**/*.ts",
         "eslint.config.ts",
         "src/configs/.ts"
     ]
