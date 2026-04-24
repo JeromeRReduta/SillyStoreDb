@@ -8,6 +8,24 @@ import tryCreateOrderAsync from "../../application/middleware/TryCreateOrderAsyn
 import tryGetProductsInOrder from "../../application/middleware/TryGetProductsInOrderAsync.ts";
 import tryAddProductToOrderAsync from "../../application/middleware/TryAddProductToOrderAsync.ts";
 
+/** TODO:
+ *
+ *
+ * Backend:
+ * * orders should have new column: status = "pending" | "completed" | "canceled"
+ * * make unique index pending_order ON table orders (user_id) WHERE (status = "PENDING")
+ * * make way to get user's pending order (or return null if entity not found)
+ * Frontend:
+ * * make useMutation for cart data - 1 usemutation/action:
+ * * useMutation: change user token, run query again - run when user logs in or out
+ * * useMutation: update values in db - run when user logs out or when we finalize order
+ *      - should be able to update both the values of order-products (i.e. cart items) and
+ *          the order status
+ *
+ *
+ *
+ */
+
 const orderRouter: Router = express.Router();
 orderRouter.use(requireSignedIn("CLIENT")); // universal requirement - must be signed in
 
