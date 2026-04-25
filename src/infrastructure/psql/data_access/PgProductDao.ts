@@ -1,25 +1,22 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Client, Pool, QueryConfig } from "pg";
-import { ICreateProductRequest } from "../../../../SillyStoreCommon/dtos/requests/ICreateProductRequest.ts";
-import { IDeleteProductRequest } from "../../../../SillyStoreCommon/dtos/requests/IDeleteProductRequest.ts";
-import { IGetAllProductsRequest } from "../../../../SillyStoreCommon/dtos/requests/IGetAllProductsRequest.ts";
-import { IGetProductRequest } from "../../../../SillyStoreCommon/dtos/requests/IGetProductRequest.ts";
+import { ICreateProductRequest } from "../../../../SillyStoreCommon/dtos/requests/create-requests/ICreateProductRequest.ts";
+import { IDeleteProductRequest } from "../../../../SillyStoreCommon/dtos/requests/delete-requests/IDeleteProductRequest.ts";
+import { IGetAllProductsRequest } from "../../../../SillyStoreCommon/dtos/requests/get-requests/IGetAllProductsRequest.ts";
+import { IGetProductRequest } from "../../../../SillyStoreCommon/dtos/requests/get-requests/IGetProductRequest.ts";
 import { IProductResponse } from "../../../../SillyStoreCommon/dtos/responses/IProductResponse.ts";
 import { IDataMapper } from "../../../application/data_mapping/DataMapper.ts";
 import backendLogger from "../../../configs/BackendLogger.ts";
 import { IProductDao } from "../../data_access/IProductDao.ts";
 import { IPgProduct } from "../entities/IPgProduct.ts";
+import { IUpdateProductRequest } from "../../../../SillyStoreCommon/dtos/requests/update-requests/IUpdateProductRequest.ts";
+import PgDaos from "../../data_access/PgDaos.ts";
 
 export default class PgProductDao implements IProductDao {
     private db: Client | Pool;
-    private dataMapper: IDataMapper<IPgProduct, IProductResponse>;
 
-    constructor(
-        db: Client | Pool,
-        dataMapper: IDataMapper<IPgProduct, IProductResponse>,
-    ) {
+    constructor(db: Client | Pool) {
         this.db = db;
-        this.dataMapper = dataMapper;
     }
 
     async createAsync(_dto: ICreateProductRequest): Promise<IProductResponse> {
@@ -40,10 +37,7 @@ export default class PgProductDao implements IProductDao {
                 FROM products
                 `,
         };
-        backendLogger.debug("sql: ", sql);
-        const { rows } = await this.db.query(sql);
-        backendLogger.debug("result: ", rows);
-        return rows.map(this.dataMapper);
+        return PgDaos.queryAsync(this.db, sql, PgDaos.productMapper);
     }
 
     async getAsync({
@@ -61,12 +55,19 @@ export default class PgProductDao implements IProductDao {
             `,
             values: [id],
         };
-        backendLogger.debug("sql:", sql);
-        const {
-            rows: [row],
-        } = await this.db.query(sql);
-        backendLogger.debug("result: ", row);
-        return row ? this.dataMapper(row) : null;
+        const rows = await PgDaos.queryAsync(
+            this.db,
+            sql,
+            PgDaos.productMapper,
+        );
+        backendLogger.debug("# of matching entries: ", rows.length);
+        return rows.length > 0 ? rows[0] : null;
+    }
+
+    async updateAsync(
+        dto: IUpdateProductRequest,
+    ): Promise<IProductResponse | null> {
+        throw new Error("Method not implemented.");
     }
 
     async deleteAsync(

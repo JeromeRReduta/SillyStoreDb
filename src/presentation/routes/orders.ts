@@ -53,7 +53,7 @@ orderRouter
     .get(tryGetAllOwnedOrdersAsync)
     .post(requireBody(["dateStr"]), tryCreateOrderAsync);
 
-orderRouter.route("/cart").get(tryGetProductsInCartAsync);
+// orderRouter.route("/cart").get(tryGetProductsInCartAsync);
 
 orderRouter.route("/:id").get(tryGetOwnedOrderAsync);
 

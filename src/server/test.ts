@@ -18,9 +18,6 @@ import { IOrderProductDao } from "../infrastructure/data_access/IOrderProductDao
 import PgOrderDao from "../infrastructure/psql/data_access/PgOrderDao.ts";
 import PgOrderProductDao from "../infrastructure/psql/data_access/PgOrderProductDao.ts";
 import apiConfigs from "../configs/ApiConfigs.ts";
-import { IAddProductToOrderRequest } from "../../SillyStoreCommon/dtos/requests/IAddProductToOrderRequest.ts";
-import { ICreateOrderRequest } from "../../SillyStoreCommon/dtos/requests/ICreateOrderRequest.ts";
-import { IGetAllOrdersRequest } from "../../SillyStoreCommon/dtos/requests/IGetAllOrdersRequest.ts";
 import { IOrderProductResponse } from "../../SillyStoreCommon/dtos/responses/IOrderProductResponse.ts";
 import { IOrderResponse } from "../../SillyStoreCommon/dtos/responses/IOrderResponse.ts";
 import { IProductRepository } from "../domain/repos/IProductRepository.ts";
@@ -29,7 +26,11 @@ import { IProductDao } from "../infrastructure/data_access/IProductDao.ts";
 import PgProductDao from "../infrastructure/psql/data_access/PgProductDao.ts";
 import userRouter from "../presentation/routes/users.ts";
 import { IProductResponse } from "../../SillyStoreCommon/dtos/responses/IProductResponse.ts";
-import { IGetAllProductsRequest } from "../../SillyStoreCommon/dtos/requests/IGetAllProductsRequest.ts";
+import { ICreateOrderRequest } from "../../SillyStoreCommon/dtos/requests/create-requests/ICreateOrderRequest.ts";
+import { IGetAllOrdersRequest } from "../../SillyStoreCommon/dtos/requests/get-requests/IGetAllOrdersRequest.ts";
+import { IUserDao } from "../infrastructure/data_access/IUserDao.ts";
+import { IGetAllProductsRequest } from "../../SillyStoreCommon/dtos/requests/get-requests/IGetAllProductsRequest.ts";
+import { IGetProductRequest } from "../../SillyStoreCommon/dtos/requests/get-requests/IGetProductRequest.ts";
 
 const app = express();
 app.use(
@@ -94,89 +95,84 @@ app.route("/orders").get(async (req, res, next) => {
     res.status(HttpStatus.OK).send(orders);
 });
 
-app.route("/orders").post(async (req, res, next) => {
-    const dto: ICreateOrderRequest = {
-        userId: (tokenOps.verify(req.cookies.token) as { id: number }).id,
-        dateStr: "2000-06-09",
-    };
-    const created: IOrderResponse = await pgOrderDao.createAsync(dto);
-    res.status(HttpStatus.CREATED).send(created);
-});
-
-app.route("/orders/:id/products").get(async (req, res, next) => {
-    try {
-        const products: IProductResponse[] =
-            await clientOrderService.getProductsInOrderAsync({
-                orderId: parseInt(req.params.id),
-                userId: tokenOps.verify(req.cookies.token).id,
-                includingQuantities: true,
-            });
-        res.status(HttpStatus.OK).send(products);
-    } catch (e) {
-        next(e);
-    }
-});
-app.route("/orders/:id/products").post(
-    requireSignedIn("CLIENT"),
-    async (req, res, next) => {
-        try {
-            const dto: IAddProductToOrderRequest = {
-                orderId: parseInt(req.params.id),
-                productId: req.body.productId,
-                quantity: req.body.quantity,
-                userId: req.userId!,
-            };
-            const created: IOrderProductResponse =
-                await clientOrderService.addProductToOrderAsync(dto);
-            res.status(HttpStatus.CREATED).send(created); // TODO - test
-            // const created: I
-        } catch (e) {
-            next(e);
-        }
-    },
-);
-
-app.use("/users", userRouter);
-app.use(psqlErrorHandler, finalErrorHandler);
-
-app.listen(3000, async () => {
-    await db.connect();
-    backendLogger.info("Server is listening on port 3000...");
-});
-const orderDao: IOrderDao = new PgOrderDao(db, orderMapper);
-
-const orderProductDao: IOrderProductDao = new PgOrderProductDao({
-    db,
-    orderMapper: pgDataMappers.orderMapper,
-    orderProductMapper: pgDataMappers.orderProductMapper,
-    productMapper: pgDataMappers.productMapper,
-});
-const productDao: IProductDao = new PgProductDao(
-    db,
-    pgDataMappers.productMapper,
-);
-const productRepo: IProductRepository = new ProductRepository({
-    orderProductDao,
-    productDao,
-});
-
-type CreateRequest = object;
-type GetAllRequest = object;
-type GetRequest = object;
-type UpdateRequest = object;
-type DeleteRequest = object;
-
-interface IMyDao<
-    TCreateRequest extends CreateRequest,
-    TGetAllRequest extends GetAllRequest,
-    TGetRequest extends GetRequest,
-    TUpdateRequest extends UpdateRequest,
-    TDeleteRequest extends DeleteRequest,
-    TResponse extends object,
-> {
-    createAsync(dto: TCreateRequest): Promise<TResponse>;
-    getAllAsync(dto: TGetAllRequest): Promise<TResponse>;
-    getAsync(dto: TGetRequest): Promise<TResponse>;
-    updateAsync(dto: TUpdateRequest): Promise<TResponse>;
-    deleteAsync(dto: TDeleteRequest): Promise<TResponse>;
+interface ITestDaos {
+    readonly orders?: IOrderDao;
+    readonly products?: IProductDao;
+    readonly users?: IUserDao;
+    readonly orderProductDao?: IOrderProductDao;
 }
+
+const testDaos: ITestDaos = {
+    products: new PgProductDao(db),
+};
+
+app.route("/products").get(async (req, res, next) => {
+    const dto: IGetAllProductsRequest = {};
+    const products: IProductResponse[] =
+        await testDaos.products!.getAllAsync(dto);
+    res.status(HttpStatus.OK).send(products);
+});
+
+app.route("/products/:id").get(async (req, res, next) => {
+    const dto: IGetProductRequest = { id: parseInt(req.params.id) };
+    const product: IProductResponse | null =
+        await testDaos.products!.getAsync(dto);
+    res.status(HttpStatus.OK).send(product);
+});
+
+// app.route("/orders/:id/products").get(async (req, res, next) => {
+//     try {
+//         const products: IProductResponse[] =
+//             await clientOrderService.getProductsInOrderAsync({
+//                 orderId: parseInt(req.params.id),
+//                 userId: tokenOps.verify(req.cookies.token).id,
+//                 includingQuantities: true,
+//             });
+//         res.status(HttpStatus.OK).send(products);
+//     } catch (e) {
+//         next(e);
+//     }
+// });
+// app.route("/orders/:id/products").post(
+//     requireSignedIn("CLIENT"),
+//     async (req, res, next) => {
+//         try {
+//             const dto: IAddProductToOrderRequest = {
+//                 orderId: parseInt(req.params.id),
+//                 productId: req.body.productId,
+//                 quantity: req.body.quantity,
+//                 userId: req.userId!,
+//             };
+//             const created: IOrderProductResponse =
+//                 await clientOrderService.addProductToOrderAsync(dto);
+//             res.status(HttpStatus.CREATED).send(created); // TODO - test
+//             // const created: I
+//         } catch (e) {
+//             next(e);
+//         }
+//     },
+// );
+
+// app.use("/users", userRouter);
+// app.use(psqlErrorHandler, finalErrorHandler);
+
+// app.listen(3000, async () => {
+//     await db.connect();
+//     backendLogger.info("Server is listening on port 3000...");
+// });
+// const orderDao: IOrderDao = new PgOrderDao(db, orderMapper);
+
+// const orderProductDao: IOrderProductDao = new PgOrderProductDao({
+//     db,
+//     orderMapper: pgDataMappers.orderMapper,
+//     orderProductMapper: pgDataMappers.orderProductMapper,
+//     productMapper: pgDataMappers.productMapper,
+// });
+// const productDao: IProductDao = new PgProductDao(
+//     db,
+//     pgDataMappers.productMapper,
+// );
+// const productRepo: IProductRepository = new ProductRepository({
+//     orderProductDao,
+//     productDao,
+// });
