@@ -5,9 +5,11 @@ import { IGetAllOrdersRequest } from "../../../SillyStoreCommon/dtos/requests/ge
 import { IGetAllPendingOrdersRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetAllPendingOrdersRequest.ts";
 import { IGetOrderRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetOrderRequest.ts";
 import { IGetProductsInOrderRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetProductsInOrderRequest.ts";
+import { IUpdateOrderRequest } from "../../../SillyStoreCommon/dtos/requests/update-requests/IUpdateOrderRequest.ts";
 import { IOrderProductResponse } from "../../../SillyStoreCommon/dtos/responses/IOrderProductResponse.ts";
 import { IOrderResponse } from "../../../SillyStoreCommon/dtos/responses/IOrderResponse.ts";
 import { IProductResponse } from "../../../SillyStoreCommon/dtos/responses/IProductResponse.ts";
+import { IProductWithQuantityResponse } from "../../../SillyStoreCommon/dtos/responses/IProductWithQuantityResponse.ts";
 import { IOrderDao } from "../../infrastructure/data_access/IOrderDao.ts";
 import { IOrderProductDao } from "../../infrastructure/data_access/IOrderProductDao.ts";
 import { IOrderRepository } from "./IOrderRepository.ts";
@@ -33,6 +35,10 @@ export default class OrderRepository implements IOrderRepository {
         return await this.orderDao.getAsync(dto);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    updateAsync(_dto: IUpdateOrderRequest): Promise<IOrderResponse | null> {
+        throw new Error("Method not implemented.");
+    }
     async deleteAsync(
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _dto: IDeleteOrderRequest,
@@ -59,5 +65,12 @@ export default class OrderRepository implements IOrderRepository {
         dto: IGetAllPendingOrdersRequest,
     ): Promise<IProductResponse[]> {
         return this.orderProductDao.getProductsInCartAsync(dto);
+    }
+
+    async getProductsWithQuantitiesInOrderAsync(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        _dto: IGetProductsInOrderRequest,
+    ): Promise<IProductWithQuantityResponse[]> {
+        throw new Error("Method not implemented.");
     }
 }

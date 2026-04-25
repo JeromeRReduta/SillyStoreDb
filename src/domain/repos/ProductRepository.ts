@@ -5,6 +5,7 @@ import { IDeleteProductRequest } from "../../../SillyStoreCommon/dtos/requests/d
 import { IGetAllProductsRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetAllProductsRequest.ts";
 import { IGetOrdersIncludingProductRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetOrdersIncludingProductRequest.ts";
 import { IGetProductRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetProductRequest.ts";
+import { IUpdateProductRequest } from "../../../SillyStoreCommon/dtos/requests/update-requests/IUpdateProductRequest.ts";
 import { IOrderResponse } from "../../../SillyStoreCommon/dtos/responses/IOrderResponse.ts";
 import { IProductResponse } from "../../../SillyStoreCommon/dtos/responses/IProductResponse.ts";
 import { IOrderProductDao } from "../../infrastructure/data_access/IOrderProductDao.ts";
@@ -38,6 +39,10 @@ export default class ProductRepository implements IProductRepository {
 
     async getAsync(dto: IGetProductRequest): Promise<IProductResponse | null> {
         return await this.productDao.getAsync(dto);
+    }
+
+    updateAsync(_dto: IUpdateProductRequest): Promise<IProductResponse | null> {
+        throw new Error("Method not implemented.");
     }
 
     async deleteAsync(

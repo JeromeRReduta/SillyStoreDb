@@ -4,6 +4,7 @@ import { IDeleteUserRequest } from "../../../SillyStoreCommon/dtos/requests/dele
 import { IGetAllUsersRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetAllUsersRequest.ts";
 import { IGetUserByCredentialsRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetUserByCredentialsRequest.ts";
 import { IGetUserRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetUserRequest.ts";
+import { IUpdateUserRequest } from "../../../SillyStoreCommon/dtos/requests/update-requests/IUpdateUserRequest.ts";
 import { IUserResponse } from "../../../SillyStoreCommon/dtos/responses/IUserResponse.ts";
 import { IUserDao } from "../../infrastructure/data_access/IUserDao.ts";
 import { IUserRepository } from "./IUserRepository.ts";
@@ -18,15 +19,23 @@ export default class UserRepository implements IUserRepository {
     async createAsync(dto: ICreateUserRequest): Promise<IUserResponse> {
         return await this.dao.createAsync(dto);
     }
+
     async getAllAsync(_dto: IGetAllUsersRequest): Promise<IUserResponse[]> {
         throw new Error("Method not implemented.");
     }
+
     async getAsync(_dto: IGetUserRequest): Promise<IUserResponse | null> {
         throw new Error("Method not implemented.");
     }
+
+    async updateAsync(_dto: IUpdateUserRequest): Promise<IUserResponse | null> {
+        throw new Error("Method not implemented.");
+    }
+
     async deleteAsync(_dto: IDeleteUserRequest): Promise<IUserResponse | null> {
         throw new Error("Method not implemented.");
     }
+
     async getByCredentialsAsync(
         dto: IGetUserByCredentialsRequest,
     ): Promise<IUserResponse | null> {
