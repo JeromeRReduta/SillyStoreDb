@@ -15,5 +15,5 @@ export default defineConfig([
         },
     },
     tseslint.configs.recommended,
-    globalIgnores([".config/*", "dist/", "SillyStoreCommon/"]),
+    globalIgnores([".config/*", "dist/"]),
 ]);

@@ -15,6 +15,7 @@ import { IOrderProductDao } from "../../data_access/IOrderProductDao.ts";
 import { IPgOrder } from "../entities/IPgOrder.ts";
 import { IPgOrderProduct } from "../entities/IPgOrderProduct.ts";
 import { IPgProduct } from "../entities/IPgProduct.ts";
+import { IGetAllPendingOrdersRequest } from "../../../../SillyStoreCommon/dtos/requests/IGetAllPendingOrdersRequest.ts";
 
 export default class PgOrderProductDao implements IOrderProductDao {
     private db: Client | Pool;
@@ -130,4 +131,64 @@ export default class PgOrderProductDao implements IOrderProductDao {
               })
             : rows.map(this.productMapper);
     }
+
+    async getProductsInCartAsync({
+        userId,
+    }: IGetAllPendingOrdersRequest): Promise<IProductResponse[]> {
+        const sql: QueryConfig = {
+            text: `
+                SELECT p.*, op.quantity FROM orders_products AS op
+                JOIN products AS p
+                    ON op.product_id = p.id
+                JOIN orders AS o
+                    ON op.order_id = o.id
+                WHERE
+                    o.status = 'pending'
+                    AND o.user_id = $1
+            `,
+            values: [userId],
+        };
+        backendLogger.debug("sql: ", sql);
+        const { rows } = await this.db.query(sql);
+        backendLogger.debug("result: ", rows);
+        return rows.map((row) => {
+            return { ...this.productMapper(row), quantity: row.quantity };
+        });
+    }
+
+    //     async getAllPendingOrdersAsync({
+    //     userId,
+    // }: IGetAllPendingOrdersRequest): Promise<IOrderResponse[]> {
+    //     const isClient: boolean = userId !== null;
+    //     const sql: QueryConfig = {
+    //         text: `
+    //             SELECT
+    //                 id,
+    //                 TO_CHAR(date, 'yyyy-mm-dd') AS date,
+    //                 user_id,
+    //                 status
+    //             FROM orders
+    //             WHERE
+    //                 status = 'pending'
+    //                 ${isClient ? "AND user_id = $1" : ""}
+    //         `,
+    //         values: isClient ? [userId] : [],
+    //     };
+
+    //     //             const sql: QueryConfig = {
+    //     //         text: `
+    //     //             SELECT
+    //     //                 id,
+    //     //                 TO_CHAR(date, 'yyyy-mm-dd') AS date,
+    //     //                 user_id
+    //     //             FROM orders
+    //     //             ${isClient ? "WHERE user_id = $1" : ""}
+    //     //         `,
+    //     //         values: isClient ? [userId] : [],
+    //     //     };
+    //     backendLogger.debug("sql: ", sql);
+    //     const { rows } = await this.db.query(sql);
+    //     backendLogger.debug("result: ", rows);
+    //     return rows.map(this.dataMapper);
+    // }
 }

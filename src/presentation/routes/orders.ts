@@ -7,13 +7,32 @@ import requireBody from "../../application/middleware/RequireBody.ts";
 import tryCreateOrderAsync from "../../application/middleware/TryCreateOrderAsync.ts";
 import tryGetProductsInOrder from "../../application/middleware/TryGetProductsInOrderAsync.ts";
 import tryAddProductToOrderAsync from "../../application/middleware/TryAddProductToOrderAsync.ts";
+import { IOrderDao } from "../../infrastructure/data_access/IOrderDao.ts";
+import PgOrderDao from "../../infrastructure/psql/data_access/PgOrderDao.ts";
+import backendConfigs from "../../configs/BackendConfigs.ts";
+import pgDataMappers from "../../application/data_mapping/PgDataMappers.ts";
 
 /** TODO:
  *
  *
  * Backend:
- * * orders should have new column: status = "pending" | "completed" | "canceled"
- * * make unique index pending_order ON table orders (user_id) WHERE (status = "PENDING")
+ * * (x) orders should have new column: status = "pending" | "completed" | "canceled"
+ * * (x) make unique index pending_order ON table orders (user_id) WHERE (status = "PENDING")
+ *
+ * Common:
+ * * make ICartItemResponse: Literally IProductResponse & {quantity: number}
+ *
+ * Backend p2:
+ * * orderproductdao(interface and impl): getCartItemsAsync
+ * * orderrepo(interface and impl): getCartItemsAsync
+ * * clientorderservice (interface and impl): getCartItemsAsync - if repo.getCartItemsAsync() returns empty [], this method returns null
+ * * middleware: tryGetCartItemsAsync
+ * * orderproductdao (interface and impl): updateCartItemAsync
+ * * orderRepo
+ * * clientOrderService
+ * * middleware: tryUpdateCartItemAsync
+ *
+ *
  * * make way to get user's pending order (or return null if entity not found)
  * Frontend:
  * * make useMutation for cart data - 1 usemutation/action:
@@ -33,6 +52,9 @@ orderRouter
     .route("/")
     .get(tryGetAllOwnedOrdersAsync)
     .post(requireBody(["dateStr"]), tryCreateOrderAsync);
+
+orderRouter.route("/cart").get(tryGetProductsInCartAsync);
+
 orderRouter.route("/:id").get(tryGetOwnedOrderAsync);
 
 orderRouter

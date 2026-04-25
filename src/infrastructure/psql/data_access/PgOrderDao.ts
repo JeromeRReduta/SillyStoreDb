@@ -9,6 +9,7 @@ import { IDeleteOrderRequest } from "../../../../SillyStoreCommon/dtos/requests/
 import { IGetAllOrdersRequest } from "../../../../SillyStoreCommon/dtos/requests/IGetAllOrdersRequest.ts";
 import { IGetOrderRequest } from "../../../../SillyStoreCommon/dtos/requests/IGetOrderRequest.ts";
 import { IOrderResponse } from "../../../../SillyStoreCommon/dtos/responses/IOrderResponse.ts";
+import { IGetAllPendingOrdersRequest } from "../../../../SillyStoreCommon/dtos/requests/IGetAllPendingOrdersRequest.ts";
 
 export default class PgOrderDao implements IOrderDao {
     private db: Client | Pool;
@@ -44,6 +45,7 @@ export default class PgOrderDao implements IOrderDao {
         backendLogger.debug("result: ", row);
         return this.dataMapper(row);
     }
+
     async getAllAsync({
         userId,
     }: IGetAllOrdersRequest): Promise<IOrderResponse[]> {
@@ -53,7 +55,8 @@ export default class PgOrderDao implements IOrderDao {
                 SELECT                  
                     id,
                     TO_CHAR(date, 'yyyy-mm-dd') AS date,
-                    user_id
+                    user_id,
+                    status
                 FROM orders
                 ${isClient ? "WHERE user_id = $1" : ""}
             `,
@@ -73,7 +76,8 @@ export default class PgOrderDao implements IOrderDao {
                 SELECT 
                     id,
                     TO_CHAR(date, 'yyyy-mm-dd') AS date,
-                    user_id
+                    user_id,
+                    status
                 FROM orders
                 WHERE id = $1
             `,
@@ -91,5 +95,41 @@ export default class PgOrderDao implements IOrderDao {
         _dto: IDeleteOrderRequest,
     ): Promise<IOrderResponse | null> {
         throw new Error("Method not implemented.");
+    }
+
+    async getAllPendingOrdersAsync({
+        userId,
+    }: IGetAllPendingOrdersRequest): Promise<IOrderResponse[]> {
+        const isClient: boolean = userId !== null;
+        const sql: QueryConfig = {
+            text: `
+                SELECT
+                    id,
+                    TO_CHAR(date, 'yyyy-mm-dd') AS date,
+                    user_id,
+                    status
+                FROM orders
+                WHERE
+                    status = 'pending'
+                    ${isClient ? "AND user_id = $1" : ""}
+            `,
+            values: isClient ? [userId] : [],
+        };
+
+        //             const sql: QueryConfig = {
+        //         text: `
+        //             SELECT
+        //                 id,
+        //                 TO_CHAR(date, 'yyyy-mm-dd') AS date,
+        //                 user_id
+        //             FROM orders
+        //             ${isClient ? "WHERE user_id = $1" : ""}
+        //         `,
+        //         values: isClient ? [userId] : [],
+        //     };
+        backendLogger.debug("sql: ", sql);
+        const { rows } = await this.db.query(sql);
+        backendLogger.debug("result: ", rows);
+        return rows.map(this.dataMapper);
     }
 }

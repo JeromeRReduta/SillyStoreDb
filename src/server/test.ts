@@ -4,11 +4,6 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import pgDataMappers from "../application/data_mapping/PgDataMappers.ts";
-import { IAddProductToOrderRequest } from "../application/dtos/requests/IAddProductToOrderRequest.ts";
-import { ICreateOrderRequest } from "../application/dtos/requests/ICreateOrderRequest.ts";
-import { IGetAllOrdersRequest } from "../application/dtos/requests/IGetAllOrdersRequest.ts";
-import { IOrderProductResponse } from "../application/dtos/responses/IOrderProductResponse.ts";
-import { IOrderResponse } from "../application/dtos/responses/IOrderResponse.ts";
 import { HttpStatus } from "../application/http/HttpStatus.ts";
 import tokenOps from "../application/jwt/TokenOperations.ts";
 import finalErrorHandler from "../application/middleware/FinalErrorHandler.ts";
@@ -23,6 +18,18 @@ import { IOrderProductDao } from "../infrastructure/data_access/IOrderProductDao
 import PgOrderDao from "../infrastructure/psql/data_access/PgOrderDao.ts";
 import PgOrderProductDao from "../infrastructure/psql/data_access/PgOrderProductDao.ts";
 import apiConfigs from "../configs/ApiConfigs.ts";
+import { IAddProductToOrderRequest } from "../../SillyStoreCommon/dtos/requests/IAddProductToOrderRequest.ts";
+import { ICreateOrderRequest } from "../../SillyStoreCommon/dtos/requests/ICreateOrderRequest.ts";
+import { IGetAllOrdersRequest } from "../../SillyStoreCommon/dtos/requests/IGetAllOrdersRequest.ts";
+import { IOrderProductResponse } from "../../SillyStoreCommon/dtos/responses/IOrderProductResponse.ts";
+import { IOrderResponse } from "../../SillyStoreCommon/dtos/responses/IOrderResponse.ts";
+import { IProductRepository } from "../domain/repos/IProductRepository.ts";
+import ProductRepository from "../domain/repos/ProductRepository.ts";
+import { IProductDao } from "../infrastructure/data_access/IProductDao.ts";
+import PgProductDao from "../infrastructure/psql/data_access/PgProductDao.ts";
+import userRouter from "../presentation/routes/users.ts";
+import { IProductResponse } from "../../SillyStoreCommon/dtos/responses/IProductResponse.ts";
+import { IGetAllProductsRequest } from "../../SillyStoreCommon/dtos/requests/IGetAllProductsRequest.ts";
 
 const app = express();
 app.use(
@@ -50,24 +57,20 @@ const orderRepo: IOrderRepository = new OrderRepository(
 const { clientOrderService, clientProductService, clientUserService } =
     apiConfigs.services;
 
-// app.route("/orders").get(async (req, res, next) => {
-//     const dto: IGetAllOrdersRequest = {
-//         userId: 1,
-//     };
-//     logger.debug("running w/ service");
-//     const orders = await services.clientOrderService.getAllOwnedAsync(dto);
-//     res.status(HttpStatus.OK).send(orders);
-// });
+// const orderDao: IOrderDao = new PgOrderDao(backendConfigs.db, pgDataMappers.orderMapper)
+// orderRouter.route("/cart")
+//     .get(async(req, res, next) => {
+//         const db:
 
-// app.route("/admin/orders").get(async (req, res, next) => {
-//     const dto: IGetAllOrdersRequest = {
-//         userId: null,
-//     };
-//     logger.debug("running w/ service");
-//     const orders = await services.clientOrderService.getAllOwnedAsync(dto);
-// res.status(HttpStatus.OK).send(orders);
-// });
+//     })
 
+app.route("/orders/cart").get(async (req, res, next) => {
+    const orders: IProductResponse[] =
+        await orderProductDao.getProductsInCartAsync({
+            userId: 1,
+        });
+    res.status(HttpStatus.OK).send(orders);
+});
 app.route("/orders/:id").get(async (req, res, next) => {
     const userId: number = (
         tokenOps.verify(req.cookies.token) as { id: number }
@@ -100,6 +103,19 @@ app.route("/orders").post(async (req, res, next) => {
     res.status(HttpStatus.CREATED).send(created);
 });
 
+app.route("/orders/:id/products").get(async (req, res, next) => {
+    try {
+        const products: IProductResponse[] =
+            await clientOrderService.getProductsInOrderAsync({
+                orderId: parseInt(req.params.id),
+                userId: tokenOps.verify(req.cookies.token).id,
+                includingQuantities: true,
+            });
+        res.status(HttpStatus.OK).send(products);
+    } catch (e) {
+        next(e);
+    }
+});
 app.route("/orders/:id/products").post(
     requireSignedIn("CLIENT"),
     async (req, res, next) => {
@@ -120,24 +136,47 @@ app.route("/orders/:id/products").post(
     },
 );
 
+app.use("/users", userRouter);
 app.use(psqlErrorHandler, finalErrorHandler);
 
 app.listen(3000, async () => {
     await db.connect();
     backendLogger.info("Server is listening on port 3000...");
 });
+const orderDao: IOrderDao = new PgOrderDao(db, orderMapper);
 
-// const orderProductDao: IOrderProductDao = new PgOrderProductDao({
-//     db,
-//     orderMapper: pgDataMappers.orderMapper,
-//     orderProductMapper: pgDataMappers.orderProductMapper,
-//     productMapper: pgDataMappers.productMapper,
-// });
-// const productDao: IProductDao = new PgProductDao(
-//     db,
-//     pgDataMappers.productMapper,
-// );
-// const productRepo: IProductRepository = new ProductRepository({
-//     orderProductDao,
-//     productDao,
-// });
+const orderProductDao: IOrderProductDao = new PgOrderProductDao({
+    db,
+    orderMapper: pgDataMappers.orderMapper,
+    orderProductMapper: pgDataMappers.orderProductMapper,
+    productMapper: pgDataMappers.productMapper,
+});
+const productDao: IProductDao = new PgProductDao(
+    db,
+    pgDataMappers.productMapper,
+);
+const productRepo: IProductRepository = new ProductRepository({
+    orderProductDao,
+    productDao,
+});
+
+type CreateRequest = object;
+type GetAllRequest = object;
+type GetRequest = object;
+type UpdateRequest = object;
+type DeleteRequest = object;
+
+interface IMyDao<
+    TCreateRequest extends CreateRequest,
+    TGetAllRequest extends GetAllRequest,
+    TGetRequest extends GetRequest,
+    TUpdateRequest extends UpdateRequest,
+    TDeleteRequest extends DeleteRequest,
+    TResponse extends object,
+> {
+    createAsync(dto: TCreateRequest): Promise<TResponse>;
+    getAllAsync(dto: TGetAllRequest): Promise<TResponse>;
+    getAsync(dto: TGetRequest): Promise<TResponse>;
+    updateAsync(dto: TUpdateRequest): Promise<TResponse>;
+    deleteAsync(dto: TDeleteRequest): Promise<TResponse>;
+}

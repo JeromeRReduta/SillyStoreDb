@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { ICreateProductRequest } from "../../application/dtos/requests/ICreateProductRequest.ts";
-import { IDeleteProductRequest } from "../../application/dtos/requests/IDeleteProductRequest.ts";
-import { IGetAllProductsRequest } from "../../application/dtos/requests/IGetAllProductsRequest.ts";
-import { IGetOrdersIncludingProductRequest } from "../../application/dtos/requests/IGetOrdersIncludingProductRequest.ts";
-import { IGetProductRequest } from "../../application/dtos/requests/IGetProductRequest.ts";
-import { IOrderResponse } from "../../application/dtos/responses/IOrderResponse.ts";
-import { IProductResponse } from "../../application/dtos/responses/IProductResponse.ts";
+import { ICreateProductRequest } from "../../../SillyStoreCommon/dtos/requests/ICreateProductRequest.ts";
+import { IDeleteProductRequest } from "../../../SillyStoreCommon/dtos/requests/IDeleteProductRequest.ts";
+import { IGetAllProductsRequest } from "../../../SillyStoreCommon/dtos/requests/IGetAllProductsRequest.ts";
+import { IGetOrdersIncludingProductRequest } from "../../../SillyStoreCommon/dtos/requests/IGetOrdersIncludingProductRequest.ts";
+import { IGetProductRequest } from "../../../SillyStoreCommon/dtos/requests/IGetProductRequest.ts";
+import { IOrderResponse } from "../../../SillyStoreCommon/dtos/responses/IOrderResponse.ts";
+import { IProductResponse } from "../../../SillyStoreCommon/dtos/responses/IProductResponse.ts";
 import { IOrderProductDao } from "../../infrastructure/data_access/IOrderProductDao.ts";
 import { IProductDao } from "../../infrastructure/data_access/IProductDao.ts";
 import { IProductRepository } from "./IProductRepository.ts";

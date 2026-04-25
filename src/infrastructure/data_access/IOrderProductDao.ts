@@ -1,12 +1,13 @@
-import { ICreateOrderProductRequest } from "../../application/dtos/requests/ICreateOrderProductRequest.ts";
-import { IDeleteOrderProductRequest } from "../../application/dtos/requests/IDeleteOrderProductRequest.ts";
-import { IGetAllOrderProductsRequest } from "../../application/dtos/requests/IGetAllOrderProductsRequest.ts";
-import { IGetOrderProductRequest } from "../../application/dtos/requests/IGetOrderProductRequest.ts";
-import { IGetOrdersIncludingProductRequest } from "../../application/dtos/requests/IGetOrdersIncludingProductRequest.ts";
-import { IGetProductsInOrderRequest } from "../../application/dtos/requests/IGetProductsInOrderRequest.ts";
-import { IOrderProductResponse } from "../../application/dtos/responses/IOrderProductResponse.ts";
-import { IOrderResponse } from "../../application/dtos/responses/IOrderResponse.ts";
-import { IProductResponse } from "../../application/dtos/responses/IProductResponse.ts";
+import { ICreateOrderProductRequest } from "../../../SillyStoreCommon/dtos/requests/create-requests/ICreateOrderProductRequest.ts";
+import { IDeleteOrderProductRequest } from "../../../SillyStoreCommon/dtos/requests/delete-requests/IDeleteOrderProductRequest.ts";
+import { IGetAllOrderProductsRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetAllOrderProductsRequest.ts";
+import { IGetAllPendingOrdersRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetAllPendingOrdersRequest.ts";
+import { IGetOrderProductRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetOrderProductRequest.ts";
+import { IGetOrdersIncludingProductRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetOrdersIncludingProductRequest.ts";
+import { IGetProductsInOrderRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetProductsInOrderRequest.ts";
+import { IOrderProductResponse } from "../../../SillyStoreCommon/dtos/responses/IOrderProductResponse.ts";
+import { IOrderResponse } from "../../../SillyStoreCommon/dtos/responses/IOrderResponse.ts";
+import { IProductResponse } from "../../../SillyStoreCommon/dtos/responses/IProductResponse.ts";
 import { IGenericDao } from "./IGenericDao.ts";
 
 export interface IOrderProductDao extends IGenericDao<
@@ -22,5 +23,9 @@ export interface IOrderProductDao extends IGenericDao<
 
     getProductsInOrderAsync(
         dto: IGetProductsInOrderRequest,
+    ): Promise<IProductResponse[]>;
+
+    getProductsInCartAsync(
+        dto: IGetAllPendingOrdersRequest,
     ): Promise<IProductResponse[]>;
 }

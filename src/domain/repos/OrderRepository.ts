@@ -1,13 +1,13 @@
-import { IAddProductToOrderRequest } from "../../application/dtos/requests/IAddProductToOrderRequest.ts";
-import { ICreateOrderProductRequest } from "../../application/dtos/requests/ICreateOrderProductRequest.ts";
-import { ICreateOrderRequest } from "../../application/dtos/requests/ICreateOrderRequest.ts";
-import { IDeleteOrderRequest } from "../../application/dtos/requests/IDeleteOrderRequest.ts";
-import { IGetAllOrdersRequest } from "../../application/dtos/requests/IGetAllOrdersRequest.ts";
-import { IGetOrderRequest } from "../../application/dtos/requests/IGetOrderRequest.ts";
-import { IGetProductsInOrderRequest } from "../../application/dtos/requests/IGetProductsInOrderRequest.ts";
-import { IOrderProductResponse } from "../../application/dtos/responses/IOrderProductResponse.ts";
-import { IOrderResponse } from "../../application/dtos/responses/IOrderResponse.ts";
-import { IProductResponse } from "../../application/dtos/responses/IProductResponse.ts";
+import { ICreateOrderProductRequest } from "../../../SillyStoreCommon/dtos/requests/create-requests/ICreateOrderProductRequest.ts";
+import { ICreateOrderRequest } from "../../../SillyStoreCommon/dtos/requests/create-requests/ICreateOrderRequest.ts";
+import { IDeleteOrderRequest } from "../../../SillyStoreCommon/dtos/requests/delete-requests/IDeleteOrderRequest.ts";
+import { IGetAllOrdersRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetAllOrdersRequest.ts";
+import { IGetAllPendingOrdersRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetAllPendingOrdersRequest.ts";
+import { IGetOrderRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetOrderRequest.ts";
+import { IGetProductsInOrderRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetProductsInOrderRequest.ts";
+import { IOrderProductResponse } from "../../../SillyStoreCommon/dtos/responses/IOrderProductResponse.ts";
+import { IOrderResponse } from "../../../SillyStoreCommon/dtos/responses/IOrderResponse.ts";
+import { IProductResponse } from "../../../SillyStoreCommon/dtos/responses/IProductResponse.ts";
 import { IOrderDao } from "../../infrastructure/data_access/IOrderDao.ts";
 import { IOrderProductDao } from "../../infrastructure/data_access/IOrderProductDao.ts";
 import { IOrderRepository } from "./IOrderRepository.ts";
@@ -40,8 +40,8 @@ export default class OrderRepository implements IOrderRepository {
         throw new Error("Method not implemented.");
     }
 
-    async addProductToOrderAsync(
-        dto: IAddProductToOrderRequest,
+    async createOrderProductAsync(
+        dto: ICreateOrderProductRequest,
     ): Promise<IOrderProductResponse> {
         const createOrderProductRequest: ICreateOrderProductRequest = dto; // done in case the two requests are de-synced for some reason
         return await this.orderProductDao.createAsync(
@@ -53,5 +53,11 @@ export default class OrderRepository implements IOrderRepository {
         dto: IGetProductsInOrderRequest,
     ): Promise<IProductResponse[]> {
         return this.orderProductDao.getProductsInOrderAsync(dto);
+    }
+
+    async getProductsInCartAsync(
+        dto: IGetAllPendingOrdersRequest,
+    ): Promise<IProductResponse[]> {
+        return this.orderProductDao.getProductsInCartAsync(dto);
     }
 }

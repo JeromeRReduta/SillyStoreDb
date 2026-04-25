@@ -20,8 +20,9 @@ const orderMapper: IDataMapper<IPgOrder, IOrderResponse> = ({
     id,
     date,
     user_id,
+    status,
 }) => {
-    return { id, dateStr: date, userId: user_id };
+    return { id, dateStr: date, userId: user_id, status };
 };
 
 const productMapper: IDataMapper<IPgProduct, IProductResponse> = ({

@@ -1,12 +1,13 @@
-import { IAddProductToOrderRequest } from "../../application/dtos/requests/IAddProductToOrderRequest.ts";
-import { ICreateOrderRequest } from "../../application/dtos/requests/ICreateOrderRequest.ts";
-import { IDeleteOrderRequest } from "../../application/dtos/requests/IDeleteOrderRequest.ts";
-import { IGetAllOrdersRequest } from "../../application/dtos/requests/IGetAllOrdersRequest.ts";
-import { IGetOrderRequest } from "../../application/dtos/requests/IGetOrderRequest.ts";
-import { IGetProductsInOrderRequest } from "../../application/dtos/requests/IGetProductsInOrder.ts";
-import { IOrderProductResponse } from "../../application/dtos/responses/IOrderProductResponse.ts";
-import { IOrderResponse } from "../../application/dtos/responses/IOrderResponse.ts";
-import { IProductResponse } from "../../application/dtos/responses/IProductResponse.ts";
+import { ICreateOrderProductRequest } from "../../../SillyStoreCommon/dtos/requests/create-requests/ICreateOrderProductRequest.ts";
+import { ICreateOrderRequest } from "../../../SillyStoreCommon/dtos/requests/create-requests/ICreateOrderRequest.ts";
+import { IDeleteOrderRequest } from "../../../SillyStoreCommon/dtos/requests/delete-requests/IDeleteOrderRequest.ts";
+import { IGetAllOrdersRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetAllOrdersRequest.ts";
+import { IGetAllPendingOrdersRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetAllPendingOrdersRequest.ts";
+import { IGetOrderRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetOrderRequest.ts";
+import { IGetProductsInOrderRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetProductsInOrderRequest.ts";
+import { IOrderProductResponse } from "../../../SillyStoreCommon/dtos/responses/IOrderProductResponse.ts";
+import { IOrderResponse } from "../../../SillyStoreCommon/dtos/responses/IOrderResponse.ts";
+import { IProductResponse } from "../../../SillyStoreCommon/dtos/responses/IProductResponse.ts";
 import { IGenericRepository } from "./ICrudRepository.ts";
 
 export interface IOrderRepository extends IGenericRepository<
@@ -16,10 +17,14 @@ export interface IOrderRepository extends IGenericRepository<
     IDeleteOrderRequest,
     IOrderResponse
 > {
-    addProductToOrderAsync(
-        dto: IAddProductToOrderRequest,
+    createOrderProductAsync(
+        dto: ICreateOrderProductRequest,
     ): Promise<IOrderProductResponse>;
     getProductsInOrderAsync(
         dto: IGetProductsInOrderRequest,
+    ): Promise<IProductResponse[]>;
+
+    getProductsInCartAsync(
+        dto: IGetAllPendingOrdersRequest,
     ): Promise<IProductResponse[]>;
 }
