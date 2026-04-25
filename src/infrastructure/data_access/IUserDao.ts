@@ -3,13 +3,15 @@ import { IDeleteUserRequest } from "../../../SillyStoreCommon/dtos/requests/dele
 import { IGetAllUsersRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetAllUsersRequest.ts";
 import { IGetUserByCredentialsRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetUserByCredentialsRequest.ts";
 import { IGetUserRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetUserRequest.ts";
+import { IUpdateUserRequest } from "../../../SillyStoreCommon/dtos/requests/update-requests/IUpdateUserRequest.ts";
 import { IUserResponse } from "../../../SillyStoreCommon/dtos/responses/IUserResponse.ts";
-import { IGenericDao } from "./IGenericDao.ts";
+import { ICrudDao } from "./ICrudDao.ts";
 
-export interface IUserDao extends IGenericDao<
+export interface IUserDao extends ICrudDao<
     ICreateUserRequest,
     IGetAllUsersRequest,
     IGetUserRequest,
+    IUpdateUserRequest,
     IDeleteUserRequest,
     IUserResponse
 > {

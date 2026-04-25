@@ -3,13 +3,15 @@ import { IDeleteOrderRequest } from "../../../SillyStoreCommon/dtos/requests/del
 import { IGetAllOrdersRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetAllOrdersRequest.ts";
 import { IGetAllPendingOrdersRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetAllPendingOrdersRequest.ts";
 import { IGetOrderRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetOrderRequest.ts";
+import { IUpdateOrderRequest } from "../../../SillyStoreCommon/dtos/requests/update-requests/IUpdateOrderRequest.ts";
 import { IOrderResponse } from "../../../SillyStoreCommon/dtos/responses/IOrderResponse.ts";
-import { IGenericDao } from "./IGenericDao.ts";
+import { ICrudDao } from "./ICrudDao.ts";
 
-export interface IOrderDao extends IGenericDao<
+export interface IOrderDao extends ICrudDao<
     ICreateOrderRequest,
     IGetAllOrdersRequest,
     IGetOrderRequest,
+    IUpdateOrderRequest,
     IDeleteOrderRequest,
     IOrderResponse
 > {
