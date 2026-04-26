@@ -12,8 +12,8 @@ import { IProductResponse } from "../../../SillyStoreCommon/dtos/responses/IProd
 import { IProductWithQuantityResponse } from "../../../SillyStoreCommon/dtos/responses/IProductWithQuantityResponse.ts";
 import { IOrderDao } from "../../infrastructure/data_access/IOrderDao.ts";
 import { IOrderProductDao } from "../../infrastructure/data_access/IOrderProductDao.ts";
-import CrudRepositories from "./CrudRepositories.ts";
 import { IOrderRepository } from "./IOrderRepository.ts";
+import CrudRepositories from "./CrudRepositories.ts";
 
 export default class OrderRepository implements IOrderRepository {
     private orderDao: IOrderDao;

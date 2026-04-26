@@ -63,6 +63,7 @@ orderRouter
     .post(requireBody(["productId", "quantity"]), tryAddProductToOrderAsync);
 
 orderRouter.route("/:id/cart").get(tryGetProductsInOrder(true));
+
 export default orderRouter;
 
 // const productRouter: Router = express.Router();
