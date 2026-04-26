@@ -14,6 +14,7 @@ interface CrudRepositoriesInfo<TRequest, TResponse> {
 
 /** Utility methods for CRUD repositories */
 export default class CrudRepositories {
+    // note: choosing to do a bunch of util funcs instead of base class b/c some repos may use >1 dao
     static async createAsync<TCreateRequest, TResponse>({
         dao,
         dto,

@@ -2,6 +2,7 @@ import { ICreateOrderProductRequest } from "../../../SillyStoreCommon/dtos/reque
 import { IDeleteOrderProductRequest } from "../../../SillyStoreCommon/dtos/requests/delete-requests/IDeleteOrderProductRequest.ts";
 import { IGetAllOrderProductsRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetAllOrderProductsRequest.ts";
 import { IGetAllPendingOrdersRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetAllPendingOrdersRequest.ts";
+import { IGetAllProductsRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetAllProductsRequest.ts";
 import { IGetOrderProductRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetOrderProductRequest.ts";
 import { IGetOrdersIncludingProductRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetOrdersIncludingProductRequest.ts";
 import { IGetProductsInOrderRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetProductsInOrderRequest.ts";
@@ -9,6 +10,7 @@ import { IUpdateOrderProductRequest } from "../../../SillyStoreCommon/dtos/reque
 import { IOrderProductResponse } from "../../../SillyStoreCommon/dtos/responses/IOrderProductResponse.ts";
 import { IOrderResponse } from "../../../SillyStoreCommon/dtos/responses/IOrderResponse.ts";
 import { IProductResponse } from "../../../SillyStoreCommon/dtos/responses/IProductResponse.ts";
+import { IProductWithQuantityResponse } from "../../../SillyStoreCommon/dtos/responses/IProductWithQuantityResponse.ts";
 import { ICrudDao } from "./ICrudDao.ts";
 
 export interface IOrderProductDao extends ICrudDao<
@@ -27,7 +29,7 @@ export interface IOrderProductDao extends ICrudDao<
         dto: IGetProductsInOrderRequest,
     ): Promise<IProductResponse[]>;
 
-    getProductsInCartAsync(
-        dto: IGetAllPendingOrdersRequest,
-    ): Promise<IProductResponse[]>;
+    getProductsWithQuantitiesAsync(
+        dto: IGetProductsInOrderRequest,
+    ): Promise<IProductWithQuantityResponse[]>;
 }

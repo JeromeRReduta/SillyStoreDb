@@ -31,6 +31,7 @@ import { IGetAllOrdersRequest } from "../../SillyStoreCommon/dtos/requests/get-r
 import { IUserDao } from "../infrastructure/data_access/IUserDao.ts";
 import { IGetAllProductsRequest } from "../../SillyStoreCommon/dtos/requests/get-requests/IGetAllProductsRequest.ts";
 import { IGetProductRequest } from "../../SillyStoreCommon/dtos/requests/get-requests/IGetProductRequest.ts";
+import { IUserRepository } from "../domain/repos/IUserRepository.ts";
 
 const app = express();
 app.use(
@@ -102,8 +103,18 @@ interface ITestDaos {
     readonly orderProductDao?: IOrderProductDao;
 }
 
+interface ITestRepos {
+    readonly orders?: IOrderRepository;
+    readonly products?: IProductRepository;
+    readonly users?: IUserRepository;
+}
+
 const testDaos: ITestDaos = {
     products: new PgProductDao(db),
+};
+
+const testRepos: ITestRepos = {
+    products: new ProductRepository(),
 };
 
 app.route("/products").get(async (req, res, next) => {
