@@ -36,6 +36,7 @@ import PgUserDao from "../infrastructure/psql/data_access/PgUserDao.ts";
 import requireBody from "../application/middleware/RequireBody.ts";
 import { IUserResponse } from "../../SillyStoreCommon/dtos/responses/IUserResponse.ts";
 import { TokenResponse } from "../../SillyStoreCommon/dtos/responses/TokenResponse.ts";
+import UserRepository from "../domain/repos/UserRepository.ts";
 
 const app = express();
 app.use(
@@ -73,6 +74,7 @@ const testRepos: ITestRepos = {
         orderProductDao: testDaos.ordersProducts!,
         productDao: testDaos.products!,
     }),
+    users: new UserRepository(testDaos.users!),
 };
 
 app.route("/products").get(async (req, res, next) => {
@@ -92,7 +94,9 @@ app.route("/products/:id").get(async (req, res, next) => {
 app.route("/users/register").post(
     requireBody(["username", "email", "pw"]),
     async (req, res, next) => {
-        const user: IUserResponse = await testDaos.users!.createAsync(req.body);
+        const user: IUserResponse = await testRepos.users!.createAsync(
+            req.body,
+        );
         const token: TokenResponse = tokenOps.create({ id: user.id });
         res.status(HttpStatus.CREATED).send(token);
     },
@@ -100,7 +104,7 @@ app.route("/users/register").post(
 
 app.route("/users/login").post(async (req, res, next) => {
     const user: IUserResponse | null =
-        await testDaos.users!.getByCredentialsAsync(req.body);
+        await testRepos.users!.getByCredentialsAsync(req.body);
     const token: TokenResponse | null = user
         ? tokenOps.create({ id: user.id })
         : null;
