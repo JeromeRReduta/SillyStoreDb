@@ -111,11 +111,14 @@ interface ITestRepos {
 
 const testDaos: ITestDaos = {
     products: new PgProductDao(db),
-    ordersProducts: new PgOrderProductDao(db);
+    ordersProducts: new PgOrderProductDao(db),
 };
 
 const testRepos: ITestRepos = {
-    products: new ProductRepository({orderProductDao: testDaos.ordersProducts!, productDao: testDaos.products!}),
+    products: new ProductRepository({
+        orderProductDao: testDaos.ordersProducts!,
+        productDao: testDaos.products!,
+    }),
 };
 
 app.route("/products").get(async (req, res, next) => {
