@@ -1,3 +1,5 @@
+import { IGetAllPendingOrdersRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetAllPendingOrdersRequest.ts";
+import { IGetProductsInOrderRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetProductsInOrderRequest.ts";
 import { IAddProductToOrderRequest } from "../../../SillyStoreCommon/dtos/requests/IAddProductToOrderRequest.ts";
 import { ICreateOrderRequest } from "../../../SillyStoreCommon/dtos/requests/ICreateOrderRequest.ts";
 import { IGetAllOrdersRequest } from "../../../SillyStoreCommon/dtos/requests/IGetAllOrdersRequest.ts";
@@ -7,6 +9,7 @@ import { IGetProductsInOrderRequest } from "../../../SillyStoreCommon/dtos/reque
 import { IOrderProductResponse } from "../../../SillyStoreCommon/dtos/responses/IOrderProductResponse.ts";
 import { IOrderResponse } from "../../../SillyStoreCommon/dtos/responses/IOrderResponse.ts";
 import { IProductResponse } from "../../../SillyStoreCommon/dtos/responses/IProductResponse.ts";
+import { IProductWithQuantityResponse } from "../../../SillyStoreCommon/dtos/responses/IProductWithQuantityResponse.ts";
 import { IOrderRepository } from "../../domain/repos/IOrderRepository.ts";
 import HttpError from "../../errors/HttpError.ts";
 import { HttpStatus } from "../http/HttpStatus.ts";
@@ -63,7 +66,7 @@ export default class ClientOrderService implements IClientOrderService {
                 "You do not own this order!",
             );
         }
-        return await this.repo.addProductToOrderAsync(dto);
+        return await this.repo.createOrderProductAsync(dto);
     }
 
     async getProductsInOrderAsync(
@@ -86,14 +89,25 @@ export default class ClientOrderService implements IClientOrderService {
         return await this.repo.getProductsInOrderAsync(dto);
     }
 
-    async getProductsInCartAsync(
+    async getPendingOrderAsync(
         dto: IGetAllPendingOrdersRequest,
-    ): Promise<IProductResponse[] | null> {
-        const cart: (IProductResponse & { quantity: number })[] =
-            await this.repo.getProductsInCartAsync(dto);
-        if (cart.length === 0) {
-            return null;
+    ): Promise<IOrderResponse | null> {
+        const found: IOrderResponse[] =
+            await this.repo.getAllPendingOrdersAsync(dto);
+        if (found.length > 1) {
+            throw new HttpError(
+                HttpStatus.FORBIDDEN,
+                "Should not have > 1 pending order! Are you an admin?",
+            );
         }
-        return cart;
+        return found.length > 0 ? found[0] : null;
+    }
+
+    async getProductsInCartAsync(
+        dto: IGetProductsInOrderRequest,
+    ): Promise<IProductWithQuantityResponse[]> {
+        const productsWithQuantities: IProductWithQuantityResponse[] =
+            await this.repo.getProductsWithQuantitiesInOrderAsync(dto);
+        return productsWithQuantities;
     }
 }

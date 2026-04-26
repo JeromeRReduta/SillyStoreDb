@@ -25,11 +25,11 @@ export interface IClientOrderService {
         dto: IGetProductsInOrderRequest,
     ): Promise<IProductResponse[]>;
 
-    getMyPendingOrderAsync( // note - repo call gets all pending orders, filtered by user. For client, this will return 0 or 1 order
+    getPendingOrderAsync( // note - repo call gets all pending orders, filtered by user. For client, this will return 0 or 1 order
         dto: IGetAllPendingOrdersRequest,
-    ): Promise<IProductResponse[] | null>;
+    ): Promise<IOrderResponse | null>;
 
-    getProductsInMyCartAsync(
+    getProductsInCartAsync(
         dto: IGetProductsInOrderRequest,
     ): Promise<IProductWithQuantityResponse[]>;
 }
