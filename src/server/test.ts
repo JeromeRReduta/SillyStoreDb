@@ -32,6 +32,10 @@ import { IUserDao } from "../infrastructure/data_access/IUserDao.ts";
 import { IGetAllProductsRequest } from "../../SillyStoreCommon/dtos/requests/get-requests/IGetAllProductsRequest.ts";
 import { IGetProductRequest } from "../../SillyStoreCommon/dtos/requests/get-requests/IGetProductRequest.ts";
 import { IUserRepository } from "../domain/repos/IUserRepository.ts";
+import PgUserDao from "../infrastructure/psql/data_access/PgUserDao.ts";
+import requireBody from "../application/middleware/RequireBody.ts";
+import { IUserResponse } from "../../SillyStoreCommon/dtos/responses/IUserResponse.ts";
+import { TokenResponse } from "../../SillyStoreCommon/dtos/responses/TokenResponse.ts";
 
 const app = express();
 app.use(
@@ -44,57 +48,6 @@ app.use(
     }),
 );
 const { db } = apiConfigs;
-const { orderMapper, productMapper, orderProductMapper } = pgDataMappers;
-const pgOrderDao: IOrderDao = new PgOrderDao(db, orderMapper);
-const pgOrderProductDao: IOrderProductDao = new PgOrderProductDao({
-    db,
-    orderMapper,
-    productMapper,
-    orderProductMapper,
-});
-const orderRepo: IOrderRepository = new OrderRepository(
-    pgOrderDao,
-    pgOrderProductDao,
-);
-const { clientOrderService, clientProductService, clientUserService } =
-    apiConfigs.services;
-
-// const orderDao: IOrderDao = new PgOrderDao(backendConfigs.db, pgDataMappers.orderMapper)
-// orderRouter.route("/cart")
-//     .get(async(req, res, next) => {
-//         const db:
-
-//     })
-
-app.route("/orders/cart").get(async (req, res, next) => {
-    const orders: IProductResponse[] =
-        await orderProductDao.getProductsInCartAsync({
-            userId: 1,
-        });
-    res.status(HttpStatus.OK).send(orders);
-});
-app.route("/orders/:id").get(async (req, res, next) => {
-    const userId: number = (
-        tokenOps.verify(req.cookies.token) as { id: number }
-    ).id;
-    const orderId: number = parseInt(req.params.id);
-    const order: IOrderResponse | null = await clientOrderService.getAsync({
-        orderId,
-        userId,
-    });
-    if (!order) {
-        throw new HttpError(HttpStatus.NOT_FOUND, "NOT FOUND");
-    }
-    res.status(HttpStatus.OK).send(order);
-});
-
-app.route("/orders").get(async (req, res, next) => {
-    const dto: IGetAllOrdersRequest = {
-        userId: (tokenOps.verify(req.cookies.token) as { id: number }).id,
-    };
-    const orders: IOrderResponse[] = await pgOrderDao.getAllAsync(dto);
-    res.status(HttpStatus.OK).send(orders);
-});
 
 interface ITestDaos {
     readonly orders?: IOrderDao;
@@ -112,6 +65,7 @@ interface ITestRepos {
 const testDaos: ITestDaos = {
     products: new PgProductDao(db),
     ordersProducts: new PgOrderProductDao(db),
+    users: new PgUserDao(db),
 };
 
 const testRepos: ITestRepos = {
@@ -135,59 +89,25 @@ app.route("/products/:id").get(async (req, res, next) => {
     res.status(HttpStatus.OK).send(product);
 });
 
-// app.route("/orders/:id/products").get(async (req, res, next) => {
-//     try {
-//         const products: IProductResponse[] =
-//             await clientOrderService.getProductsInOrderAsync({
-//                 orderId: parseInt(req.params.id),
-//                 userId: tokenOps.verify(req.cookies.token).id,
-//                 includingQuantities: true,
-//             });
-//         res.status(HttpStatus.OK).send(products);
-//     } catch (e) {
-//         next(e);
-//     }
-// });
-// app.route("/orders/:id/products").post(
-//     requireSignedIn("CLIENT"),
-//     async (req, res, next) => {
-//         try {
-//             const dto: IAddProductToOrderRequest = {
-//                 orderId: parseInt(req.params.id),
-//                 productId: req.body.productId,
-//                 quantity: req.body.quantity,
-//                 userId: req.userId!,
-//             };
-//             const created: IOrderProductResponse =
-//                 await clientOrderService.addProductToOrderAsync(dto);
-//             res.status(HttpStatus.CREATED).send(created); // TODO - test
-//             // const created: I
-//         } catch (e) {
-//             next(e);
-//         }
-//     },
-// );
+app.route("/users/register").post(
+    requireBody(["username", "email", "pw"]),
+    async (req, res, next) => {
+        const user: IUserResponse = await testDaos.users!.createAsync(req.body);
+        const token: TokenResponse = tokenOps.create({ id: user.id });
+        res.status(HttpStatus.CREATED).send(token);
+    },
+);
 
-// app.use("/users", userRouter);
-// app.use(psqlErrorHandler, finalErrorHandler);
+app.route("/users/login").post(async (req, res, next) => {
+    const user: IUserResponse | null =
+        await testDaos.users!.getByCredentialsAsync(req.body);
+    const token: TokenResponse | null = user
+        ? tokenOps.create({ id: user.id })
+        : null;
+    res.status(HttpStatus.OK).send(token);
+});
 
-// app.listen(3000, async () => {
-//     await db.connect();
-//     backendLogger.info("Server is listening on port 3000...");
-// });
-// const orderDao: IOrderDao = new PgOrderDao(db, orderMapper);
-
-// const orderProductDao: IOrderProductDao = new PgOrderProductDao({
-//     db,
-//     orderMapper: pgDataMappers.orderMapper,
-//     orderProductMapper: pgDataMappers.orderProductMapper,
-//     productMapper: pgDataMappers.productMapper,
-// });
-// const productDao: IProductDao = new PgProductDao(
-//     db,
-//     pgDataMappers.productMapper,
-// );
-// const productRepo: IProductRepository = new ProductRepository({
-//     orderProductDao,
-//     productDao,
-// });
+app.listen(3000, async () => {
+    await db.connect();
+    backendLogger.info("Server is listening on port 3000...");
+});

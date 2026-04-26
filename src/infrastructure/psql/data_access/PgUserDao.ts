@@ -1,33 +1,23 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Client, Pool, QueryConfig } from "pg";
-import { ICreateUserRequest } from "../../../../SillyStoreCommon/dtos/requests/ICreateUserRequest.ts";
-import { IDeleteUserRequest } from "../../../../SillyStoreCommon/dtos/requests/IDeleteUserRequest.ts";
-import { IGetAllUsersRequest } from "../../../../SillyStoreCommon/dtos/requests/IGetAllUsersRequest.ts";
-import { IGetUserByCredentialsRequest } from "../../../../SillyStoreCommon/dtos/requests/IGetUserByCredentialsRequest.ts";
-import { IGetUserRequest } from "../../../../SillyStoreCommon/dtos/requests/IGetUserRequest.ts";
+import * as bcrypt from "bcrypt";
+import { ICreateUserRequest } from "../../../../SillyStoreCommon/dtos/requests/create-requests/ICreateUserRequest.ts";
+import { IDeleteUserRequest } from "../../../../SillyStoreCommon/dtos/requests/delete-requests/IDeleteUserRequest.ts";
+import { IGetUserByCredentialsRequest } from "../../../../SillyStoreCommon/dtos/requests/get-requests/IGetUserByCredentialsRequest.ts";
+import { IGetUserRequest } from "../../../../SillyStoreCommon/dtos/requests/get-requests/IGetUserRequest.ts";
+import { IUpdateUserRequest } from "../../../../SillyStoreCommon/dtos/requests/update-requests/IUpdateUserRequest.ts";
 import { IUserResponse } from "../../../../SillyStoreCommon/dtos/responses/IUserResponse.ts";
-import { IDataMapper } from "../../../application/data_mapping/DataMapper.ts";
-import backendLogger from "../../../configs/BackendLogger.ts";
 import { IUserDao } from "../../data_access/IUserDao.ts";
 import { IPgUser } from "../entities/IPgUser.ts";
-import * as bcrypt from "bcrypt";
+import PgDaos from "../../data_access/PgDaos.ts";
+import backendLogger from "../../../configs/BackendLogger.ts";
 
 export default class PgUserDao implements IUserDao {
     private db: Client | Pool;
-    private dataMapper: IDataMapper<IPgUser, IUserResponse>;
     private numSaltRounds: number;
 
-    constructor({
-        db,
-        dataMapper,
-        numSaltRounds = 10,
-    }: {
-        db: Client | Pool;
-        dataMapper: IDataMapper<IPgUser, IUserResponse>;
-        numSaltRounds?: number;
-    }) {
+    constructor(db: Client | Pool, numSaltRounds: number = 10) {
         this.db = db;
-        this.dataMapper = dataMapper;
         this.numSaltRounds = numSaltRounds;
     }
 
@@ -39,29 +29,38 @@ export default class PgUserDao implements IUserDao {
         const pwHash: string = await bcrypt.hash(pw, this.numSaltRounds);
         const sql: QueryConfig = {
             text: `
-                INSERT INTO users (username, pw_hash, email)
-                VALUES ($1, $2, $3)
-                RETURNING *
-            `,
+                    INSERT INTO users (username, pw_hash, email)
+                    VALUES ($1, $2, $3)
+                    RETURNING *
+                `,
             values: [username, pwHash, email],
         };
-        backendLogger.debug("running sql: ", sql);
-        const {
-            rows: [row],
-        } = await this.db.query(sql);
-        backendLogger.debug("result: ", row);
-        return this.dataMapper(row);
+        const rows: IUserResponse[] = await PgDaos.queryAsync(
+            this.db,
+            sql,
+            PgDaos.userMapper,
+        );
+        if (rows.length !== 1) {
+            throw new Error("Error - only 1 entry should have been created!");
+        }
+        return rows[0];
     }
 
-    async getAllAsync(_dto: IGetAllUsersRequest): Promise<IUserResponse[]> {
+    async getAllAsync(dto: object): Promise<IUserResponse[]> {
         throw new Error("Method not implemented.");
     }
-    async getAsync(_dto: IGetUserRequest): Promise<IUserResponse | null> {
+
+    async getAsync(dto: IGetUserRequest): Promise<IUserResponse | null> {
         throw new Error("Method not implemented.");
     }
-    async deleteAsync(_dto: IDeleteUserRequest): Promise<IUserResponse | null> {
+    async updateAsync(dto: IUpdateUserRequest): Promise<IUserResponse | null> {
         throw new Error("Method not implemented.");
     }
+
+    async deleteAsync(dto: IDeleteUserRequest): Promise<IUserResponse | null> {
+        throw new Error("Method not implemented.");
+    }
+
     async getByCredentialsAsync({
         username,
         pw,
@@ -69,25 +68,26 @@ export default class PgUserDao implements IUserDao {
     }: IGetUserByCredentialsRequest): Promise<IUserResponse | null> {
         const sql: QueryConfig = {
             text: `
-                SELECT * FROM users
-                WHERE username = $1
-                AND email = $2
-            `,
+                    SELECT * FROM users
+                    WHERE username = $1
+                    AND email = $2
+                `,
             values: [username, email],
         };
-        backendLogger.debug("running sql: ", sql);
+        backendLogger.debug("sql: ", sql);
         const { rows } = await this.db.query(sql);
         backendLogger.debug("result: ", rows);
-        for (const row of rows) {
-            const hasMatchingPassword: boolean = await bcrypt.compare(
-                pw,
-                row.pw_hash,
-            );
-            if (hasMatchingPassword) {
-                return this.dataMapper(row);
-            }
+        if (rows.length > 1) {
+            throw new Error("error - should only find 0 or 1 users");
         }
-        backendLogger.debug("no match found!");
-        return null;
+        if (rows.length === 0) {
+            return null;
+        }
+        const found: IPgUser = rows[0];
+        const hasMatchingPassword: boolean = await bcrypt.compare(
+            pw,
+            found.pw_hash,
+        );
+        return hasMatchingPassword ? PgDaos.userMapper(found) : null;
     }
 }
