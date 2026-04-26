@@ -14,9 +14,16 @@ import PgDaos from "../../data_access/PgDaos.ts";
 
 export default class PgProductDao implements IProductDao {
     private db: Client | Pool;
+    private formattedProductSql: string;
 
     constructor(db: Client | Pool) {
         this.db = db;
+        this.formattedProductSql = `
+            id,
+            title,
+            description,
+            price::decimal::float8
+        `;
     }
 
     async createAsync(_dto: ICreateProductRequest): Promise<IProductResponse> {
@@ -30,10 +37,7 @@ export default class PgProductDao implements IProductDao {
             // thanks https://www.postgresql.org/docs/9.4/datatype-money.html
             text: `
                 SELECT
-                    id,
-                    title,
-                    description,
-                    price::decimal::float8
+                    ${this.formattedProductSql}
                 FROM products
                 `,
         };
@@ -46,10 +50,7 @@ export default class PgProductDao implements IProductDao {
         const sql: QueryConfig = {
             text: `
                 SELECT
-                    id,
-                    title,
-                    description,
-                    price::decimal::float8
+                    ${this.formattedProductSql}
                 FROM products
                 WHERE id = $1
             `,
