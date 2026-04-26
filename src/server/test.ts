@@ -100,7 +100,7 @@ interface ITestDaos {
     readonly orders?: IOrderDao;
     readonly products?: IProductDao;
     readonly users?: IUserDao;
-    readonly orderProductDao?: IOrderProductDao;
+    readonly ordersProducts?: IOrderProductDao;
 }
 
 interface ITestRepos {
@@ -111,23 +111,24 @@ interface ITestRepos {
 
 const testDaos: ITestDaos = {
     products: new PgProductDao(db),
+    ordersProducts: new PgOrderProductDao(db);
 };
 
 const testRepos: ITestRepos = {
-    products: new ProductRepository(),
+    products: new ProductRepository({orderProductDao: testDaos.ordersProducts!, productDao: testDaos.products!}),
 };
 
 app.route("/products").get(async (req, res, next) => {
     const dto: IGetAllProductsRequest = {};
     const products: IProductResponse[] =
-        await testDaos.products!.getAllAsync(dto);
+        await testRepos.products!.getAllAsync(dto);
     res.status(HttpStatus.OK).send(products);
 });
 
 app.route("/products/:id").get(async (req, res, next) => {
     const dto: IGetProductRequest = { id: parseInt(req.params.id) };
     const product: IProductResponse | null =
-        await testDaos.products!.getAsync(dto);
+        await testRepos.products!.getAsync(dto);
     res.status(HttpStatus.OK).send(product);
 });
 
