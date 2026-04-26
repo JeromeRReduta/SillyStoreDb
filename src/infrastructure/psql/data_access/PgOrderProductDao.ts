@@ -80,9 +80,9 @@ export default class PgOrderProductDao implements IOrderProductDao {
                 JOIN orders AS o
                     ON op.order_id = o.id
                 WHERE op.product_id = $1
-                    ${isClient ? "WHERE user_id = $2" : ""}
+                    ${isClient ? "AND user_id = $2" : ""}
             `,
-            values: isClient ? [productId] : [productId, userId],
+            values: isClient ? [productId, userId] : [productId],
         };
         return await PgDaos.queryAsync(this.db, sql, PgDaos.orderMapper);
     }
