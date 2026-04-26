@@ -31,4 +31,8 @@ export interface IOrderRepository extends ICrudRepository<
     getProductsWithQuantitiesInOrderAsync(
         dto: IGetProductsInOrderRequest,
     ): Promise<IProductWithQuantityResponse[]>;
+
+    getAllPendingOrdersAsync(
+        getPendingOrderRequest: IGetAllPendingOrdersRequest,
+    ): Promise<IOrderResponse[]>;
 }

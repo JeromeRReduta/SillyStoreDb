@@ -1,26 +1,28 @@
 import { Client, Pool, QueryConfig } from "pg";
-
-import { IOrderDao } from "../../data_access/IOrderDao.ts";
-import { IDataMapper } from "../../../application/data_mapping/DataMapper.ts";
-import { IPgOrder } from "../entities/IPgOrder.ts";
-import backendLogger from "../../../configs/BackendLogger.ts";
-import { ICreateOrderRequest } from "../../../../SillyStoreCommon/dtos/requests/ICreateOrderRequest.ts";
-import { IDeleteOrderRequest } from "../../../../SillyStoreCommon/dtos/requests/IDeleteOrderRequest.ts";
-import { IGetAllOrdersRequest } from "../../../../SillyStoreCommon/dtos/requests/IGetAllOrdersRequest.ts";
-import { IGetOrderRequest } from "../../../../SillyStoreCommon/dtos/requests/IGetOrderRequest.ts";
+import { ICreateOrderRequest } from "../../../../SillyStoreCommon/dtos/requests/create-requests/ICreateOrderRequest.ts";
+import { IDeleteOrderRequest } from "../../../../SillyStoreCommon/dtos/requests/delete-requests/IDeleteOrderRequest.ts";
+import { IGetAllOrdersRequest } from "../../../../SillyStoreCommon/dtos/requests/get-requests/IGetAllOrdersRequest.ts";
+import { IGetAllPendingOrdersRequest } from "../../../../SillyStoreCommon/dtos/requests/get-requests/IGetAllPendingOrdersRequest.ts";
+import { IGetOrderRequest } from "../../../../SillyStoreCommon/dtos/requests/get-requests/IGetOrderRequest.ts";
 import { IOrderResponse } from "../../../../SillyStoreCommon/dtos/responses/IOrderResponse.ts";
-import { IGetAllPendingOrdersRequest } from "../../../../SillyStoreCommon/dtos/requests/IGetAllPendingOrdersRequest.ts";
+import backendLogger from "../../../configs/BackendLogger.ts";
+import { IOrderDao } from "../../data_access/IOrderDao.ts";
+import { IUpdateOrderRequest } from "../../../../SillyStoreCommon/dtos/requests/update-requests/IUpdateOrderRequest.ts";
+import PgDaos from "../../data_access/PgDaos.ts";
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
 export default class PgOrderDao implements IOrderDao {
     private db: Client | Pool;
-    private dataMapper: IDataMapper<IPgOrder, IOrderResponse>;
+    private formattedOrderSql: string;
 
-    constructor(
-        db: Client | Pool,
-        dataMapper: IDataMapper<IPgOrder, IOrderResponse>,
-    ) {
+    constructor(db: Client | Pool) {
         this.db = db;
-        this.dataMapper = dataMapper;
+        this.formattedOrderSql = `
+            id,
+            TO_CHAR(date, 'yyyy-mm-dd') AS date,
+            user_id,
+            status
+        `;
     }
 
     async createAsync({
@@ -32,18 +34,19 @@ export default class PgOrderDao implements IOrderDao {
                 INSERT INTO orders (date, user_id)
                 VALUES ($1, $2)
                 RETURNING
-                    id,
-                    TO_CHAR(date, 'yyyy-mm-dd') AS date,
-                    user_id
+                    $3
             `,
-            values: [dateStr, userId],
+            values: [dateStr, userId, this.formattedOrderSql],
         };
-        backendLogger.debug("sql: ", sql);
-        const {
-            rows: [row],
-        } = await this.db.query(sql);
-        backendLogger.debug("result: ", row);
-        return this.dataMapper(row);
+        const rows: IOrderResponse[] = await PgDaos.queryAsync(
+            this.db,
+            sql,
+            PgDaos.orderMapper,
+        );
+        if (rows.length !== 1) {
+            throw new Error("Error - only 1 entry should have been created!");
+        }
+        return rows[0];
     }
 
     async getAllAsync({
@@ -52,20 +55,14 @@ export default class PgOrderDao implements IOrderDao {
         const isClient: boolean = userId !== null;
         const sql: QueryConfig = {
             text: `
-                SELECT                  
-                    id,
-                    TO_CHAR(date, 'yyyy-mm-dd') AS date,
-                    user_id,
-                    status
+                SELECT
+                ${this.formattedOrderSql}
                 FROM orders
                 ${isClient ? "WHERE user_id = $1" : ""}
             `,
             values: isClient ? [userId] : [],
         };
-        backendLogger.debug("sql: ", sql);
-        const { rows } = await this.db.query(sql);
-        backendLogger.debug("result: ", rows);
-        return rows.map(this.dataMapper);
+        return await PgDaos.queryAsync(this.db, sql, PgDaos.orderMapper);
     }
 
     async getAsync({
@@ -73,25 +70,29 @@ export default class PgOrderDao implements IOrderDao {
     }: IGetOrderRequest): Promise<IOrderResponse | null> {
         const sql: QueryConfig = {
             text: `
-                SELECT 
-                    id,
-                    TO_CHAR(date, 'yyyy-mm-dd') AS date,
-                    user_id,
-                    status
+                SELECT
+                ${this.formattedOrderSql}
                 FROM orders
                 WHERE id = $1
             `,
             values: [orderId],
         };
-        backendLogger.debug("sql", sql);
-        const {
-            rows: [row],
-        } = await this.db.query(sql);
-        backendLogger.debug("result: ", row);
-        return row ? this.dataMapper(row) : null;
+        const rows: IOrderResponse[] = await PgDaos.queryAsync(
+            this.db,
+            sql,
+            PgDaos.orderMapper,
+        );
+        backendLogger.debug("# of matching entries: ", rows.length);
+        return rows.length > 0 ? rows[0] : null;
     }
+
+    async updateAsync(
+        _dto: IUpdateOrderRequest,
+    ): Promise<IOrderResponse | null> {
+        throw new Error("Method not implemented.");
+    }
+
     async deleteAsync(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _dto: IDeleteOrderRequest,
     ): Promise<IOrderResponse | null> {
         throw new Error("Method not implemented.");
@@ -104,10 +105,7 @@ export default class PgOrderDao implements IOrderDao {
         const sql: QueryConfig = {
             text: `
                 SELECT
-                    id,
-                    TO_CHAR(date, 'yyyy-mm-dd') AS date,
-                    user_id,
-                    status
+                    ${this.formattedOrderSql}
                 FROM orders
                 WHERE
                     status = 'pending'
@@ -115,21 +113,6 @@ export default class PgOrderDao implements IOrderDao {
             `,
             values: isClient ? [userId] : [],
         };
-
-        //             const sql: QueryConfig = {
-        //         text: `
-        //             SELECT
-        //                 id,
-        //                 TO_CHAR(date, 'yyyy-mm-dd') AS date,
-        //                 user_id
-        //             FROM orders
-        //             ${isClient ? "WHERE user_id = $1" : ""}
-        //         `,
-        //         values: isClient ? [userId] : [],
-        //     };
-        backendLogger.debug("sql: ", sql);
-        const { rows } = await this.db.query(sql);
-        backendLogger.debug("result: ", rows);
-        return rows.map(this.dataMapper);
+        return await PgDaos.queryAsync(this.db, sql, PgDaos.orderMapper);
     }
 }

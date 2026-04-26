@@ -67,7 +67,10 @@ const testDaos: ITestDaos = {
     products: new PgProductDao(db),
     ordersProducts: new PgOrderProductDao(db),
     users: new PgUserDao(db),
+    orders: new PgOrderDao(db),
 };
+
+// TODO: test orderRepo, then services
 
 const testRepos: ITestRepos = {
     products: new ProductRepository({
@@ -75,40 +78,69 @@ const testRepos: ITestRepos = {
         productDao: testDaos.products!,
     }),
     users: new UserRepository(testDaos.users!),
+    orders: new OrderRepository(testDaos.orders!, testDaos.ordersProducts!),
 };
+/** PRODUCTS */
+// app.route("/products").get(async (req, res, next) => {
+//     const dto: IGetAllProductsRequest = {};
+//     const products: IProductResponse[] =
+//         await testRepos.products!.getAllAsync(dto);
+//     res.status(HttpStatus.OK).send(products);
+// });
 
-app.route("/products").get(async (req, res, next) => {
-    const dto: IGetAllProductsRequest = {};
-    const products: IProductResponse[] =
-        await testRepos.products!.getAllAsync(dto);
-    res.status(HttpStatus.OK).send(products);
+// app.route("/products/:id").get(async (req, res, next) => {
+//     const dto: IGetProductRequest = { id: parseInt(req.params.id) };
+//     const product: IProductResponse | null =
+//         await testRepos.products!.getAsync(dto);
+//     res.status(HttpStatus.OK).send(product);
+// });
+
+/** USERS */
+
+// app.route("/users/register").post(
+//     requireBody(["username", "email", "pw"]),
+//     async (req, res, next) => {
+//         const user: IUserResponse = await testRepos.users!.createAsync(
+//             req.body,
+//         );
+//         const token: TokenResponse = tokenOps.create({ id: user.id });
+//         res.status(HttpStatus.CREATED).send(token);
+//     },
+// );
+
+// app.route("/users/login").post(async (req, res, next) => {
+//     const user: IUserResponse | null =
+//         await testRepos.users!.getByCredentialsAsync(req.body);
+//     const token: TokenResponse | null = user
+//         ? tokenOps.create({ id: user.id })
+//         : null;
+//     res.status(HttpStatus.OK).send(token);
+// });
+
+/** ORDERS */
+const userId: number | null = 3;
+
+app.route("/orders").get(async (req, res, next) => {
+    const orders: IOrderResponse[] = await testRepos.orders!.getAllAsync({
+        userId,
+    });
+    res.status(HttpStatus.OK).send(orders);
 });
 
-app.route("/products/:id").get(async (req, res, next) => {
-    const dto: IGetProductRequest = { id: parseInt(req.params.id) };
-    const product: IProductResponse | null =
-        await testRepos.products!.getAsync(dto);
-    res.status(HttpStatus.OK).send(product);
+app.route("/orders/pending").get(async (req, res, next) => {
+    const pendingOrders: IOrderResponse[] =
+        await testRepos.orders!.getAllPendingOrdersAsync({
+            userId,
+        });
+    res.status(HttpStatus.OK).send(pendingOrders);
 });
 
-app.route("/users/register").post(
-    requireBody(["username", "email", "pw"]),
-    async (req, res, next) => {
-        const user: IUserResponse = await testRepos.users!.createAsync(
-            req.body,
-        );
-        const token: TokenResponse = tokenOps.create({ id: user.id });
-        res.status(HttpStatus.CREATED).send(token);
-    },
-);
-
-app.route("/users/login").post(async (req, res, next) => {
-    const user: IUserResponse | null =
-        await testRepos.users!.getByCredentialsAsync(req.body);
-    const token: TokenResponse | null = user
-        ? tokenOps.create({ id: user.id })
-        : null;
-    res.status(HttpStatus.OK).send(token);
+app.route("/orders/:id").get(async (req, res, next) => {
+    const order: IOrderResponse | null = await testRepos.orders!.getAsync({
+        orderId: parseInt(req.params.id),
+        userId,
+    });
+    res.status(HttpStatus.OK).send(order);
 });
 
 app.listen(3000, async () => {

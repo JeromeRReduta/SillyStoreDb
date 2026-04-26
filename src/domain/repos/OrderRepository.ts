@@ -12,6 +12,7 @@ import { IProductResponse } from "../../../SillyStoreCommon/dtos/responses/IProd
 import { IProductWithQuantityResponse } from "../../../SillyStoreCommon/dtos/responses/IProductWithQuantityResponse.ts";
 import { IOrderDao } from "../../infrastructure/data_access/IOrderDao.ts";
 import { IOrderProductDao } from "../../infrastructure/data_access/IOrderProductDao.ts";
+import CrudRepositories from "./CrudRepositories.ts";
 import { IOrderRepository } from "./IOrderRepository.ts";
 
 export default class OrderRepository implements IOrderRepository {
@@ -24,53 +25,53 @@ export default class OrderRepository implements IOrderRepository {
     }
 
     async createAsync(dto: ICreateOrderRequest): Promise<IOrderResponse> {
-        return await this.orderDao.createAsync(dto);
+        return await CrudRepositories.createAsync({ dao: this.orderDao, dto });
     }
 
     async getAllAsync(dto: IGetAllOrdersRequest): Promise<IOrderResponse[]> {
-        return await this.orderDao.getAllAsync(dto);
+        return await CrudRepositories.getAllAsync({ dao: this.orderDao, dto });
     }
 
     async getAsync(dto: IGetOrderRequest): Promise<IOrderResponse | null> {
-        return await this.orderDao.getAsync(dto);
+        return await CrudRepositories.getAsync({ dao: this.orderDao, dto });
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    updateAsync(_dto: IUpdateOrderRequest): Promise<IOrderResponse | null> {
-        throw new Error("Method not implemented.");
-    }
-    async deleteAsync(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        _dto: IDeleteOrderRequest,
+    async updateAsync(
+        dto: IUpdateOrderRequest,
     ): Promise<IOrderResponse | null> {
-        throw new Error("Method not implemented.");
+        return await CrudRepositories.updateAsync({ dao: this.orderDao, dto });
+    }
+
+    async deleteAsync(
+        dto: IDeleteOrderRequest,
+    ): Promise<IOrderResponse | null> {
+        return await CrudRepositories.deleteAsync({ dao: this.orderDao, dto });
     }
 
     async createOrderProductAsync(
         dto: ICreateOrderProductRequest,
     ): Promise<IOrderProductResponse> {
-        const createOrderProductRequest: ICreateOrderProductRequest = dto; // done in case the two requests are de-synced for some reason
-        return await this.orderProductDao.createAsync(
-            createOrderProductRequest,
-        );
+        return await CrudRepositories.createAsync({
+            dao: this.orderProductDao,
+            dto,
+        });
     }
 
     async getProductsInOrderAsync(
         dto: IGetProductsInOrderRequest,
     ): Promise<IProductResponse[]> {
-        return this.orderProductDao.getProductsInOrderAsync(dto);
-    }
-
-    async getProductsInCartAsync(
-        dto: IGetAllPendingOrdersRequest,
-    ): Promise<IProductResponse[]> {
-        return this.orderProductDao.getProductsInCartAsync(dto);
+        return await this.orderProductDao.getProductsInOrderAsync(dto);
     }
 
     async getProductsWithQuantitiesInOrderAsync(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        _dto: IGetProductsInOrderRequest,
+        dto: IGetProductsInOrderRequest,
     ): Promise<IProductWithQuantityResponse[]> {
-        throw new Error("Method not implemented.");
+        return await this.orderProductDao.getProductsWithQuantitiesAsync(dto);
+    }
+
+    async getAllPendingOrdersAsync(
+        dto: IGetAllPendingOrdersRequest,
+    ): Promise<IOrderResponse[]> {
+        return await this.orderDao.getAllPendingOrdersAsync(dto);
     }
 }

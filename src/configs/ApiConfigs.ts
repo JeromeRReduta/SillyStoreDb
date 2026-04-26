@@ -4,7 +4,6 @@ import backendConfigs from "./BackendConfigs.ts";
 import { IDaoConfigs } from "./DaoConfigs.ts";
 import { IRepoConfigs } from "./RepoConfigs.ts";
 import { IServiceConfigs } from "./ServiceConfigs.ts";
-import pgDataMappers from "../application/data_mapping/PgDataMappers.ts";
 import PgOrderProductDao from "../infrastructure/psql/data_access/PgOrderProductDao.ts";
 import PgProductDao from "../infrastructure/psql/data_access/PgProductDao.ts";
 import PgUserDao from "../infrastructure/psql/data_access/PgUserDao.ts";
@@ -21,21 +20,12 @@ export interface IApiConfigs {
     readonly repos: IRepoConfigs;
     readonly services: IServiceConfigs;
 }
-
-const { orderMapper, orderProductMapper, productMapper, userMapper } =
-    pgDataMappers;
-
 const db: Client | Pool = new Client(backendConfigs.db.databaseUrl);
 const daos: IDaoConfigs = {
-    orderDao: new PgOrderDao(db, orderMapper),
-    orderProductDao: new PgOrderProductDao({
-        db,
-        orderMapper,
-        productMapper,
-        orderProductMapper,
-    }),
-    productDao: new PgProductDao(db, productMapper),
-    userDao: new PgUserDao({ db, dataMapper: userMapper }),
+    orderDao: new PgOrderDao(db),
+    productDao: new PgProductDao(db),
+    orderProductDao: new PgOrderProductDao(db),
+    userDao: new PgUserDao(db),
 };
 const repos: IRepoConfigs = {
     orderRepo: new OrderRepository(daos.orderDao, daos.orderProductDao),
