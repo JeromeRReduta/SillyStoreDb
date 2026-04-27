@@ -103,11 +103,11 @@ export default class ClientOrderService implements IClientOrderService {
         return found.length > 0 ? found[0] : null;
     }
 
-    async getProductsInCartAsync(
+    async getProductsWithQuantitiesInPendingOrderAsync(
         dto: IGetProductsInOrderRequest,
     ): Promise<IProductWithQuantityResponse[]> {
-        const productsWithQuantities: IProductWithQuantityResponse[] =
-            await this.repo.getProductsWithQuantitiesInOrderAsync(dto);
-        return productsWithQuantities;
+        return await this.repo.getProductsWithQuantitiesInPendingOrdersAsync(
+            dto,
+        );
     }
 }

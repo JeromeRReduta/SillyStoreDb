@@ -29,7 +29,7 @@ export interface IClientOrderService {
         dto: IGetAllPendingOrdersRequest,
     ): Promise<IOrderResponse | null>;
 
-    getProductsInCartAsync(
+    getProductsWithQuantitiesInPendingOrderAsync(
         dto: IGetProductsInOrderRequest,
     ): Promise<IProductWithQuantityResponse[]>;
 }

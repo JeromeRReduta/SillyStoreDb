@@ -97,42 +97,36 @@ const testRepos: ITestRepos = {
 
 /** USERS */
 
-// app.route("/users/register").post(
-//     requireBody(["username", "email", "pw"]),
-//     async (req, res, next) => {
-//         const user: IUserResponse = await testRepos.users!.createAsync(
-//             req.body,
-//         );
-//         const token: TokenResponse = tokenOps.create({ id: user.id });
-//         res.status(HttpStatus.CREATED).send(token);
-//     },
-// );
+app.route("/users/register").post(
+    requireBody(["username", "email", "pw"]),
+    async (req, res, next) => {
+        const user: IUserResponse = await testRepos.users!.createAsync(
+            req.body,
+        );
+        const token: TokenResponse = tokenOps.create({ id: user.id });
+        res.status(HttpStatus.CREATED).send(token);
+    },
+);
 
-// app.route("/users/login").post(async (req, res, next) => {
-//     const user: IUserResponse | null =
-//         await testRepos.users!.getByCredentialsAsync(req.body);
-//     const token: TokenResponse | null = user
-//         ? tokenOps.create({ id: user.id })
-//         : null;
-//     res.status(HttpStatus.OK).send(token);
-// });
+app.route("/users/login").post(async (req, res, next) => {
+    const user: IUserResponse | null =
+        await testRepos.users!.getByCredentialsAsync(req.body);
+    const token: TokenResponse | null = user
+        ? tokenOps.create({ id: user.id })
+        : null;
+    res.cookie("token", token);
+
+    res.status(HttpStatus.OK).send(token);
+});
 
 /** ORDERS */
-const userId: number | null = 3;
+const userId: number | null = 10;
 
 app.route("/orders").get(async (req, res, next) => {
     const orders: IOrderResponse[] = await testRepos.orders!.getAllAsync({
         userId,
     });
     res.status(HttpStatus.OK).send(orders);
-});
-
-app.route("/orders/:id").get(async (req, res, next) => {
-    const order: IOrderResponse | null = await testRepos.orders!.getAsync({
-        orderId: parseInt(req.params.id),
-        userId,
-    });
-    res.status(HttpStatus.OK).send(order);
 });
 
 app.route("/orders/pending/orders").get(async (req, res, next) => {
@@ -153,6 +147,13 @@ app.route("/orders/pending/products").get(async (req, res, next) => {
     res.status(HttpStatus.OK).send(products);
 });
 
+app.route("/orders/:id").get(async (req, res, next) => {
+    const order: IOrderResponse | null = await testRepos.orders!.getAsync({
+        orderId: parseInt(req.params.id),
+        userId,
+    });
+    res.status(HttpStatus.OK).send(order);
+});
 app.listen(3000, async () => {
     await db.connect();
     backendLogger.info("Server is listening on port 3000...");
