@@ -137,7 +137,7 @@ app.route("/orders/:id").get(async (req, res, next) => {
 
 app.route("/orders/pending/orders").get(async (req, res, next) => {
     const pendingOrders: IOrderResponse[] =
-        await testDaos.orders!.getAllPendingOrdersAsync({ userId });
+        await testRepos.orders!.getAllPendingOrdersAsync({ userId });
     const found: IOrderResponse | null =
         pendingOrders.length > 0 ? pendingOrders[0] : null;
     res.status(HttpStatus.OK).send(found);
@@ -145,13 +145,11 @@ app.route("/orders/pending/orders").get(async (req, res, next) => {
 
 app.route("/orders/pending/products").get(async (req, res, next) => {
     const products: IProductResponse[] =
-        await testDaos.ordersProducts!.getProductsWithQuantitiesInPendingOrderAsync(
-            {
-                orderId: 0,
-                userId,
-                includingQuantities: false,
-            },
-        );
+        await testRepos.orders!.getProductsWithQuantitiesInPendingOrdersAsync({
+            orderId: 0,
+            userId,
+            includingQuantities: false,
+        });
     res.status(HttpStatus.OK).send(products);
 });
 

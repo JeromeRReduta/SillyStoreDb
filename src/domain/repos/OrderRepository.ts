@@ -74,4 +74,12 @@ export default class OrderRepository implements IOrderRepository {
     ): Promise<IOrderResponse[]> {
         return await this.orderDao.getAllPendingOrdersAsync(dto);
     }
+
+    async getProductsWithQuantitiesInPendingOrdersAsync(
+        dto: IGetProductsInOrderRequest,
+    ): Promise<IProductWithQuantityResponse[]> {
+        return await this.orderProductDao.getProductsWithQuantitiesInPendingOrderAsync(
+            dto,
+        );
+    }
 }
