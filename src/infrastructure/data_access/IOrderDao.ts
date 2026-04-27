@@ -18,4 +18,6 @@ export interface IOrderDao extends ICrudDao<
     getAllPendingOrdersAsync(
         getPendingOrderRequest: IGetAllPendingOrdersRequest,
     ): Promise<IOrderResponse[]>;
+
+    updateOrderAsync(dto: IUpdateOrderRequest): Promise<IOrderResponse[]>;
 }
