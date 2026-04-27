@@ -62,8 +62,18 @@ orderRouter
     .get(tryGetProductsInOrder(false))
     .post(requireBody(["productId", "quantity"]), tryAddProductToOrderAsync);
 
-orderRouter.route("/:id/cart").get(tryGetProductsInOrder(true));
+orderRouter.route("pending/order").get(/** get pending order  */);
 
+orderRouter
+    .route("pending/products")
+    .get(/** get pending products with quantities */);
+/**
+ * TODO:
+ *
+ * remove cart route
+ * add pending route
+ * add pending/products route (products in cart)
+ */
 export default orderRouter;
 
 // const productRouter: Router = express.Router();
