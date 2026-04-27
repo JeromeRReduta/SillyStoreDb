@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import PG, { Client, Pool, QueryConfig } from "pg";
+import { Client, Pool, QueryConfig } from "pg";
 import { ICreateOrderProductRequest } from "../../../../SillyStoreCommon/dtos/requests/create-requests/ICreateOrderProductRequest.ts";
 import { IDeleteOrderProductRequest } from "../../../../SillyStoreCommon/dtos/requests/delete-requests/IDeleteOrderProductRequest.ts";
 import { IGetAllOrderProductsRequest } from "../../../../SillyStoreCommon/dtos/requests/get-requests/IGetAllOrderProductsRequest.ts";

@@ -11,6 +11,7 @@ import { IOrderDao } from "../../infrastructure/data_access/IOrderDao.ts";
 import PgOrderDao from "../../infrastructure/psql/data_access/PgOrderDao.ts";
 import backendConfigs from "../../configs/BackendConfigs.ts";
 import pgDataMappers from "../../application/data_mapping/PgDataMappers.ts";
+import tryGetPendingOrderAsync from "../../application/middleware/TryGetPendingOrderAsync.ts";
 
 /** TODO:
  *
@@ -62,11 +63,9 @@ orderRouter
     .get(tryGetProductsInOrder(false))
     .post(requireBody(["productId", "quantity"]), tryAddProductToOrderAsync);
 
-orderRouter.route("pending/order").get(/** get pending order  */);
+orderRouter.route("pending/order").get(tryGetPendingOrderAsync);
 
-orderRouter
-    .route("pending/products")
-    .get(/** get pending products with quantities */);
+orderRouter.route("pending/products").get(tryGetPendingProductsAsync);
 /**
  * TODO:
  *
