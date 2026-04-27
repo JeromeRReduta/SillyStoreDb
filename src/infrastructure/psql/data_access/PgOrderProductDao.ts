@@ -107,12 +107,35 @@ export default class PgOrderProductDao implements IOrderProductDao {
     }: IGetProductsInOrderRequest): Promise<IProductWithQuantityResponse[]> {
         const sql: QueryConfig = {
             text: `
-            SELECT p.*, op.quantity FROM orders_products AS op
-            JOIN products AS p
-                ON op.product_id = p.id
-            WHERE op.order_id = $1
+                SELECT p.*, op.quantity FROM orders_products AS op
+                JOIN products AS p
+                    ON op.product_id = p.id
+                WHERE op.order_id = $1
         `,
             values: [orderId],
+        };
+        return await PgDaos.queryAsync(
+            this.db,
+            sql,
+            PgDaos.productWithQuantityMapper,
+        );
+    }
+
+    async getProductsWithQuantitiesInPendingOrderAsync({
+        userId,
+    }: IGetProductsInOrderRequest): Promise<IProductWithQuantityResponse[]> {
+        const isClient: boolean = userId !== null;
+        const sql: QueryConfig = {
+            text: `
+                SELECT p.*, op.quantity FROM orders_products AS op
+                JOIN products AS p
+                    ON op.product_id = p.id
+                JOIN orders AS o
+                    ON op.order_id = o.id
+                WHERE o.status = 'pending'
+                    ${isClient ? "AND o.user_id = $1" : ""}
+            `,
+            values: isClient ? [userId] : [],
         };
         return await PgDaos.queryAsync(
             this.db,

@@ -144,12 +144,15 @@ app.route("/orders/pending/orders").get(async (req, res, next) => {
 });
 
 app.route("/orders/pending/products").get(async (req, res, next) => {
-    // cosnt products: IProductResponse[] = await testDaos.ordersProducts!.getProductsWithQuantitiesAsync({
-    //     orderId: 0,
-    //     userId,
-    //     includingQuantities: false
-    // })
-    // FAILS - b/c getProductsWithQuantitiesAsync is supposed to be only for pending order, OR need a new func that returns products in pending order
+    const products: IProductResponse[] =
+        await testDaos.ordersProducts!.getProductsWithQuantitiesInPendingOrderAsync(
+            {
+                orderId: 0,
+                userId,
+                includingQuantities: false,
+            },
+        );
+    res.status(HttpStatus.OK).send(products);
 });
 
 app.listen(3000, async () => {

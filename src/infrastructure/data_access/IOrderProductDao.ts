@@ -32,4 +32,8 @@ export interface IOrderProductDao extends ICrudDao<
     getProductsWithQuantitiesAsync(
         dto: IGetProductsInOrderRequest,
     ): Promise<IProductWithQuantityResponse[]>;
+
+    getProductsWithQuantitiesInPendingOrderAsync(
+        dto: IGetProductsInOrderRequest,
+    ): Promise<IProductWithQuantityResponse[]>;
 }
