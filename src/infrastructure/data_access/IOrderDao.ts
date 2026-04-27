@@ -3,6 +3,7 @@ import { IDeleteOrderRequest } from "../../../SillyStoreCommon/dtos/requests/del
 import { IGetAllOrdersRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetAllOrdersRequest.ts";
 import { IGetAllPendingOrdersRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetAllPendingOrdersRequest.ts";
 import { IGetOrderRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetOrderRequest.ts";
+import { IUpdateOrderProductRequest } from "../../../SillyStoreCommon/dtos/requests/update-requests/IUpdateOrderProductRequest.ts";
 import { IUpdateOrderRequest } from "../../../SillyStoreCommon/dtos/requests/update-requests/IUpdateOrderRequest.ts";
 import { IOrderResponse } from "../../../SillyStoreCommon/dtos/responses/IOrderResponse.ts";
 import { ICrudDao } from "./ICrudDao.ts";
@@ -16,8 +17,6 @@ export interface IOrderDao extends ICrudDao<
     IOrderResponse
 > {
     getAllPendingOrdersAsync(
-        getPendingOrderRequest: IGetAllPendingOrdersRequest,
+        dto: IGetAllPendingOrdersRequest,
     ): Promise<IOrderResponse[]>;
-
-    updateOrderAsync(dto: IUpdateOrderRequest): Promise<IOrderResponse[]>;
 }
