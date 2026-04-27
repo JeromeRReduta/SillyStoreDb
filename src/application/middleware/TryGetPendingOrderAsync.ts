@@ -11,13 +11,18 @@ import { IGetAllPendingOrdersRequest } from "../../../SillyStoreCommon/dtos/requ
 export default async function tryGetPendingOrderAsync(
     req: ExpressRequest<object, IOrderResponse | null, object>,
     res: ExpressResponse<IOrderResponse | null>,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _next: NextFunction,
+    next: NextFunction,
 ): Promise<void> {
-    const dto: IGetAllPendingOrdersRequest = {
-        userId: req.userId!,
-    };
-    const pendingOrders: IOrderResponse | null =
-        await apiConfigs.services.clientOrderService.getPendingOrderAsync(dto);
-    res.status(HttpStatus.OK).send(pendingOrders);
+    try {
+        const dto: IGetAllPendingOrdersRequest = {
+            userId: req.userId!,
+        };
+        const pendingOrders: IOrderResponse | null =
+            await apiConfigs.services.clientOrderService.getPendingOrderAsync(
+                dto,
+            );
+        res.status(HttpStatus.OK).send(pendingOrders);
+    } catch (e) {
+        next(e);
+    }
 }
