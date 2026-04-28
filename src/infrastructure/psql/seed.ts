@@ -3,7 +3,7 @@ import { type Client } from "pg";
 import seedUsers from "./seedUsers.ts";
 import seedProducts from "./seedProducts.ts";
 import seedOrders from "./seedOrders.ts";
-import seedOrdersProducts from "./seedOrdersProducts.ts";
+import seedCartItems from "./seedCartItems.ts";
 import apiConfigs from "../../configs/ApiConfigs.ts";
 
 export interface Quantities {
@@ -34,7 +34,7 @@ async function main(): Promise<void> {
     backendLogger.info("Seeding orders...");
     await seedOrders(db, quantities);
     backendLogger.info("Adding orders to products...");
-    await seedOrdersProducts(db, quantities);
+    await seedCartItems(db, quantities);
     backendLogger.info("Closing db connection...");
     await db.end();
     backendLogger.info("Seeding complete! Ending process.");

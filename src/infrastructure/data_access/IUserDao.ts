@@ -1,10 +1,12 @@
-import { ICreateUserRequest } from "../../../SillyStoreCommon/dtos/requests/create-requests/ICreateUserRequest.ts";
-import { IDeleteUserRequest } from "../../../SillyStoreCommon/dtos/requests/delete-requests/IDeleteUserRequest.ts";
-import { IGetAllUsersRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetAllUsersRequest.ts";
-import { IGetUserByCredentialsRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetUserByCredentialsRequest.ts";
-import { IGetUserRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetUserRequest.ts";
-import { IUpdateUserRequest } from "../../../SillyStoreCommon/dtos/requests/update-requests/IUpdateUserRequest.ts";
-import { IUserResponse } from "../../../SillyStoreCommon/dtos/responses/IUserResponse.ts";
+import {
+    ICreateUserRequest,
+    IGetAllUsersRequest,
+    IGetUserRequest,
+    IUpdateUserRequest,
+    IDeleteUserRequest,
+    IUserResponse,
+    IGetUserByCredentialsRequest,
+} from "../../../SillyStoreCommon/dtos/userDtos.ts";
 import { ICrudDao } from "./ICrudDao.ts";
 
 export interface IUserDao extends ICrudDao<

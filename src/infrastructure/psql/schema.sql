@@ -1,14 +1,16 @@
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS orders CASCADE;
 DROP TABLE IF EXISTS products CASCADE;
-DROP TABLE IF EXISTS orders_products;
+DROP TABLE IF EXISTS cart_items;
 
-
+DROP TYPE IF EXISTS user_role;
+CREATE TYPE user_role AS ENUM('client', 'admin');
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
-    pw_hash TEXT NOT NULL
+    pw_hash TEXT NOT NULL,
+    role user_role NOT NULL DEFAULT 'client'
 );
 
 DROP TYPE IF EXISTS order_status;
@@ -34,7 +36,7 @@ CREATE TABLE products (
 
 );
 
-CREATE TABLE orders_products (
+CREATE TABLE cart_items (
     order_id INT NOT NULL REFERENCES orders ON DELETE CASCADE,
     product_id INT NOT NULL REFERENCES products ON DELETE CASCADE,
     quantity INT NOT NULL,

@@ -1,14 +1,23 @@
-import { ICreateOrderProductRequest } from "../../../SillyStoreCommon/dtos/requests/create-requests/ICreateOrderProductRequest.ts";
-import { IDeleteOrderProductRequest } from "../../../SillyStoreCommon/dtos/requests/delete-requests/IDeleteOrderProductRequest.ts";
-import { IGetAllOrderProductsRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetAllOrderProductsRequest.ts";
-import { IGetOrderProductRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetOrderProductRequest.ts";
-import { IGetOrdersIncludingProductRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetOrdersIncludingProductRequest.ts";
-import { IGetProductsInOrderRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetProductsInOrderRequest.ts";
-import { IUpdateOrderProductRequest } from "../../../SillyStoreCommon/dtos/requests/update-requests/IUpdateOrderProductRequest.ts";
-import { IOrderProductResponse } from "../../../SillyStoreCommon/dtos/responses/IOrderProductResponse.ts";
-import { IOrderResponse } from "../../../SillyStoreCommon/dtos/responses/IOrderResponse.ts";
-import { IProductResponse } from "../../../SillyStoreCommon/dtos/responses/IProductResponse.ts";
-import { IProductWithQuantityResponse } from "../../../SillyStoreCommon/dtos/responses/IProductWithQuantityResponse.ts";
+import {
+    IGetAllPendingOrdersRequest,
+    IOrderResponse,
+} from "../../../SillyStoreCommon/dtos/orderDtos.ts";
+import {
+    ICreateOrderProductRequest,
+    IGetAllOrderProductsRequest,
+    IGetOrderProductRequest,
+    IUpdateOrderProductRequest,
+    IDeleteOrderProductRequest,
+    IOrderProductResponse,
+    IGetOrdersIncludingProductRequest,
+    IGetProductsInOrderRequest,
+    IMergeOrderProductsinOrderRequest,
+    IMergeOrderProductsInPendingOrderRequest,
+} from "../../../SillyStoreCommon/dtos/orderProductDtos.ts";
+import {
+    IProductResponse,
+    IProductWithQuantityResponse,
+} from "../../../SillyStoreCommon/dtos/productDtos.ts";
 import { ICrudDao } from "./ICrudDao.ts";
 
 export interface IOrderProductDao extends ICrudDao<
@@ -23,23 +32,24 @@ export interface IOrderProductDao extends ICrudDao<
         dto: IGetOrdersIncludingProductRequest,
     ): Promise<IOrderResponse[]>;
 
-    getProductsInOrderAsync(
-        dto: IGetProductsInOrderRequest,
-    ): Promise<IProductResponse[]>;
-
-    getProductsWithQuantitiesAsync(
+    getCartItemsAsync(
         dto: IGetProductsInOrderRequest,
     ): Promise<IProductWithQuantityResponse[]>;
 
-    getProductsWithQuantitiesInPendingOrderAsync(
+    getPendingCartItemsAsync(
         dto: IGetProductsInOrderRequest,
     ): Promise<IProductWithQuantityResponse[]>;
+
     // note: These should return updated rows - to get full order product list, should run get again
-    mergeOrderProductsByOrderId(dto: IFirst): Promise<IOrderProductResponse[]>;
+    mergeCartItems(dto: IFirst): Promise<IOrderProductResponse[]>;
 
-    mergeOrderProductsInPendingOrder(
-        dto: ISecond,
-    ): Promise<IOrderProductResponse>;
+    // should return updated rows
+    mergePendingCartItems(
+        dto: IMergeOrderProductsinOrderRequest,
+    ): Promise<IOrderProductResponse[]>;
+    mergePendingOrderProductsAsync(
+        dto: IMergeOrderProductsInPendingOrderRequest,
+    ): Promise<IOrderProductResponse[]>;
     /** TODO: Sillystore common:
     * 
     * simplify dtos:
@@ -47,11 +57,11 @@ export interface IOrderProductDao extends ICrudDao<
     *  https://www.typescriptlang.org/docs/handbook/utility-types.html
     *   ESPECIALLY for update dtos
     *   make dtos for:
-        dto: merge order products by order id
-        dto: merge order products in pending order
-        dto: get products with quantities
-        dto: get products with quantities in pending order
-
+        (x) dto: merge order products by order id
+        (x) dto: merge order products in pending order
+        (x) dto: get products with quantities
+        (x) dto: get products with quantities in pending order
+        Note - for any order product request, jsut return products w/ quantities
     
         Then, figure out how to implement merge order products
         test for orderproduct dao, then order repo, then client order service

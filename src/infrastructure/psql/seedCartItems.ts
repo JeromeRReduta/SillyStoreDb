@@ -1,7 +1,7 @@
 import { Client, QueryConfig } from "pg";
 import { Quantities } from "./seed.ts";
 import backendLogger from "../../configs/BackendLogger.ts";
-export default async function seedOrdersProducts(
+export default async function seedCartItems(
     db: Client,
     { users, ordersPerUser, productsPerOrder }: Quantities,
 ) {
@@ -17,7 +17,7 @@ export default async function seedOrdersProducts(
                 const quantity: number = 5;
                 const sql: QueryConfig = {
                     text: `
-                    INSERT INTO orders_products (order_id, product_id, quantity)
+                    INSERT INTO cart_items (order_id, product_id, quantity)
                     VALUES ($1, $2, $3)
                     RETURNING *
                     `,
@@ -25,9 +25,9 @@ export default async function seedOrdersProducts(
                 };
                 backendLogger.debug("running sql: ", sql);
                 const {
-                    rows: [pgOrderProduct],
+                    rows: [cartItem],
                 } = await db.query(sql);
-                backendLogger.debug("result: ", pgOrderProduct);
+                backendLogger.debug("result: ", cartItem);
             }
         }
     }
