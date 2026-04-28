@@ -14,7 +14,7 @@ import { IOrderRepository } from "../domain/repos/IOrderRepository.ts";
 import OrderRepository from "../domain/repos/OrderRepository.ts";
 import HttpError from "../errors/HttpError.ts";
 import { IOrderDao } from "../infrastructure/data_access/IOrderDao.ts";
-import { IOrderProductDao } from "../infrastructure/data_access/IOrderProductDao.ts";
+import { IOrderProductDao } from "../infrastructure/data_access/ICartItemDao.ts";
 import PgOrderDao from "../infrastructure/psql/data_access/PgOrderDao.ts";
 import PgOrderProductDao from "../infrastructure/psql/data_access/PgOrderProductDao.ts";
 import apiConfigs from "../configs/ApiConfigs.ts";

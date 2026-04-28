@@ -10,7 +10,7 @@ import { IUpdateOrderProductRequest } from "../../../../SillyStoreCommon/dtos/re
 import { IOrderProductResponse } from "../../../../SillyStoreCommon/dtos/responses/IOrderProductResponse.ts";
 import { IOrderResponse } from "../../../../SillyStoreCommon/dtos/responses/IOrderResponse.ts";
 import { IProductResponse } from "../../../../SillyStoreCommon/dtos/responses/IProductResponse.ts";
-import { IOrderProductDao } from "../../data_access/IOrderProductDao.ts";
+import { IOrderProductDao } from "../../data_access/ICartItemDao.ts";
 import { IProductWithQuantityResponse } from "../../../../SillyStoreCommon/dtos/responses/IProductWithQuantityResponse.ts";
 import PgDaos from "../../data_access/PgDaos.ts";
 

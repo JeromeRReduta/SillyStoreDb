@@ -11,7 +11,7 @@ import { IOrderResponse } from "../../../SillyStoreCommon/dtos/responses/IOrderR
 import { IProductResponse } from "../../../SillyStoreCommon/dtos/responses/IProductResponse.ts";
 import { IProductWithQuantityResponse } from "../../../SillyStoreCommon/dtos/responses/IProductWithQuantityResponse.ts";
 import { IOrderDao } from "../../infrastructure/data_access/IOrderDao.ts";
-import { IOrderProductDao } from "../../infrastructure/data_access/IOrderProductDao.ts";
+import { IOrderProductDao } from "../../infrastructure/data_access/ICartItemDao.ts";
 import { IOrderRepository } from "./IOrderRepository.ts";
 import CrudRepositories from "./CrudRepositories.ts";
 

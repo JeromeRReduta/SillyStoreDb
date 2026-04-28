@@ -5,7 +5,7 @@ import { IGetProductRequest } from "../../../SillyStoreCommon/dtos/requests/get-
 import { IUpdateProductRequest } from "../../../SillyStoreCommon/dtos/requests/update-requests/IUpdateProductRequest.ts";
 import { IOrderResponse } from "../../../SillyStoreCommon/dtos/responses/IOrderResponse.ts";
 import { IProductResponse } from "../../../SillyStoreCommon/dtos/responses/IProductResponse.ts";
-import { IOrderProductDao } from "../../infrastructure/data_access/IOrderProductDao.ts";
+import { IOrderProductDao } from "../../infrastructure/data_access/ICartItemDao.ts";
 import { IProductDao } from "../../infrastructure/data_access/IProductDao.ts";
 import CrudRepositories from "./CrudRepositories.ts";
 import { IProductRepository } from "./IProductRepository.ts";
