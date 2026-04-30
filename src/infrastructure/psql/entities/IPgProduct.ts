@@ -1,7 +1,9 @@
+import { IProduct } from "../../../../SillyStoreCommon/domain-objects/Product.ts";
+
 export interface IPgProduct {
-    readonly id: number;
-    readonly image_src: string;
-    readonly title: string;
-    readonly description: string;
-    readonly price: number;
+    readonly id: IProduct["id"];
+    readonly image_src: IProduct["imageSrc"];
+    readonly title: IProduct["title"];
+    readonly description: IProduct["description"];
+    readonly price: IProduct["price"];
 }

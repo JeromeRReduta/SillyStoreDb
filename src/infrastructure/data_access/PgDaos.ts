@@ -1,15 +1,19 @@
 import { Client, Pool, QueryConfig } from "pg";
+import {
+    ICartItemResponse,
+    ICartItemResponseWithCreator,
+} from "../../../SillyStoreCommon/dtos/cartItemDtos.ts";
+import { IOrderResponse } from "../../../SillyStoreCommon/dtos/orderDtos.ts";
+import { IProductResponse } from "../../../SillyStoreCommon/dtos/productDtos.ts";
+import {
+    IUserResponse,
+    IUserWithPwHashResponse,
+} from "../../../SillyStoreCommon/dtos/userDtos.ts";
 import backendLogger from "../../configs/BackendLogger.ts";
-import { IPgUser } from "../psql/entities/IPgUser.ts";
-import { IUserResponse } from "../../../SillyStoreCommon/dtos/responses/IUserResponse.ts";
+import { IPgCartItem } from "../psql/entities/IPgCartItem.ts";
 import { IPgOrder } from "../psql/entities/IPgOrder.ts";
-import { IOrderResponse } from "../../../SillyStoreCommon/dtos/responses/IOrderResponse.ts";
 import { IPgProduct } from "../psql/entities/IPgProduct.ts";
-import { IProductResponse } from "../../../SillyStoreCommon/dtos/responses/IProductResponse.ts";
-import { IPgOrderProduct } from "../psql/entities/IPgOrderProduct.ts";
-import { IOrderProductResponse } from "../../../SillyStoreCommon/dtos/responses/IOrderProductResponse.ts";
-import { IPgProductWithQuantity } from "../psql/entities/IPgProductWithQuantity.ts";
-import { IProductWithQuantityResponse } from "../../../SillyStoreCommon/dtos/responses/IProductWithQuantityResponse.ts";
+import { IPgUser } from "../psql/entities/IPgUser.ts";
 
 /** Util class for daos using PG's Client or Pool */
 export default class PgDaos {
@@ -17,8 +21,16 @@ export default class PgDaos {
         id,
         username,
         email,
+        role,
     }: IPgUser): IUserResponse {
-        return { id, username, email };
+        return { id, username, email, role };
+    };
+
+    static userWithPwHashMapper: IPgDataMapper<
+        IPgUser,
+        IUserWithPwHashResponse
+    > = function (pgUser: IPgUser): IUserWithPwHashResponse {
+        return { ...PgDaos.userMapper(pgUser), pwHash: pgUser.pw_hash };
     };
 
     static orderMapper: IPgDataMapper<IPgOrder, IOrderResponse> = function ({
@@ -41,29 +53,36 @@ export default class PgDaos {
             return { id, imageSrc: image_src, title, description, price };
         };
 
-    static productWithQuantityMapper: IPgDataMapper<
-        IPgProductWithQuantity,
-        IProductWithQuantityResponse
-    > = function ({
-        id,
-        image_src,
-        title,
-        description,
-        price,
-        quantity,
-    }: IPgProductWithQuantity): IProductWithQuantityResponse {
-        return { id, imageSrc: image_src, title, description, price, quantity };
-    };
+    static cartItemMapper: IPgDataMapper<IPgCartItem, ICartItemResponse> =
+        function ({
+            order_id,
+            product_id,
+            quantity,
+            creator_id,
+        }): ICartItemResponse {
+            return {
+                orderId: order_id,
+                productId: product_id,
+                quantity,
+                creatorId: creator_id,
+            };
+        };
 
-    static orderProductMapper: IPgDataMapper<
-        IPgOrderProduct,
-        IOrderProductResponse
+    static cartItemWithCreatorMapper: IPgDataMapper<
+        Required<IPgCartItem>,
+        ICartItemResponseWithCreator
     > = function ({
         order_id,
         product_id,
         quantity,
-    }: IPgOrderProduct): IOrderProductResponse {
-        return { orderId: order_id, productId: product_id, quantity };
+        creator_id,
+    }: Required<IPgCartItem>): ICartItemResponseWithCreator {
+        return {
+            orderId: order_id,
+            productId: product_id,
+            quantity,
+            creatorId: creator_id,
+        };
     };
 
     static async queryAsync<TPgEntity, TResponse>(
