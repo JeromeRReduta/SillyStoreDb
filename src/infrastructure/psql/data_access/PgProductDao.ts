@@ -1,15 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { Client, Pool, QueryConfig } from "pg";
-import { ICreateProductRequest } from "../../../../SillyStoreCommon/dtos/requests/create-requests/ICreateProductRequest.ts";
-import { IDeleteProductRequest } from "../../../../SillyStoreCommon/dtos/requests/delete-requests/IDeleteProductRequest.ts";
-import { IGetAllProductsRequest } from "../../../../SillyStoreCommon/dtos/requests/get-requests/IGetAllProductsRequest.ts";
-import { IGetProductRequest } from "../../../../SillyStoreCommon/dtos/requests/get-requests/IGetProductRequest.ts";
-import { IProductResponse } from "../../../../SillyStoreCommon/dtos/responses/IProductResponse.ts";
-import { IDataMapper } from "../../../application/data_mapping/DataMapper.ts";
+import {
+    ICreateProductRequest,
+    IProductResponse,
+    IGetAllProductsRequest,
+    IGetProductRequest,
+    IUpdateProductRequest,
+    IDeleteProductRequest,
+} from "../../../../SillyStoreCommon/dtos/productDtos.ts";
 import backendLogger from "../../../configs/BackendLogger.ts";
 import { IProductDao } from "../../data_access/IProductDao.ts";
-import { IPgProduct } from "../entities/IPgProduct.ts";
-import { IUpdateProductRequest } from "../../../../SillyStoreCommon/dtos/requests/update-requests/IUpdateProductRequest.ts";
 import PgDaos from "../../data_access/PgDaos.ts";
 
 export default class PgProductDao implements IProductDao {
@@ -66,7 +67,7 @@ export default class PgProductDao implements IProductDao {
     }
 
     async updateAsync(
-        dto: IUpdateProductRequest,
+        _dto: IUpdateProductRequest,
     ): Promise<IProductResponse | null> {
         throw new Error("Method not implemented.");
     }
