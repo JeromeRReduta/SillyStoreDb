@@ -11,6 +11,7 @@ import {
     IGetPendingCartItemsRequest,
 } from "../../../SillyStoreCommon/dtos/cartItemDtos.ts";
 import { IOrderResponse } from "../../../SillyStoreCommon/dtos/orderDtos.ts";
+import { IProductWithQuantityResponse } from "../../../SillyStoreCommon/dtos/productDtos.ts";
 import { ICrudDao } from "./ICrudDao.ts";
 
 export interface ICartItemDao extends ICrudDao<
@@ -28,6 +29,15 @@ export interface ICartItemDao extends ICrudDao<
     getOrdersIncludingProductAsync(
         dto: IGetOrdersIncludingProductRequest,
     ): Promise<IOrderResponse[]>;
+
+    // TODO: make dtos for these 2
+    getProductsInOrderAsync(
+        dto: object,
+    ): Promise<IProductWithQuantityResponse[]>;
+
+    getProductsInPendingOrderAsync(
+        dto: object,
+    ): Promise<IProductWithQuantityResponse[]>;
 
     // note: These should return updated rows - to get full order product list, should run get again
     mergeCartItemsAsync(

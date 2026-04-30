@@ -4,7 +4,7 @@ import backendConfigs from "./BackendConfigs.ts";
 import { IDaoConfigs } from "./DaoConfigs.ts";
 import { IRepoConfigs } from "./RepoConfigs.ts";
 import { IServiceConfigs } from "./ServiceConfigs.ts";
-import PgOrderProductDao from "../infrastructure/psql/data_access/PgOrderProductDao.ts";
+import PgOrderProductDao from "../infrastructure/psql/data_access/PgCartItemDao.ts";
 import PgProductDao from "../infrastructure/psql/data_access/PgProductDao.ts";
 import PgUserDao from "../infrastructure/psql/data_access/PgUserDao.ts";
 import OrderRepository from "../domain/repos/OrderRepository.ts";

@@ -1,13 +1,15 @@
 import { Client, Pool, QueryConfig } from "pg";
-import { ICreateOrderRequest } from "../../../../SillyStoreCommon/dtos/requests/create-requests/ICreateOrderRequest.ts";
-import { IDeleteOrderRequest } from "../../../../SillyStoreCommon/dtos/requests/delete-requests/IDeleteOrderRequest.ts";
-import { IGetAllOrdersRequest } from "../../../../SillyStoreCommon/dtos/requests/get-requests/IGetAllOrdersRequest.ts";
-import { IGetAllPendingOrdersRequest } from "../../../../SillyStoreCommon/dtos/requests/get-requests/IGetAllPendingOrdersRequest.ts";
-import { IGetOrderRequest } from "../../../../SillyStoreCommon/dtos/requests/get-requests/IGetOrderRequest.ts";
-import { IOrderResponse } from "../../../../SillyStoreCommon/dtos/responses/IOrderResponse.ts";
+import {
+    ICreateOrderRequest,
+    IOrderResponse,
+    IGetAllOrdersRequest,
+    IGetOrderRequest,
+    IUpdateOrderRequest,
+    IDeleteOrderRequest,
+    IGetAllPendingOrdersRequest,
+} from "../../../../SillyStoreCommon/dtos/orderDtos.ts";
 import backendLogger from "../../../configs/BackendLogger.ts";
 import { IOrderDao } from "../../data_access/IOrderDao.ts";
-import { IUpdateOrderRequest } from "../../../../SillyStoreCommon/dtos/requests/update-requests/IUpdateOrderRequest.ts";
 import PgDaos from "../../data_access/PgDaos.ts";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -65,9 +67,7 @@ export default class PgOrderDao implements IOrderDao {
         return await PgDaos.queryAsync(this.db, sql, PgDaos.orderMapper);
     }
 
-    async getAsync({
-        orderId,
-    }: IGetOrderRequest): Promise<IOrderResponse | null> {
+    async getAsync({ id }: IGetOrderRequest): Promise<IOrderResponse | null> {
         const sql: QueryConfig = {
             text: `
                 SELECT
@@ -75,7 +75,7 @@ export default class PgOrderDao implements IOrderDao {
                 FROM orders
                 WHERE id = $1
             `,
-            values: [orderId],
+            values: [id],
         };
         const rows: IOrderResponse[] = await PgDaos.queryAsync(
             this.db,

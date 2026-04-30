@@ -16,7 +16,7 @@ import HttpError from "../errors/HttpError.ts";
 import { IOrderDao } from "../infrastructure/data_access/IOrderDao.ts";
 import { IOrderProductDao } from "../infrastructure/data_access/ICartItemDao.ts";
 import PgOrderDao from "../infrastructure/psql/data_access/PgOrderDao.ts";
-import PgOrderProductDao from "../infrastructure/psql/data_access/PgOrderProductDao.ts";
+import PgOrderProductDao from "../infrastructure/psql/data_access/PgCartItemDao.ts";
 import apiConfigs from "../configs/ApiConfigs.ts";
 import { IOrderProductResponse } from "../../SillyStoreCommon/dtos/responses/IOrderProductResponse.ts";
 import { IOrderResponse } from "../../SillyStoreCommon/dtos/responses/IOrderResponse.ts";

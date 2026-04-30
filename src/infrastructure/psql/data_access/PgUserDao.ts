@@ -48,18 +48,18 @@ export default class PgUserDao implements IUserDao {
         return rows[0];
     }
 
-    async getAllAsync(dto: object): Promise<IUserResponse[]> {
+    async getAllAsync(_dto: object): Promise<IUserResponse[]> {
         throw new Error("Method not implemented.");
     }
 
-    async getAsync(dto: IGetUserRequest): Promise<IUserResponse | null> {
+    async getAsync(_dto: IGetUserRequest): Promise<IUserResponse | null> {
         throw new Error("Method not implemented.");
     }
-    async updateAsync(dto: IUpdateUserRequest): Promise<IUserResponse | null> {
+    async updateAsync(_dto: IUpdateUserRequest): Promise<IUserResponse | null> {
         throw new Error("Method not implemented.");
     }
 
-    async deleteAsync(dto: IDeleteUserRequest): Promise<IUserResponse | null> {
+    async deleteAsync(_dto: IDeleteUserRequest): Promise<IUserResponse | null> {
         throw new Error("Method not implemented.");
     }
 
