@@ -71,10 +71,20 @@ const testServices = {
     products: new ProductClientService(testDaos.products!),
 };
 
+setupUserInfo(app);
 setupUserRoutes(app);
 setupProductRoutes(app);
 setupOrderRoutes(app);
 initApp(app);
+
+function setupUserInfo(app: Express): void {
+    app.use((req, res, next) => {
+        if (req.cookies?.token) {
+            req.userInfo = tokenOps.extractUserInfo(req.cookies.token);
+        }
+        next();
+    });
+}
 
 function setupUserRoutes(app: Express): void {
     app.route("/users/register").post(
@@ -133,16 +143,14 @@ function setupProductRoutes(app: Express): void {
 
 function setupOrderRoutes(app: Express): void {
     app.use("/orders", (req, res, next) => {
-        if (!req.cookies?.token) {
+        if (!req.userInfo) {
             throw new HttpError(HttpStatus.UNAUTHORIZED, "Sign in bro");
         }
         next();
     });
 
     app.route("/orders").get(async (req, res, next) => {
-        const { id: userId, role } = tokenOps.extractUserInfo(
-            req.cookies?.token,
-        ); // todo - change req.userId to req.userInfo obj = {userId, role}
+        const { id: userId, role } = req.userInfo;
         const dto: IGetAllOrdersRequest = {
             userId,
             role,
@@ -155,9 +163,7 @@ function setupOrderRoutes(app: Express): void {
     app.route("/orders").post(
         requireBody(["dateStr", "status"]),
         async (req, res, next) => {
-            const { id: userId, role } = tokenOps.extractUserInfo(
-                req.cookies?.token,
-            );
+            const { id: userId, role } = req.userInfo;
             const { dateStr, status } = req.body; // todo - change req.userId to req.userInfo obj = {userId, role}
             const dto: ICreateOrderRequest = {
                 dateStr,
@@ -172,9 +178,7 @@ function setupOrderRoutes(app: Express): void {
     );
 
     app.route("/orders/pending").get(async (req, res, next) => {
-        const { id: userId, role } = tokenOps.extractUserInfo(
-            req.cookies?.token,
-        );
+        const { id: userId, role } = req.userInfo;
         const dto: IGetAllPendingOrdersRequest = {
             userId,
             role,
@@ -197,9 +201,8 @@ function setupOrderRoutes(app: Express): void {
     app.route("/orders/pending").put(
         requireBody(["dateStr", "status"]),
         async (req, res, next) => {
-            const { id: userId, role } = tokenOps.extractUserInfo(
-                req.cookies?.token,
-            );
+            const { id: userId, role } = req.userInfo;
+
             const { dateStr, status } = req.body;
             const dto: IUpdatePendingOrderRequest = {
                 dateStr,
@@ -219,9 +222,8 @@ function setupOrderRoutes(app: Express): void {
     ); // put
 
     app.route("/orders/:id").get(async (req, res, next) => {
-        const { id: userId, role } = tokenOps.extractUserInfo(
-            req.cookies?.token,
-        );
+        const { id: userId, role } = req.userInfo;
+
         const dto: IGetOrderRequest = {
             id: parseInt(req.params.id),
             userId,
@@ -236,9 +238,7 @@ function setupOrderRoutes(app: Express): void {
         // not sure if i wanna put this in app, I guess I can *shrug*
         requireBody(["dateStr", "status"]),
         async (req, res, next) => {
-            const { id: userId, role } = tokenOps.extractUserInfo(
-                req.cookies?.token,
-            );
+            const { id: userId, role } = req.userInfo;
 
             const {
                 params: { id },
