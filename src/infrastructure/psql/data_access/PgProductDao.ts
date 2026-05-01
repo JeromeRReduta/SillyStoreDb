@@ -19,6 +19,7 @@ export default class PgProductDao implements IProductDao {
 
     constructor(db: Client | Pool) {
         this.db = db;
+        // thanks https://www.postgresql.org/docs/9.4/datatype-money.html
         this.formattedProductSql = `
             id,
             title,
@@ -35,7 +36,6 @@ export default class PgProductDao implements IProductDao {
         _dto: IGetAllProductsRequest,
     ): Promise<IProductResponse[]> {
         const sql: QueryConfig = {
-            // thanks https://www.postgresql.org/docs/9.4/datatype-money.html
             text: `
                 SELECT
                     ${this.formattedProductSql}
