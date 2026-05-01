@@ -19,10 +19,7 @@ export default class UserClientService implements IUserClientService {
 
     async registerAsync(dto: ICreateUserRequest): Promise<TokenResponse> {
         const user: IUserResponse = await this.userDao.createAsync(dto);
-        return tokenOps.create({
-            id: user.id,
-            role: user.role,
-        });
+        return tokenOps.createUserToken(user);
     }
 
     async loginAsync(
@@ -36,24 +33,6 @@ export default class UserClientService implements IUserClientService {
                 "No matching user found!",
             );
         }
-        return tokenOps.create({
-            id: user.id,
-            role: user.role,
-        });
+        return tokenOps.createUserToken(user);
     }
-
-    // async loginAsync(
-    //     dto: IGetUserByCredentialsRequest,
-    // ): Promise<TokenResponse> {
-    //     const user: IUserResponse | null =
-    //         await this.repo.getByCredentialsAsync(dto);
-    //     if (!user) {
-    //         throw new HttpError(
-    //             HttpStatus.NOT_FOUND,
-    //             "No matching user found!",
-    //         );
-    //     }
-    //     const token: TokenResponse = tokenOps.create({ id: user.id });
-    //     return token;
-    // }
 }

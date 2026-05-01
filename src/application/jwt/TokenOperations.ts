@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import backendConfigs from "../../configs/BackendConfigs.ts";
+import { IUserResponse } from "../../../SillyStoreCommon/dtos/userDtos.ts";
 
 const SECRET: jwt.Secret = backendConfigs.jwt.secret;
 
@@ -13,5 +14,9 @@ export default class tokenOps {
 
     static verify(token: string): jwt.JwtPayload | string {
         return jwt.verify(token, SECRET);
+    }
+
+    static createUserToken(user: IUserResponse) {
+        return this.create({ id: user.id, role: user.role });
     }
 }
