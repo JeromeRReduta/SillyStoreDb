@@ -23,6 +23,7 @@
         "vite-env.d.ts",
         "SillyStoreCommon/**/*.ts",
         "eslint.config.ts",
-        "src/configs/.ts"
+        "src/configs/.ts",
+        "src/application/services/ClientProductService.ts.OLD"
     ]
 }

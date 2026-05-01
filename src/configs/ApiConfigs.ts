@@ -8,7 +8,7 @@ import PgOrderProductDao from "../infrastructure/psql/data_access/PgCartItemDao.
 import PgProductDao from "../infrastructure/psql/data_access/PgProductDao.ts";
 import PgUserDao from "../infrastructure/psql/data_access/PgUserDao.ts";
 import ClientOrderService from "../application/services/ClientOrderService.ts";
-import ClientProductService from "../application/services/ClientProductService.ts";
+import ClientProductService from "../application/services/ClientProductService.ts.OLD";
 import ClientUserService from "../application/services/ClientUserService.ts";
 
 export interface IApiConfigs {
