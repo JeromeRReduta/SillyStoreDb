@@ -1,10 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Client, Pool, QueryConfig } from "pg";
 import * as bcrypt from "bcrypt";
-import { IUserDao } from "../../data_access/IUserDao.ts";
-import { IPgUser } from "../entities/IPgUser.ts";
-import PgDaos from "../../data_access/PgDaos.ts";
-import backendLogger from "../../../configs/BackendLogger.ts";
 import {
     ICreateUserRequest,
     IUserResponse,
@@ -13,6 +9,10 @@ import {
     IDeleteUserRequest,
     IGetUserByCredentialsRequest,
 } from "../../../../SillyStoreCommon/dtos/userDtos.ts";
+import backendLogger from "../../../configs/BackendLogger.ts";
+import { IUserDao } from "../../data_access/IUserDao.ts";
+import PgDaos from "../../data_access/PgDaos.ts";
+import { IPgUser } from "../entities/IPgUser.ts";
 
 export default class PgUserDao implements IUserDao {
     private db: Client | Pool;
@@ -64,17 +64,15 @@ export default class PgUserDao implements IUserDao {
     }
 
     async getByCredentialsAsync({
-        username,
         pw,
         email,
     }: IGetUserByCredentialsRequest): Promise<IUserResponse | null> {
         const sql: QueryConfig = {
             text: `
                     SELECT * FROM users
-                    WHERE username = $1
-                    AND email = $2
+                    WHERE email = $1
                 `,
-            values: [username, email],
+            values: [email],
         };
         backendLogger.debug("sql: ", sql);
         const { rows } = await this.db.query(sql);
