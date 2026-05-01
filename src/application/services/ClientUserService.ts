@@ -8,6 +8,7 @@ import { HttpStatus } from "../http/HttpStatus.ts";
 import tokenOps from "../jwt/TokenOperations.ts";
 import { IClientUserService } from "./IUserClientService.ts";
 
+// TODO: delete
 export default class ClientUserService implements IClientUserService {
     private repo: IUserRepository;
 
