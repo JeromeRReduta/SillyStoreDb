@@ -48,8 +48,7 @@ import tryGetPendingProductsAsync from "../../application/middleware/TryGetPendi
  */
 
 const orderRouter: Router = express.Router();
-orderRouter.use(requireSignedIn("CLIENT")); // universal requirement - must be signed in
-
+orderRouter.use(requireSignedIn);
 orderRouter
     .route("/")
     .get(tryGetAllOwnedOrdersAsync)

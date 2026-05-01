@@ -7,6 +7,7 @@ import psqlErrorHandler from "../application/middleware/PsqlErrorHandler.ts";
 import finalErrorHandler from "../application/middleware/FinalErrorHandler.ts";
 import orderRouter from "../presentation/routes/orders.ts";
 import cors from "cors";
+import processToken from "../application/middleware/ProcessToken.ts";
 
 // TODO: change logger to mask pw_hash fields
 const app = express();
@@ -19,6 +20,8 @@ app.use(
         credentials: true,
     }),
 );
+
+app.use(processToken);
 app.use("/products", productRouter);
 app.use("/users", userRouter);
 app.use("/orders", orderRouter);

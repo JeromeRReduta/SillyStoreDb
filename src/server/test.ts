@@ -41,6 +41,7 @@ import {
     IUpdateOrderRequest,
 } from "../../SillyStoreCommon/dtos/orderDtos.ts";
 import HttpError from "../errors/HttpError.ts";
+import processToken from "../application/middleware/ProcessToken.ts";
 
 const app = express();
 app.use(
@@ -78,12 +79,7 @@ setupOrderRoutes(app);
 initApp(app);
 
 function setupUserInfo(app: Express): void {
-    app.use((req, res, next) => {
-        if (req.cookies?.token) {
-            req.userInfo = tokenOps.extractUserInfo(req.cookies.token);
-        }
-        next();
-    });
+    app.use(processToken);
 }
 
 function setupUserRoutes(app: Express): void {
@@ -142,13 +138,7 @@ function setupProductRoutes(app: Express): void {
 }
 
 function setupOrderRoutes(app: Express): void {
-    app.use("/orders", (req, res, next) => {
-        if (!req.userInfo) {
-            throw new HttpError(HttpStatus.UNAUTHORIZED, "Sign in bro");
-        }
-        next();
-    });
-
+    app.use(requireSignedIn);
     app.route("/orders").get(async (req, res, next) => {
         const { id: userId, role } = req.userInfo;
         const dto: IGetAllOrdersRequest = {
