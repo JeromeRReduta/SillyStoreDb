@@ -5,13 +5,12 @@ import {
     IUpdateCartItemRequest,
     IDeleteCartItemRequest,
     ICartItemResponse,
-    IGetOrdersIncludingProductRequest,
-    IMergeCartItemsRequest,
-    IMergePendingCartItemsRequest,
     IGetPendingCartItemsRequest,
+    IMergePendingCartItemsRequest,
+    IMergeCartItemsInOrderRequest,
+    IGetCartItemsInOrderRequest,
 } from "../../../SillyStoreCommon/dtos/cartItemDtos.ts";
-import { IOrderResponse } from "../../../SillyStoreCommon/dtos/orderDtos.ts";
-import { IProductWithQuantityResponse } from "../../../SillyStoreCommon/dtos/productDtos.ts";
+import HttpError from "../../errors/HttpError.ts";
 import { ICrudDao } from "./ICrudDao.ts";
 
 export interface ICartItemDao extends ICrudDao<
@@ -22,31 +21,44 @@ export interface ICartItemDao extends ICrudDao<
     IDeleteCartItemRequest,
     ICartItemResponse
 > {
-    getAllPendingCartItemsAsync(
+    /**
+     * Gets all cart items from pending order. If no pending order exists, throws an error
+     * @param {IGetPendingCartItemsRequest} dto
+     * @throws {HttpError} if no pending order exists
+     * @returns {Promise<ICartItemResponse[]>} all cart items from pending order
+     */
+    getAllPendingAsync(
         dto: IGetPendingCartItemsRequest,
     ): Promise<ICartItemResponse[]>;
 
-    getOrdersIncludingProductAsync(
-        dto: IGetOrdersIncludingProductRequest,
-    ): Promise<IOrderResponse[]>;
-
-    // TODO: make dtos for these 2
-    getProductsInOrderAsync(
-        dto: object,
-    ): Promise<IProductWithQuantityResponse[]>;
-
-    getProductsInPendingOrderAsync(
-        dto: object,
-    ): Promise<IProductWithQuantityResponse[]>;
-
-    // note: These should return updated rows - to get full order product list, should run get again
-    mergeCartItemsAsync(
-        dto: IMergeCartItemsRequest,
+    /** Gets all cart items from a specific order. If no such order exists, throws an error
+     * @param {IGetCartItemsInOrderRequest} dto
+     * @throws {HttpError} if no pending order exists
+     * @returns {Promise<ICartItemResponse[]>} all cart items from order
+     */
+    getAllInOrderAsync(
+        dto: IGetCartItemsInOrderRequest,
     ): Promise<ICartItemResponse[]>;
 
-    mergePendingCartItemsAsync(
+    /**
+     * Merges all cart items in dto into a given order's cart
+     * @param dto
+     * @returns {Promise<ICartItemResponse[]>} modified entries
+     */
+    mergeCartInOrderAsync(
+        dto: IMergeCartItemsInOrderRequest,
+    ): Promise<ICartItemResponse[]>;
+
+    /**
+     * Merge all cart items in dto into the user's pending order. If no pending order exists, this
+     * will CREATE A NEW PENDING ORDER.
+     * @param dto
+     * @returns {Promise<ICartItemResponse[]>} modified entries
+     */
+    mergePendingCartAsync(
         dto: IMergePendingCartItemsRequest,
     ): Promise<ICartItemResponse[]>;
+
     /** TODO: Sillystore common:
     * 
     * simplify dtos:
@@ -67,13 +79,4 @@ export interface ICartItemDao extends ICrudDao<
     * * 
     * 
     */
-
-    /**
-     * interface IUpdatePendingOrderRequest:
-     *  // literally just = IUpdateOrderProductRequest[]
-     *
-     * 1. general sense:
-     *  merge orderProducts w/ specific order (i.e. based on order.id)
-     *  merge orderProducts w/ pending order
-     */
 }

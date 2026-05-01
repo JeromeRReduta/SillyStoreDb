@@ -42,6 +42,17 @@ import {
 } from "../../SillyStoreCommon/dtos/orderDtos.ts";
 import HttpError from "../errors/HttpError.ts";
 import processToken from "../application/middleware/ProcessToken.ts";
+import { ICartItemDao } from "../infrastructure/data_access/ICartItemDao.ts";
+import PgCartItemDao from "../infrastructure/psql/data_access/PgCartItemDao.ts";
+import {
+    ICartItemResponse,
+    ICreateCartItemRequest,
+    IGetAllCartItemsRequest,
+    IGetCartItemsInOrderRequest,
+    IGetPendingCartItemsRequest,
+    IMergePendingCartItemsRequest,
+} from "../../SillyStoreCommon/dtos/cartItemDtos.ts";
+import { ICartItem } from "../../SillyStoreCommon/domain-objects/CartItem.ts";
 
 const app = express();
 app.use(
@@ -59,12 +70,14 @@ interface ITestDaos {
     readonly orders?: IOrderDao;
     readonly products?: IProductDao;
     readonly users?: IUserDao;
+    readonly cartItems?: ICartItemDao;
 }
 
 const testDaos: ITestDaos = {
     products: new PgProductDao(db),
     users: new PgUserDao(db),
     orders: new PgOrderDao(db),
+    cartItems: new PgCartItemDao(db),
 };
 
 const testServices = {
@@ -76,6 +89,7 @@ setupUserInfo(app);
 setupUserRoutes(app);
 setupProductRoutes(app);
 setupOrderRoutes(app);
+setupCartItemRoutes(app);
 initApp(app);
 
 function setupUserInfo(app: Express): void {
@@ -251,6 +265,89 @@ function setupOrderRoutes(app: Express): void {
     );
 }
 
+function setupCartItemRoutes(app: Express): void {
+    app.use("/cart", requireSignedIn);
+
+    app.route("/cart/pending").get(async (req, res, next) => {
+        const { id: creatorId, role } = req.userInfo;
+        const dto: IGetPendingCartItemsRequest = {
+            creatorId,
+            role,
+        };
+        const cartItems: ICartItemResponse[] =
+            await testDaos.cartItems!.getAllPendingAsync(dto);
+        res.status(HttpStatus.OK).send(cartItems);
+    });
+    // note - not planning to implement this
+
+    // app.route("/cart").get(requireBody(["orderId"]), async (req, res, next) => {
+    //     const {
+    //         body: { orderId },
+    //         userInfo: { id: creatorId, role },
+    //     } = req;
+    //     const dto: IGetCartItemsInOrderRequest = {
+    //         orderId,
+    //         creatorId,
+    //         role,
+    //     };
+    //     const history: ICartItemResponse[] =
+    //         await testDaos.cartItems!.getAllInOrderAsync(dto);
+    //     res.status(HttpStatus.OK).send(history);
+    // });
+
+    // note - not planning to implement this
+    // app.route("/cart").post(
+    //     requireBody(["orderId", "productId", "quantity"]),
+    //     async (req, res, next) => {
+    //         const dto: ICreateCartItemRequest = req.body;
+    //         const created: ICartItemResponse =
+    //             await testDaos.cartItems!.createAsync(dto);
+    //         res.status(HttpStatus.CREATED).send(created);
+    //     },
+    // );
+
+    app.route("/cart/pending").put(
+        requireBody(["cartItems", "dateStr"]),
+        async (req, res, next) => {
+            const {
+                body: { cartItems, dateStr },
+                userInfo: { id: creatorId, role },
+            } = req;
+            const dto: IMergePendingCartItemsRequest & { dateStr: string } = {
+                role,
+                creatorId,
+                cartItems,
+                dateStr,
+            };
+            const updated: ICartItemResponse[] =
+                await testDaos.cartItems!.mergePendingCartAsync(dto);
+            res.status(HttpStatus.OK).send(updated);
+        },
+    );
+}
+
+const thing: Pick<ICartItem, "productId" | "quantity">[] = [
+    {
+        productId: 1,
+        quantity: 100,
+    },
+    {
+        productId: 2,
+        quantity: 99,
+    },
+    {
+        productId: 3,
+        quantity: 98,
+    },
+    {
+        productId: 4,
+        quantity: 97,
+    },
+    {
+        productId: 5,
+        quantity: 96,
+    },
+];
 function initApp(app: Express): void {
     app.listen(backendConfigs.db.port, async () => {
         const { db } = apiConfigs;
