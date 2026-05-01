@@ -13,7 +13,10 @@ import { HttpStatus } from "../application/http/HttpStatus.ts";
 import tokenOps from "../application/jwt/TokenOperations.ts";
 import requireBody from "../application/middleware/RequireBody.ts";
 import apiConfigs from "../configs/ApiConfigs.ts";
-import { IOrderDao } from "../infrastructure/data_access/IOrderDao.ts";
+import {
+    IOrderDao,
+    IUpdatePendingOrderRequest,
+} from "../infrastructure/data_access/IOrderDao.ts";
 import { IProductDao } from "../infrastructure/data_access/IProductDao.ts";
 import { IUserDao } from "../infrastructure/data_access/IUserDao.ts";
 import PgOrderDao from "../infrastructure/psql/data_access/PgOrderDao.ts";
@@ -28,6 +31,16 @@ import {
     IProductResponse,
 } from "../../SillyStoreCommon/dtos/productDtos.ts";
 import ProductClientService from "../application/services/ProductClientService.ts";
+import requireSignedIn from "../application/middleware/RequireSignedIn.ts";
+import {
+    ICreateOrderRequest,
+    IGetAllOrdersRequest,
+    IGetAllPendingOrdersRequest,
+    IGetOrderRequest,
+    IOrderResponse,
+    IUpdateOrderRequest,
+} from "../../SillyStoreCommon/dtos/orderDtos.ts";
+import HttpError from "../errors/HttpError.ts";
 
 const app = express();
 app.use(
@@ -60,6 +73,7 @@ const testServices = {
 
 setupUserRoutes(app);
 setupProductRoutes(app);
+setupOrderRoutes(app);
 initApp(app);
 
 function setupUserRoutes(app: Express): void {
@@ -71,6 +85,7 @@ function setupUserRoutes(app: Express): void {
             // const token: TokenResponse = tokenOps.create({ id: user.id });
             const token: TokenResponse =
                 await testServices.users.registerAsync(dto);
+            res.cookie("token", token);
             res.status(HttpStatus.CREATED).send(token);
         },
     );
@@ -86,6 +101,7 @@ function setupUserRoutes(app: Express): void {
             //     : null;
             const token: TokenResponse =
                 await testServices.users.loginAsync(dto);
+            res.cookie("token", token);
             res.status(token ? HttpStatus.CREATED : HttpStatus.NOT_FOUND).send(
                 token,
             );
@@ -113,6 +129,136 @@ function setupProductRoutes(app: Express): void {
             product,
         );
     });
+}
+
+function setupOrderRoutes(app: Express): void {
+    app.use("/orders", (req, res, next) => {
+        if (!req.cookies?.token) {
+            throw new HttpError(HttpStatus.UNAUTHORIZED, "Sign in bro");
+        }
+        next();
+    });
+
+    app.route("/orders").get(async (req, res, next) => {
+        const { id: userId, role } = tokenOps.extractUserInfo(
+            req.cookies?.token,
+        ); // todo - change req.userId to req.userInfo obj = {userId, role}
+        const dto: IGetAllOrdersRequest = {
+            userId,
+            role,
+        };
+        const orders: IOrderResponse[] =
+            await testDaos.orders!.getAllAsync(dto);
+        res.status(HttpStatus.OK).send(orders);
+    });
+
+    app.route("/orders").post(
+        requireBody(["dateStr", "status"]),
+        async (req, res, next) => {
+            const { id: userId, role } = tokenOps.extractUserInfo(
+                req.cookies?.token,
+            );
+            const { dateStr, status } = req.body; // todo - change req.userId to req.userInfo obj = {userId, role}
+            const dto: ICreateOrderRequest = {
+                dateStr,
+                userId,
+                status,
+                role,
+            };
+            const order: IOrderResponse =
+                await testDaos.orders!.createAsync(dto);
+            res.status(HttpStatus.CREATED).send(order);
+        },
+    );
+
+    app.route("/orders/pending").get(async (req, res, next) => {
+        const { id: userId, role } = tokenOps.extractUserInfo(
+            req.cookies?.token,
+        );
+        const dto: IGetAllPendingOrdersRequest = {
+            userId,
+            role,
+        };
+        const pendingOrders: IOrderResponse[] =
+            await testDaos.orders!.getAllPendingOrdersAsync(dto);
+        backendLogger.debug("ROLE: ", role);
+        backendLogger.debug(
+            "MAXIMUM ENTRIES ALLOWED: ",
+            role === "client" ? "1" : "UNLIMITED",
+        );
+        backendLogger.debug(
+            "# of entries actually found: ",
+            pendingOrders.length,
+            role === "client" && pendingOrders.length > 1 ? " (uh oh)" : "",
+        );
+        res.status(HttpStatus.OK).send(pendingOrders);
+    });
+
+    app.route("/orders/pending").put(
+        requireBody(["dateStr", "status"]),
+        async (req, res, next) => {
+            const { id: userId, role } = tokenOps.extractUserInfo(
+                req.cookies?.token,
+            );
+            const { dateStr, status } = req.body;
+            const dto: IUpdatePendingOrderRequest = {
+                dateStr,
+                status,
+                userId,
+                role,
+            };
+            backendLogger.debug("HERE IN PENDING, user info", userId, role);
+            const updated: IOrderResponse | null =
+                await testDaos.orders!.updatePendingOrderAsync(dto);
+            backendLogger.debug("ROLE: ", role);
+
+            res.status(updated ? HttpStatus.OK : HttpStatus.NOT_FOUND).send(
+                updated,
+            );
+        },
+    ); // put
+
+    app.route("/orders/:id").get(async (req, res, next) => {
+        const { id: userId, role } = tokenOps.extractUserInfo(
+            req.cookies?.token,
+        );
+        const dto: IGetOrderRequest = {
+            id: parseInt(req.params.id),
+            userId,
+            role,
+        };
+        const order: IOrderResponse | null =
+            await testDaos.orders!.getAsync(dto);
+        res.status(order ? HttpStatus.OK : HttpStatus.NOT_FOUND).send(order);
+    });
+
+    app.route("/orders/:id").put(
+        // not sure if i wanna put this in app, I guess I can *shrug*
+        requireBody(["dateStr", "status"]),
+        async (req, res, next) => {
+            const { id: userId, role } = tokenOps.extractUserInfo(
+                req.cookies?.token,
+            );
+
+            const {
+                params: { id },
+                body: { dateStr, status },
+            } = req;
+
+            const dto: IUpdateOrderRequest = {
+                role,
+                userId,
+                dateStr,
+                status,
+                id: parseInt(id),
+            };
+            const updated: IOrderResponse | null =
+                await testDaos.orders!.updateAsync(dto);
+            res.status(updated ? HttpStatus.OK : HttpStatus.NOT_FOUND).send(
+                updated,
+            );
+        },
+    );
 }
 
 function initApp(app: Express): void {

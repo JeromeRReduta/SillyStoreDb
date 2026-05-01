@@ -1,6 +1,10 @@
 import jwt from "jsonwebtoken";
 import backendConfigs from "../../configs/BackendConfigs.ts";
-import { IUserResponse } from "../../../SillyStoreCommon/dtos/userDtos.ts";
+import {
+    IUserResponse,
+    TokenResponse,
+} from "../../../SillyStoreCommon/dtos/userDtos.ts";
+import { UserRole } from "../../../SillyStoreCommon/domain-objects/User.ts";
 
 const SECRET: jwt.Secret = backendConfigs.jwt.secret;
 
@@ -12,11 +16,18 @@ export default class tokenOps {
         return jwt.sign(payload, SECRET, { expiresIn: "7d" });
     }
 
-    static verify(token: string): jwt.JwtPayload | string {
+    static verify(token: TokenResponse): jwt.JwtPayload | string {
         return jwt.verify(token, SECRET);
     }
 
     static createUserToken(user: IUserResponse) {
-        return this.create({ id: user.id, role: user.role });
+        return tokenOps.create({ id: user.id, role: user.role });
+    }
+
+    static extractUserInfo(token: TokenResponse): {
+        id: number;
+        role: UserRole;
+    } {
+        return tokenOps.verify(token) as { id: number; role: UserRole };
     }
 }

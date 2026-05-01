@@ -1,3 +1,4 @@
+import { IOrder } from "../../../SillyStoreCommon/domain-objects/Order.ts";
 import {
     ICreateOrderRequest,
     IGetAllOrdersRequest,
@@ -20,4 +21,10 @@ export interface IOrderDao extends ICrudDao<
     getAllPendingOrdersAsync(
         dto: IGetAllPendingOrdersRequest,
     ): Promise<IOrderResponse[]>;
+    updatePendingOrderAsync(
+        dto: IUpdatePendingOrderRequest,
+    ): Promise<IOrderResponse | null>;
 }
+
+// TODO: put this in common dtos
+export type IUpdatePendingOrderRequest = Omit<IUpdateOrderRequest, "id">;

@@ -9,7 +9,10 @@ import {
     IGetAllPendingOrdersRequest,
 } from "../../../../SillyStoreCommon/dtos/orderDtos.ts";
 import backendLogger from "../../../configs/BackendLogger.ts";
-import { IOrderDao } from "../../data_access/IOrderDao.ts";
+import {
+    IOrderDao,
+    IUpdatePendingOrderRequest,
+} from "../../data_access/IOrderDao.ts";
 import PgDaos from "../../data_access/PgDaos.ts";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -30,15 +33,15 @@ export default class PgOrderDao implements IOrderDao {
     async createAsync({
         dateStr,
         userId,
+        status,
     }: ICreateOrderRequest): Promise<IOrderResponse> {
         const sql: QueryConfig = {
             text: `
-                INSERT INTO orders (date, user_id)
-                VALUES ($1, $2)
-                RETURNING
-                    $3
+                INSERT INTO orders (date, user_id, status)
+                VALUES ($1, $2, $3)
+                RETURNING ${this.formattedOrderSql}
             `,
-            values: [dateStr, userId, this.formattedOrderSql],
+            values: [dateStr, userId, status],
         };
         const rows: IOrderResponse[] = await PgDaos.queryAsync(
             this.db,
@@ -53,16 +56,16 @@ export default class PgOrderDao implements IOrderDao {
 
     async getAllAsync({
         userId,
+        role,
     }: IGetAllOrdersRequest): Promise<IOrderResponse[]> {
-        const isClient: boolean = userId !== null;
         const sql: QueryConfig = {
             text: `
                 SELECT
                 ${this.formattedOrderSql}
                 FROM orders
-                ${isClient ? "WHERE user_id = $1" : ""}
+                ${role === "client" ? "WHERE user_id = $1" : ""}
             `,
-            values: isClient ? [userId] : [],
+            values: role === "client" ? [userId] : [],
         };
         return await PgDaos.queryAsync(this.db, sql, PgDaos.orderMapper);
     }
@@ -86,10 +89,43 @@ export default class PgOrderDao implements IOrderDao {
         return rows.length > 0 ? rows[0] : null;
     }
 
-    async updateAsync(
-        _dto: IUpdateOrderRequest,
-    ): Promise<IOrderResponse | null> {
-        throw new Error("Method not implemented.");
+    async updateAsync({
+        // todo: Make everything except userId and role and id optional
+        dateStr,
+        status,
+        userId,
+        role,
+        id,
+    }: IUpdateOrderRequest): Promise<IOrderResponse | null> {
+        const processed = {
+            dateStr: dateStr ?? null,
+            status: status ?? null,
+        };
+
+        const sql: QueryConfig = {
+            text: `
+                UPDATE orders SET
+                    date = COALESCE($1, date),
+                    status = COALESCE($2, status)
+                WHERE
+                    id = $3
+                    ${role === "client" ? "AND user_id = $4" : ""}
+                RETURNING ${this.formattedOrderSql}
+            `,
+            values:
+                role === "client"
+                    ? [processed.dateStr, processed.status, id, userId]
+                    : [processed.dateStr, processed.status, id],
+        };
+        const rows: IOrderResponse[] = await PgDaos.queryAsync(
+            this.db,
+            sql,
+            PgDaos.orderMapper,
+        );
+        if (rows.length > 1) {
+            throw Error("Error - only 1 entry should have been updated");
+        }
+        return rows.length === 1 ? rows[0] : null;
     }
 
     async deleteAsync(
@@ -100,8 +136,8 @@ export default class PgOrderDao implements IOrderDao {
 
     async getAllPendingOrdersAsync({
         userId,
+        role,
     }: IGetAllPendingOrdersRequest): Promise<IOrderResponse[]> {
-        const isClient: boolean = userId !== null;
         const sql: QueryConfig = {
             text: `
                 SELECT
@@ -109,10 +145,42 @@ export default class PgOrderDao implements IOrderDao {
                 FROM orders
                 WHERE
                     status = 'pending'
-                    ${isClient ? "AND user_id = $1" : ""}
+                    ${role === "client" ? "AND user_id = $1" : ""}
             `,
-            values: isClient ? [userId] : [],
+            values: role === "client" ? [userId] : [],
         };
         return await PgDaos.queryAsync(this.db, sql, PgDaos.orderMapper);
+    }
+
+    async updatePendingOrderAsync({
+        dateStr,
+        status,
+        userId,
+    }: IUpdatePendingOrderRequest): Promise<IOrderResponse | null> {
+        const processed = {
+            dateStr: dateStr ?? null,
+            status: status ?? null,
+        };
+        const sql: QueryConfig = {
+            text: `
+                UPDATE orders SET
+                    date = COALESCE($1, date),
+                    status = COALESCE($2, status)
+                WHERE
+                    user_id = $3
+                    AND status = 'pending' 
+                RETURNING ${this.formattedOrderSql}
+            `,
+            values: [processed.dateStr, processed.status, userId],
+        };
+        const rows: IOrderResponse[] = await PgDaos.queryAsync(
+            this.db,
+            sql,
+            PgDaos.orderMapper,
+        );
+        if (rows.length > 1) {
+            throw Error("Error - only 1 entry should have been updated");
+        }
+        return rows.length === 1 ? rows[0] : null;
     }
 }
