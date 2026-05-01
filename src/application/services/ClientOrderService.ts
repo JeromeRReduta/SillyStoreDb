@@ -13,7 +13,7 @@ import { IProductWithQuantityResponse } from "../../../SillyStoreCommon/dtos/res
 import { IOrderRepository } from "../../domain/repos/IOrderRepository.ts";
 import HttpError from "../../errors/HttpError.ts";
 import { HttpStatus } from "../http/HttpStatus.ts";
-import { IClientOrderService } from "./IClientOrderService.ts";
+import { IClientOrderService } from "./IOrderClientService.ts";
 
 export default class ClientOrderService implements IClientOrderService {
     private repo: IOrderRepository;

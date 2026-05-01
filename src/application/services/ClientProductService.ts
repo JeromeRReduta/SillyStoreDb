@@ -6,9 +6,9 @@ import { IGetProductRequest } from "../dtos/requests/IGetProductRequest.ts";
 import { IOrderResponse } from "../dtos/responses/IOrderResponse.ts";
 import { IProductResponse } from "../dtos/responses/IProductResponse.ts";
 import { HttpStatus } from "../http/HttpStatus.ts";
-import { IClientProductService } from "./IClientProductService.ts";
+import { IProductClientService } from "./IProductClientService.ts";
 
-export default class ClientProductService implements IClientProductService {
+export default class ClientProductService implements IProductClientService {
     private repo: IProductRepository;
 
     constructor(repo: IProductRepository) {

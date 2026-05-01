@@ -1,9 +1,9 @@
-import { IClientOrderService } from "../application/services/IClientOrderService.ts";
-import { IClientProductService } from "../application/services/IClientProductService.ts";
-import { IClientUserService } from "../application/services/IClientUserService.ts";
+import { IClientOrderService } from "../application/services/IOrderClientService.ts";
+import { IProductClientService } from "../application/services/IProductClientService.ts";
+import { IClientUserService } from "../application/services/IUserClientService.ts";
 
 export interface IServiceConfigs {
     readonly clientOrderService: IClientOrderService;
-    readonly clientProductService: IClientProductService;
+    readonly clientProductService: IProductClientService;
     readonly clientUserService: IClientUserService;
 }

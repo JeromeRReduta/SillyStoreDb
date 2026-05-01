@@ -6,7 +6,7 @@ import { IUserResponse } from "../dtos/responses/IUserResponse.ts";
 import { TokenResponse } from "../dtos/responses/TokenResponse.ts";
 import { HttpStatus } from "../http/HttpStatus.ts";
 import tokenOps from "../jwt/TokenOperations.ts";
-import { IClientUserService } from "./IClientUserService.ts";
+import { IClientUserService } from "./IUserClientService.ts";
 
 export default class ClientUserService implements IClientUserService {
     private repo: IUserRepository;
