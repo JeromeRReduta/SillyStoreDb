@@ -27,6 +27,7 @@ import {
     IGetProductRequest,
     IProductResponse,
 } from "../../SillyStoreCommon/dtos/productDtos.ts";
+import ProductClientService from "../application/services/ProductClientService.ts";
 
 const app = express();
 app.use(
@@ -54,6 +55,7 @@ const testDaos: ITestDaos = {
 
 const testServices = {
     users: new UserClientService(testDaos.users!),
+    products: new ProductClientService(testDaos.products!),
 };
 
 setupUserRoutes(app);
@@ -94,15 +96,19 @@ function setupUserRoutes(app: Express): void {
 function setupProductRoutes(app: Express): void {
     app.route("/products").get(async (req, res, next) => {
         const dto: IGetAllProductsRequest = {};
+        // const products: IProductResponse[] =
+        //     await testDaos.products!.getAllAsync(dto);
         const products: IProductResponse[] =
-            await testDaos.products!.getAllAsync(dto);
+            await testServices.products.getAllAsync(dto);
         res.status(HttpStatus.OK).send(products);
     });
 
     app.route("/products/:id").get(async (req, res, next) => {
         const dto: IGetProductRequest = { id: parseInt(req.params.id) };
-        const product: IProductResponse | null =
-            await testDaos.products!.getAsync(dto);
+        // const product: IProductResponse | null =
+        //     await testDaos.products!.getAsync(dto);
+        const product: IProductResponse =
+            await testServices.products.getAsync(dto);
         res.status(product ? HttpStatus.OK : HttpStatus.NOT_FOUND).send(
             product,
         );
