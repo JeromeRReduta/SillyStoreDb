@@ -5,6 +5,7 @@ import tryCreateOrderAsync from "../../application/middleware/TryCreateOrderAsyn
 import tryGetAllOwnedOrdersAsync from "../../application/middleware/TryGetAllOwnedOrdersAsync.ts";
 import tryGetPendingOrderAsync from "../../application/middleware/TryGetPendingOrderAsync.ts";
 import tryUpdatePendingOrderAsync from "../../application/middleware/TryUpdatePendingOrderAsync.ts";
+import tryGetOwnedOrderAsync from "../../application/middleware/TryGetOwnedOrderAsync.ts";
 
 /** TODO:
  * Frontend:
@@ -19,6 +20,7 @@ const orderRouter: express.Router = express.Router();
 orderRouter.use(requireSignedIn);
 orderRouter.route("/").get(tryGetAllOwnedOrdersAsync);
 orderRouter.route("/").post(requireBody(["dateStr"]), tryCreateOrderAsync);
+orderRouter.route("/:id").get(tryGetOwnedOrderAsync);
 orderRouter.route("/pending").get(tryGetPendingOrderAsync);
 orderRouter
     .route("/pending")

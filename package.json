@@ -13,6 +13,7 @@
         "db:seed": "tsx --env-file=.env.development src/infrastructure/psql/seed.ts",
         "db:reset": "npm run db:schema && npm run db:seed",
         "fresh-test": "npm run db:reset && npm run test",
+        "lint": "npx eslint .",
         "see-big-number": "git ls-files | grep '\\.ts' | grep -v 'test' | xargs wc -l | sort -rn"
     },
     "devDependencies": {

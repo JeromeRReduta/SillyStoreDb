@@ -14,8 +14,6 @@ import {
     IGetCartItemsInOrderRequest,
 } from "../../../../SillyStoreCommon/dtos/cartItemDtos.ts";
 import PgDaos from "../../data_access/PgDaos.ts";
-import { IOrderResponse } from "../../../../SillyStoreCommon/dtos/orderDtos.ts";
-import backendLogger from "../../../configs/BackendLogger.ts";
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export default class PgCartItemDao implements ICartItemDao {

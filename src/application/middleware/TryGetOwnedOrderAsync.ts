@@ -1,23 +1,33 @@
-import { NextFunction, Request, Response } from "express";
+import {
+    NextFunction,
+    Request as ExpressRequest,
+    Response as ExpressResponse,
+} from "express";
 
 import { HttpStatus } from "../http/HttpStatus.ts";
 import apiConfigs from "../../configs/ApiConfigs.ts";
-import { IGetOrderRequest } from "../../../SillyStoreCommon/dtos/requests/IGetOrderRequest.ts";
-import { IOrderResponse } from "../../../SillyStoreCommon/dtos/responses/IOrderResponse.ts";
+import {
+    IOrderResponse,
+    IGetOrderRequest,
+} from "../../../SillyStoreCommon/dtos/orderDtos.ts";
 
 export default async function tryGetOwnedOrderAsync(
-    req: Request<{ id: string }, IOrderResponse, object>,
-    res: Response<IOrderResponse>,
+    req: ExpressRequest<{ id: string }, IOrderResponse, object>,
+    res: ExpressResponse<IOrderResponse>,
     next: NextFunction,
 ) {
     try {
-        const { clientOrderService } = apiConfigs.services;
-
+        const { orderClientService: service } = apiConfigs.services;
+        const {
+            params: { id },
+            userInfo: { id: userId, role },
+        } = req;
         const dto: IGetOrderRequest = {
-            orderId: parseInt(req.params.id),
-            userId: req.userId!,
+            id: parseInt(id),
+            userId,
+            role,
         };
-        const order = await clientOrderService.getAsync(dto);
+        const order = await service.getOwnedByIdAsync(dto);
         res.status(HttpStatus.OK).send(order);
     } catch (e) {
         next(e);

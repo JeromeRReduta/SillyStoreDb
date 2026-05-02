@@ -10,7 +10,6 @@ import {
     IMergeCartItemsInOrderRequest,
     IGetCartItemsInOrderRequest,
 } from "../../../SillyStoreCommon/dtos/cartItemDtos.ts";
-import HttpError from "../../errors/HttpError.ts";
 import { ICrudDao } from "./ICrudDao.ts";
 
 export interface ICartItemDao extends ICrudDao<

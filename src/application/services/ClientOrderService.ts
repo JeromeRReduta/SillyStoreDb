@@ -4,7 +4,6 @@ import {
     IGetAllOrdersRequest,
     IGetOrderRequest,
     IGetAllPendingOrdersRequest,
-    IUpdateOrderRequest,
     IUpdatePendingOrderRequest,
 } from "../../../SillyStoreCommon/dtos/orderDtos.ts";
 import HttpError from "../../errors/HttpError.ts";
