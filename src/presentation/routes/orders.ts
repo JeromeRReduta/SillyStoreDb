@@ -15,36 +15,12 @@ import tryGetPendingOrderAsync from "../../application/middleware/TryGetPendingO
 import tryGetPendingProductsAsync from "../../application/middleware/TryGetPendingProducts.ts";
 
 /** TODO:
- *
- *
- * Backend:
- * * (x) orders should have new column: status = "pending" | "completed" | "canceled"
- * * (x) make unique index pending_order ON table orders (user_id) WHERE (status = "PENDING")
- *
- * Common:
- * * make ICartItemResponse: Literally IProductResponse & {quantity: number}
- *
- * Backend p2:
- * * orderproductdao(interface and impl): getCartItemsAsync
- * * orderrepo(interface and impl): getCartItemsAsync
- * * clientorderservice (interface and impl): getCartItemsAsync - if repo.getCartItemsAsync() returns empty [], this method returns null
- * * middleware: tryGetCartItemsAsync
- * * orderproductdao (interface and impl): updateCartItemAsync
- * * orderRepo
- * * clientOrderService
- * * middleware: tryUpdateCartItemAsync
- *
- *
- * * make way to get user's pending order (or return null if entity not found)
  * Frontend:
  * * make useMutation for cart data - 1 usemutation/action:
  * * useMutation: change user token, run query again - run when user logs in or out
  * * useMutation: update values in db - run when user logs out or when we finalize order
  *      - should be able to update both the values of order-products (i.e. cart items) and
  *          the order status
- *
- *
- *
  */
 
 const orderRouter: Router = express.Router();

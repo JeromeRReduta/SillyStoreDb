@@ -9,7 +9,6 @@ import orderRouter from "../presentation/routes/orders.ts";
 import cors from "cors";
 import processToken from "../application/middleware/ProcessToken.ts";
 
-// TODO: change logger to mask pw_hash fields
 const app = express();
 app.use(
     express.json(),

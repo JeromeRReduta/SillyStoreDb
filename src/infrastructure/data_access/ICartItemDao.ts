@@ -72,7 +72,7 @@ export interface ICartItemDao extends ICrudDao<
         (x) dto: get products with quantities in pending order
         Note - for any order product request, jsut return products w/ quantities
     
-        Then, figure out how to implement merge order products
+        (x) Then, figure out how to implement merge order products
         test for orderproduct dao, then order repo, then client order service
 
         THEN can finally fkin go to frontend
