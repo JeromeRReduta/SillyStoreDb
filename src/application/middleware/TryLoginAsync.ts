@@ -1,8 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import { saveToken } from "./SaveToken.ts";
+import saveToken from "./SaveToken.ts";
 import apiConfigs from "../../configs/ApiConfigs.ts";
-import { IGetUserByCredentialsRequest } from "../../../SillyStoreCommon/dtos/requests/IGetUserByCredentialsRequest.ts";
-import { TokenResponse } from "../../../SillyStoreCommon/dtos/responses/TokenResponse.ts";
+import {
+    TokenResponse,
+    IGetUserByCredentialsRequest,
+} from "../../../SillyStoreCommon/dtos/userDtos.ts";
 
 export default async function tryLoginAsync(
     req: Request<
@@ -14,10 +16,9 @@ export default async function tryLoginAsync(
     next: NextFunction,
 ) {
     try {
-        const { clientUserService } = apiConfigs.services;
-        const token: TokenResponse = await clientUserService.loginAsync(
-            req.body,
-        );
+        const { userClientService: service } = apiConfigs.services;
+        const dto: IGetUserByCredentialsRequest = req.body;
+        const token: TokenResponse = await service.loginAsync(dto);
         saveToken(token, res);
         res.status(200).send({ token });
     } catch (e) {

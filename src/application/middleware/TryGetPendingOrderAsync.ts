@@ -1,4 +1,3 @@
-import { IOrderResponse } from "../../../SillyStoreCommon/dtos/responses/IOrderResponse.ts";
 import {
     Request as ExpressRequest,
     Response as ExpressResponse,
@@ -6,7 +5,10 @@ import {
 } from "express";
 import apiConfigs from "../../configs/ApiConfigs.ts";
 import { HttpStatus } from "../http/HttpStatus.ts";
-import { IGetAllPendingOrdersRequest } from "../../../SillyStoreCommon/dtos/requests/get-requests/IGetAllPendingOrdersRequest.ts";
+import {
+    IOrderResponse,
+    IGetAllPendingOrdersRequest,
+} from "../../../SillyStoreCommon/dtos/orderDtos.ts";
 
 export default async function tryGetPendingOrderAsync(
     req: ExpressRequest<object, IOrderResponse | null, object>,
@@ -14,13 +16,14 @@ export default async function tryGetPendingOrderAsync(
     next: NextFunction,
 ): Promise<void> {
     try {
+        const { orderClientService: service } = apiConfigs.services;
+        const { id: userId, role } = req.userInfo;
         const dto: IGetAllPendingOrdersRequest = {
-            userId: req.userId!,
+            userId,
+            role,
         };
         const pendingOrders: IOrderResponse | null =
-            await apiConfigs.services.clientOrderService.getPendingOrderAsync(
-                dto,
-            );
+            await service.getPendingAsync(dto);
         res.status(HttpStatus.OK).send(pendingOrders);
     } catch (e) {
         next(e);

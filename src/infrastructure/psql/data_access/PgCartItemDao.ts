@@ -1,4 +1,4 @@
-import PG, { Client, Pool, QueryConfig } from "pg";
+import { Client, Pool, QueryConfig } from "pg";
 import { ICartItemDao } from "../../data_access/ICartItemDao.ts";
 import { ICartItem } from "../../../../SillyStoreCommon/domain-objects/CartItem.ts";
 import {

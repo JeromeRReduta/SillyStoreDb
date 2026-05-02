@@ -1,20 +1,25 @@
-import { NextFunction, Request, Response } from "express";
+import {
+    NextFunction,
+    Request as ExpressRequest,
+    Response as ExpressResponse,
+} from "express";
 import { HttpStatus } from "../http/HttpStatus.ts";
 import apiConfigs from "../../configs/ApiConfigs.ts";
-import { IGetProductRequest } from "../../../SillyStoreCommon/dtos/requests/IGetProductRequest.ts";
-import { IProductResponse } from "../../../SillyStoreCommon/dtos/responses/IProductResponse.ts";
+import {
+    IGetProductRequest,
+    IProductResponse,
+} from "../../../SillyStoreCommon/dtos/productDtos.ts";
 
 export default async function tryGetProductAsync(
-    req: Request<IGetProductRequest, IProductResponse, object>,
-    res: Response<IProductResponse>,
+    req: ExpressRequest<IGetProductRequest, IProductResponse, object>,
+    res: ExpressResponse<IProductResponse>,
     next: NextFunction,
 ) {
     try {
-        const { clientProductService } = apiConfigs.services;
-
-        const found: IProductResponse = await clientProductService.getAsync(
-            req.params,
-        );
+        const { productClientService: service } = apiConfigs.services;
+        const { id } = req.params;
+        const dto: IGetProductRequest = { id };
+        const found: IProductResponse = await service.getAsync(dto);
         res.status(HttpStatus.OK).send(found);
     } catch (e) {
         next(e);

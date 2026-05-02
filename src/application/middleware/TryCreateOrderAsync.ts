@@ -1,22 +1,33 @@
-import { NextFunction, Request, Response } from "express";
+import {
+    NextFunction,
+    Request as ExpressRequest,
+    Response as ExpressResponse,
+} from "express";
 import { HttpStatus } from "../http/HttpStatus.ts";
 import apiConfigs from "../../configs/ApiConfigs.ts";
-import { ICreateOrderRequest } from "../../../SillyStoreCommon/dtos/requests/ICreateOrderRequest.ts";
-import { IOrderResponse } from "../../../SillyStoreCommon/dtos/responses/IOrderResponse.ts";
+import {
+    IOrderResponse,
+    ICreateOrderRequest,
+} from "../../../SillyStoreCommon/dtos/orderDtos.ts";
 
 export default async function tryCreateOrderAsync(
-    req: Request<object, IOrderResponse, { dateStr: string }>,
-    res: Response<IOrderResponse>,
+    req: ExpressRequest<object, IOrderResponse, { dateStr: string }>,
+    res: ExpressResponse<IOrderResponse>,
     next: NextFunction,
 ): Promise<void> {
     try {
-        const { clientOrderService } = apiConfigs.services;
+        const { orderClientService: service } = apiConfigs.services;
+        const {
+            userInfo: { id: userId, role },
+            body: { dateStr },
+        } = req;
         const dto: ICreateOrderRequest = {
-            dateStr: req.body.dateStr,
-            userId: req.userId!,
+            userId,
+            role,
+            dateStr,
+            status: "pending",
         };
-        const created: IOrderResponse =
-            await clientOrderService.createAsync(dto);
+        const created: IOrderResponse = await service.createAsync(dto);
         res.status(HttpStatus.CREATED).send(created);
     } catch (e) {
         next(e);

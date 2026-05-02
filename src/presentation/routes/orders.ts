@@ -1,18 +1,10 @@
 import * as express from "express";
-import { Router } from "express";
-import requireSignedIn from "../../application/middleware/RequireSignedIn.ts";
-import tryGetAllOwnedOrdersAsync from "../../application/middleware/TryGetAllOwnedOrdersAsync.ts";
-import tryGetOwnedOrderAsync from "../../application/middleware/TryGetOwnedOrderAsync.ts";
 import requireBody from "../../application/middleware/RequireBody.ts";
+import requireSignedIn from "../../application/middleware/RequireSignedIn.ts";
 import tryCreateOrderAsync from "../../application/middleware/TryCreateOrderAsync.ts";
-import tryGetProductsInOrder from "../../application/middleware/TryGetProductsInOrderAsync.ts";
-import tryAddProductToOrderAsync from "../../application/middleware/TryAddProductToOrderAsync.ts";
-import { IOrderDao } from "../../infrastructure/data_access/IOrderDao.ts";
-import PgOrderDao from "../../infrastructure/psql/data_access/PgOrderDao.ts";
-import backendConfigs from "../../configs/BackendConfigs.ts";
-import pgDataMappers from "../../application/data_mapping/PgDataMappers.ts";
+import tryGetAllOwnedOrdersAsync from "../../application/middleware/TryGetAllOwnedOrdersAsync.ts";
 import tryGetPendingOrderAsync from "../../application/middleware/TryGetPendingOrderAsync.ts";
-import tryGetPendingProductsAsync from "../../application/middleware/TryGetPendingProducts.ts";
+import tryUpdatePendingOrderAsync from "../../application/middleware/TryUpdatePendingOrderAsync.ts";
 
 /** TODO:
  * Frontend:
@@ -23,43 +15,13 @@ import tryGetPendingProductsAsync from "../../application/middleware/TryGetPendi
  *          the order status
  */
 
-const orderRouter: Router = express.Router();
+const orderRouter: express.Router = express.Router();
 orderRouter.use(requireSignedIn);
+orderRouter.route("/").get(tryGetAllOwnedOrdersAsync);
+orderRouter.route("/").post(requireBody(["dateStr"]), tryCreateOrderAsync);
+orderRouter.route("/pending").get(tryGetPendingOrderAsync);
 orderRouter
-    .route("/")
-    .get(tryGetAllOwnedOrdersAsync)
-    .post(requireBody(["dateStr"]), tryCreateOrderAsync);
+    .route("/pending")
+    .put(requireBody(["dateStr", "status"]), tryUpdatePendingOrderAsync);
 
-// orderRouter.route("/cart").get(tryGetProductsInCartAsync);
-
-orderRouter.route("/pending/order").get(tryGetPendingOrderAsync);
-
-orderRouter.route("/pending/products").get(tryGetPendingProductsAsync);
-
-orderRouter.route("/:id").get(tryGetOwnedOrderAsync);
-
-orderRouter
-    .route("/:id/products")
-    .get(tryGetProductsInOrder(false))
-    .post(requireBody(["productId", "quantity"]), tryAddProductToOrderAsync);
-
-/**
- * TODO:
- *
- * remove cart route
- * add pending route
- * add pending/products route (products in cart)
- */
 export default orderRouter;
-
-// const productRouter: Router = express.Router();
-
-// productRouter.route("/").get(tryGetAllsProductsAsync);
-
-// // don't have to validate id is in param, since this route literally won't be called if it's missing
-// productRouter.route("/:id").get(tryGetProductAsync);
-
-// productRouter
-//     .route("/:id/orders")
-//     .get(requireSignedIn, tryGetOrdersIncludingProductAsync);
-// export default productRouter;
