@@ -146,7 +146,7 @@ export default class PgCartItemDao implements ICartItemDao {
          *
          *
          */
-        const createOrderIfAbsentSql: QueryConfig = {
+        await this.db.query({
             text: `
             INSERT into orders (date, status, user_id)
             VALUES ($1, 'pending', $2)
@@ -155,12 +155,7 @@ export default class PgCartItemDao implements ICartItemDao {
             RETURNING ${this.formattedOrderSql}
             `,
             values: [dateStr, creatorId],
-        };
-        const createdOrders: IOrderResponse[] = await PgDaos.queryAsync(
-            this.db,
-            createOrderIfAbsentSql,
-            PgDaos.orderMapper,
-        );
+        });
 
         const getIdSql: QueryConfig = {
             text: `
@@ -170,33 +165,26 @@ export default class PgCartItemDao implements ICartItemDao {
             `,
             values: [creatorId],
         };
-
         const idRows: number[] = await PgDaos.queryAsync(
             this.db,
             getIdSql,
             (e: { id: number }) => e.id,
         );
-
         backendLogger.debug("mapped id rows", idRows);
-
         if (idRows.length !== 1) {
             throw new Error(
                 "idk what happened but the sql messed up here - should always return 1",
             );
         }
         const pendingOrderId: number = idRows[0];
-        const tempTableSql: QueryConfig = {
+        await this.db.query(
+            `CREATE TEMP TABLE cart_items_new (LIKE cart_items)`,
+        );
+        await this.db.query({
             text: `
-                CREATE TEMP TABLE cart_items_new (LIKE cart_items)
-            `,
-        };
-        await PgDaos.queryAsync(this.db, tempTableSql, (e) => e);
-
-        const foreachSql: QueryConfig = {
-            text: `
-
                 WITH objs AS 
-                   ( SELECT *
+                   (
+                        SELECT *
                         FROM json_to_recordset($2)
                         AS x("productId" INT, "quantity" INT)
                     )
@@ -206,11 +194,10 @@ export default class PgCartItemDao implements ICartItemDao {
                 RETURNING *
             `,
             values: [pendingOrderId, JSON.stringify(cartItems)],
-        };
+        });
 
         // TODO: now that we can insert any json arr into cart_items_new, have to figure out how to merge it w/
         // cart_items
-        const thing = await PgDaos.queryAsync(this.db, foreachSql, (e) => e);
 
         const getTempDataSql: QueryConfig = {
             text: `
@@ -218,7 +205,12 @@ export default class PgCartItemDao implements ICartItemDao {
             `,
             values: [],
         };
-        await PgDaos.queryAsync(this.db, getTempDataSql, (e) => e);
+        const thing = await PgDaos.queryAsync(
+            this.db,
+            getTempDataSql,
+            (e) => e,
+        );
+        backendLogger.debug("rows for temp table are now", thing);
         // const sql: QueryConfig = {
         //     text: `
         //         CREATE TEMP TABLE cart_items_new (LIKE cart_items);
@@ -256,6 +248,7 @@ export default class PgCartItemDao implements ICartItemDao {
             sql,
             PgDaos.cartItemMapper,
         );
+        await this.db.query("DROP TABLE cart_items_new");
         return [];
     }
 
