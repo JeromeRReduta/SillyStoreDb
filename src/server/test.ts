@@ -307,19 +307,17 @@ function setupCartItemRoutes(app: Express): void {
     // );
 
     app.route("/cart/pending").put(
-        requireBody(["cartItems", "dateStr"]),
+        requireBody(["cartItems"]),
         async (req, res, next) => {
             const {
-                body: { cartItems, dateStr },
+                body: { cartItems },
                 userInfo: { id: creatorId, role },
             } = req;
-            const dto: IMergePendingCartItemsRequest & { dateStr: string } = {
+            const dto: IMergePendingCartItemsRequest = {
                 role,
                 creatorId,
                 cartItems,
-                dateStr,
             };
-
             const beforeMerge: ICartItemResponse[] =
                 await testDaos.cartItems!.getAllPendingAsync(dto);
 

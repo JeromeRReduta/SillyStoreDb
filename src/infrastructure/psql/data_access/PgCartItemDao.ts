@@ -121,23 +121,18 @@ export default class PgCartItemDao implements ICartItemDao {
         throw new Error("Method not implemented.");
     }
     async mergePendingCartAsync({
-        role,
         creatorId,
         cartItems,
-        dateStr,
-    }: IMergePendingCartItemsRequest & { dateStr: string }): Promise<
-        ICartItemResponse[]
-    > {
-        // TODO: add dateStr to IMergePendingCartItemsRequest
+    }: IMergePendingCartItemsRequest): Promise<ICartItemResponse[]> {
         await this.db.query({
             text: `
             INSERT into orders (date, status, user_id)
-            VALUES ($1, 'pending', $2)
+            VALUES (CURRENT_DATE, 'pending', $1)
             ON CONFLICT
                 DO NOTHING
             RETURNING ${this.formattedOrderSql}
             `,
-            values: [dateStr, creatorId],
+            values: [creatorId],
         });
         const getIdSql: QueryConfig = {
             text: `
