@@ -211,6 +211,27 @@ export default class PgCartItemDao implements ICartItemDao {
             (e) => e,
         );
         backendLogger.debug("rows for temp table are now", thing);
+        await this.db.query({
+            text: `
+                WITH upsert(order_id, product_id) AS (
+                    INSERT INTO cart_items (order_id, product_id, quantity)
+                    SELECT order_id, product_id, quantity FROM cart_items_new
+                    ON CONFLICT (order_id, product_id)
+                        DO UPDATE SET
+                            quantity = excluded.quantity
+                    RETURNING order_id, product_id
+                )
+                DELETE FROM cart_items
+                    WHERE order_id = $1
+                    AND product_id NOT IN (SELECT product_id FROM upsert)
+
+            `,
+            values: [pendingOrderId],
+        });
+        //                     DELETE FROM cart_items
+        //             WHERE order_id = $1
+        //                 AND product_id NOT IN (SELECT product_id FROM upsert)
+
         // const sql: QueryConfig = {
         //     text: `
         //         CREATE TEMP TABLE cart_items_new (LIKE cart_items);
@@ -243,11 +264,6 @@ export default class PgCartItemDao implements ICartItemDao {
         //     values: [cartItems, pendingOrderId],
         // };
 
-        const result: ICartItemResponse[] = await PgDaos.queryAsync(
-            this.db,
-            sql,
-            PgDaos.cartItemMapper,
-        );
         await this.db.query("DROP TABLE cart_items_new");
         return [];
     }

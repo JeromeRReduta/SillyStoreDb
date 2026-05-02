@@ -319,8 +319,16 @@ function setupCartItemRoutes(app: Express): void {
                 cartItems,
                 dateStr,
             };
+
+            const beforeMerge: ICartItemResponse[] =
+                await testDaos.cartItems!.getAllPendingAsync(dto);
+
             const updated: ICartItemResponse[] =
                 await testDaos.cartItems!.mergePendingCartAsync(dto);
+            const afterMerge: ICartItemResponse[] =
+                await testDaos.cartItems!.getAllPendingAsync(dto);
+            backendLogger.info("before: ", beforeMerge);
+            backendLogger.info("after: ", afterMerge);
             res.status(HttpStatus.OK).send(updated);
         },
     );
