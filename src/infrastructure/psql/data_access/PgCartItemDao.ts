@@ -129,23 +129,6 @@ export default class PgCartItemDao implements ICartItemDao {
         ICartItemResponse[]
     > {
         // TODO: add dateStr to IMergePendingCartItemsRequest
-        /**
-         * 1. create temp table cart_items_new w/ same schema as cart_items
-         * 2. if user doesn't have pending order, create one
-         * 3. merge:
-         *      target = cart_items as old
-         *      source = cart_items_new as new
-         *
-         *      if new entry exists (old.product_id = new.product_id and old.order_id = new.order_id),
-         *          update it w/ new quantity
-         *      if entry in new but NOT in old, insert it
-         *      if entry in old but NOT in new (and old entry has same order_id has pending order_id), delete it
-         *
-         *
-         *
-         *
-         *
-         */
         await this.db.query({
             text: `
             INSERT into orders (date, status, user_id)
@@ -156,7 +139,6 @@ export default class PgCartItemDao implements ICartItemDao {
             `,
             values: [dateStr, creatorId],
         });
-
         const getIdSql: QueryConfig = {
             text: `
                 SELECT DISTINCT id FROM orders
@@ -170,7 +152,6 @@ export default class PgCartItemDao implements ICartItemDao {
             getIdSql,
             (e: { id: number }) => e.id,
         );
-        backendLogger.debug("mapped id rows", idRows);
         if (idRows.length !== 1) {
             throw new Error(
                 "idk what happened but the sql messed up here - should always return 1",
@@ -195,22 +176,8 @@ export default class PgCartItemDao implements ICartItemDao {
             `,
             values: [pendingOrderId, JSON.stringify(cartItems)],
         });
-
-        // TODO: now that we can insert any json arr into cart_items_new, have to figure out how to merge it w/
-        // cart_items
-
-        const getTempDataSql: QueryConfig = {
-            text: `
-                SELECT * FROM cart_items_new
-            `,
-            values: [],
-        };
-        const thing = await PgDaos.queryAsync(
-            this.db,
-            getTempDataSql,
-            (e) => e,
-        );
-        backendLogger.debug("rows for temp table are now", thing);
+        // ty https://stackoverflow.com/questions/52315874/how-to-correct-migrate-merge-statement-with-not-matched-by-target-from-ms-sq
+        // ty https://stackoverflow.com/questions/35159431/on-conflict-do-update-has-missing-from-clause
         await this.db.query({
             text: `
                 WITH upsert(order_id, product_id) AS (
@@ -228,42 +195,6 @@ export default class PgCartItemDao implements ICartItemDao {
             `,
             values: [pendingOrderId],
         });
-        //                     DELETE FROM cart_items
-        //             WHERE order_id = $1
-        //                 AND product_id NOT IN (SELECT product_id FROM upsert)
-
-        // const sql: QueryConfig = {
-        //     text: `
-        //         CREATE TEMP TABLE cart_items_new (LIKE cart_items);
-
-        //         LISTEN msg;
-        //         SELECT NOTIFY msg, $1;
-        //         UNLISTEN msg;
-
-        //         FOREACH item IN ARRAY $1 LOOP
-        //             INSERT INTO cart_items_new (order_id, product_id, quantity)
-        //             VALUES ($2, item.product_id, item.quantity)
-        //         END LOOP
-
-        //         MERGE INTO cart_items AS prev
-        //         USING cart_items_new AS next
-        //         ON prev.order_id = next.order_id
-        //             AND prev.product_id = next.product_id
-        //         WHEN matched THEN
-        //             UPDATE SET
-        //                 quantity = next.quantity
-
-        //         WHEN NOT matched by target THEN
-        //             INSERT (order_id, product_id, quantity)
-        //             VALUES (next.order_id, next.product_id, next.quantity)
-        //         WHEN NOT matched by source AND prev.order_id = next.order_id THEN
-        //             DELETE
-        //         OUTPUT $action, inserted.id, inserted.name, deleted.id, deleted.name
-
-        //     `,
-        //     values: [cartItems, pendingOrderId],
-        // };
-
         await this.db.query("DROP TABLE cart_items_new");
         return [];
     }
