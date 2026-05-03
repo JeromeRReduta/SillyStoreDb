@@ -16,11 +16,13 @@ export default async function tryGetPendingCartAsync(
     next: NextFunction,
 ): Promise<void> {
     try {
-        const { cartItemClientService: service } = apiConfigs.services;
-        const { id: creatorId, role } = req.userInfo;
-        const dto: IGetPendingCartItemsRequest = { creatorId, role };
+        const { orderClientService, cartItemClientService } =
+            apiConfigs.services;
+        const { id, role } = req.userInfo;
+        await orderClientService.getPendingAsync({ userId: id, role }); // will throw 404 if no pending order - code smell? maybe separate returning response from getting data?
+        const dto: IGetPendingCartItemsRequest = { creatorId: id, role };
         const pendingCartItems: ICartItemResponse[] =
-            await service.getPendingCartItemsAsync(dto);
+            await cartItemClientService.getPendingCartItemsAsync(dto);
         res.status(HttpStatus.OK).send(pendingCartItems);
     } catch (e) {
         next(e);

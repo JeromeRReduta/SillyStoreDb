@@ -1,6 +1,7 @@
 import * as express from "express";
 import requireSignedIn from "../../application/middleware/RequireSignedIn.ts";
 import tryGetPendingCartAsync from "./TryGetPendingCartAsync.ts";
+import tryGetPendingOrderAsync from "../../application/middleware/TryGetPendingOrderAsync.ts";
 
 const cartRouter: express.Router = express.Router();
 cartRouter.use(requireSignedIn);
