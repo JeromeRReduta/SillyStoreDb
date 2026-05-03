@@ -1,7 +1,7 @@
 import {
     IGetPendingCartItemsRequest,
     ICartItemResponse,
-    IMergeCartItemsInOrderRequest,
+    IMergePendingCartItemsRequest,
 } from "../../../SillyStoreCommon/dtos/cartItemDtos.ts";
 import { ICartItemDao } from "../../infrastructure/data_access/ICartItemDao.ts";
 import { ICartItemClientService } from "./ICartItemClientService.ts";
@@ -20,7 +20,7 @@ export default class CartItemClientService implements ICartItemClientService {
     }
 
     async overwritePendingCart(
-        dto: IMergeCartItemsInOrderRequest,
+        dto: IMergePendingCartItemsRequest,
     ): Promise<void> {
         await this.cartItemDao.mergePendingCartAsync(dto);
     }

@@ -1,12 +1,15 @@
 import * as express from "express";
 import requireSignedIn from "../../application/middleware/RequireSignedIn.ts";
 import tryGetPendingCartAsync from "./TryGetPendingCartAsync.ts";
-import tryGetPendingOrderAsync from "../../application/middleware/TryGetPendingOrderAsync.ts";
+import requireBody from "../../application/middleware/RequireBody.ts";
+import tryOverwritePendingCartAsync from "./TryOverwritePendingCartAsync.ts";
 
 const cartRouter: express.Router = express.Router();
 cartRouter.use(requireSignedIn);
 cartRouter.route("/pending").get(tryGetPendingCartAsync);
-// cartRouter.route("/pending").put(tryOverwriteCartAsync);
+cartRouter
+    .route("/pending")
+    .put(requireBody(["cartItems"]), tryOverwritePendingCartAsync);
 
 export default cartRouter;
 

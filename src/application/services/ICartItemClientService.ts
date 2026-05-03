@@ -1,7 +1,7 @@
 import {
     ICartItemResponse,
     IGetPendingCartItemsRequest,
-    IMergeCartItemsInOrderRequest,
+    IMergePendingCartItemsRequest,
 } from "../../../SillyStoreCommon/dtos/cartItemDtos.ts";
 
 export interface ICartItemClientService {
@@ -20,5 +20,5 @@ export interface ICartItemClientService {
      * @param dto
      * @note if no pending order exists, this method will MAKE A NEW ONE
      */
-    overwritePendingCart(dto: IMergeCartItemsInOrderRequest): Promise<void>;
+    overwritePendingCart(dto: IMergePendingCartItemsRequest): Promise<void>;
 }
