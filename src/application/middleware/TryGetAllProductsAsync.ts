@@ -1,16 +1,24 @@
-import { NextFunction, Request, Response } from "express";
-import { IProductResponse } from "../dtos/responses/IProductResponse.ts";
-import services from "../../configs/BackendConfigs.ts";
-import { HttpStatus } from "../http/HttpStatus.ts";
+import {
+    Request as ExpressRequest,
+    Response as ExpressResponse,
+    NextFunction,
+} from "express";
+import {
+    IGetAllProductsRequest,
+    IProductResponse,
+} from "../../../SillyStoreCommon/dtos/productDtos.ts";
+import apiConfigs from "../../configs/ApiConfigs.ts";
+import HttpStatus from "../http/HttpStatus.ts";
 
 export default async function tryGetAllProductsAsync(
-    _req: Request<object, IProductResponse[], object>,
-    res: Response<IProductResponse[]>,
+    _req: ExpressRequest<object, IProductResponse[], object>,
+    res: ExpressResponse<IProductResponse[]>,
     next: NextFunction,
 ) {
     try {
-        const products: IProductResponse[] =
-            await services.clientProductService.getAllAsync({});
+        const { productClientService: service } = apiConfigs.services;
+        const dto: IGetAllProductsRequest = {};
+        const products: IProductResponse[] = await service.getAllAsync(dto);
         res.status(HttpStatus.OK).send(products);
     } catch (e) {
         next(e);

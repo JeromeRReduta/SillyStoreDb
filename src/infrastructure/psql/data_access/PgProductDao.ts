@@ -1,25 +1,31 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { Client, Pool, QueryConfig } from "pg";
-import logger from "../../../../SillyStoreCommon/logging/Logger.ts";
-import { IDataMapper } from "../../../application/data_mapping/DataMapper.ts";
-import { ICreateProductRequest } from "../../../application/dtos/requests/ICreateProductRequest.ts";
-import { IDeleteProductRequest } from "../../../application/dtos/requests/IDeleteProductRequest.ts";
-import { IGetAllProductsRequest } from "../../../application/dtos/requests/IGetAllProductsRequest.ts";
-import { IGetProductRequest } from "../../../application/dtos/requests/IGetProductRequest.ts";
-import { IProductResponse } from "../../../application/dtos/responses/IProductResponse.ts";
-import { IPgProduct } from "../entities/IPgProduct.ts";
+import {
+    ICreateProductRequest,
+    IProductResponse,
+    IGetAllProductsRequest,
+    IGetProductRequest,
+    IUpdateProductRequest,
+    IDeleteProductRequest,
+} from "../../../../SillyStoreCommon/dtos/productDtos.ts";
+import backendLogger from "../../../configs/BackendLogger.ts";
 import { IProductDao } from "../../data_access/IProductDao.ts";
+import PgDaos from "../../data_access/PgDaos.ts";
 
 export default class PgProductDao implements IProductDao {
     private db: Client | Pool;
-    private dataMapper: IDataMapper<IPgProduct, IProductResponse>;
+    private formattedProductSql: string;
 
-    constructor(
-        db: Client | Pool,
-        dataMapper: IDataMapper<IPgProduct, IProductResponse>,
-    ) {
+    constructor(db: Client | Pool) {
         this.db = db;
-        this.dataMapper = dataMapper;
+        // thanks https://www.postgresql.org/docs/9.4/datatype-money.html
+        this.formattedProductSql = `
+            id,
+            title,
+            description,
+            price::decimal::float8
+        `;
     }
 
     async createAsync(_dto: ICreateProductRequest): Promise<IProductResponse> {
@@ -30,20 +36,13 @@ export default class PgProductDao implements IProductDao {
         _dto: IGetAllProductsRequest,
     ): Promise<IProductResponse[]> {
         const sql: QueryConfig = {
-            // thanks https://www.postgresql.org/docs/9.4/datatype-money.html
             text: `
                 SELECT
-                    id,
-                    title,
-                    description,
-                    price::decimal::float8
+                    ${this.formattedProductSql}
                 FROM products
                 `,
         };
-        logger.debug("sql: ", sql);
-        const { rows } = await this.db.query(sql);
-        logger.debug("result: ", rows);
-        return rows.map(this.dataMapper);
+        return PgDaos.queryAsync(this.db, sql, PgDaos.productMapper);
     }
 
     async getAsync({
@@ -52,21 +51,25 @@ export default class PgProductDao implements IProductDao {
         const sql: QueryConfig = {
             text: `
                 SELECT
-                    id,
-                    title,
-                    description,
-                    price::decimal::float8
+                    ${this.formattedProductSql}
                 FROM products
                 WHERE id = $1
             `,
             values: [id],
         };
-        logger.debug("sql:", sql);
-        const {
-            rows: [row],
-        } = await this.db.query(sql);
-        logger.debug("result: ", row);
-        return row ? this.dataMapper(row) : null;
+        const rows = await PgDaos.queryAsync(
+            this.db,
+            sql,
+            PgDaos.productMapper,
+        );
+        backendLogger.debug("# of matching entries: ", rows.length);
+        return rows.length > 0 ? rows[0] : null;
+    }
+
+    async updateAsync(
+        _dto: IUpdateProductRequest,
+    ): Promise<IProductResponse | null> {
+        throw new Error("Method not implemented.");
     }
 
     async deleteAsync(

@@ -1,14 +1,18 @@
-import { ICreateProductRequest } from "../../application/dtos/requests/ICreateProductRequest.ts";
-import { IDeleteProductRequest } from "../../application/dtos/requests/IDeleteProductRequest.ts";
-import { IGetAllProductsRequest } from "../../application/dtos/requests/IGetAllProductsRequest.ts";
-import { IGetProductRequest } from "../../application/dtos/requests/IGetProductRequest.ts";
-import { IProductResponse } from "../../application/dtos/responses/IProductResponse.ts";
-import { IGenericDao } from "./IGenericDao.ts";
-
-export type IProductDao = IGenericDao<
+import {
     ICreateProductRequest,
     IGetAllProductsRequest,
     IGetProductRequest,
+    IUpdateProductRequest,
+    IDeleteProductRequest,
+    IProductResponse,
+} from "../../../SillyStoreCommon/dtos/productDtos.ts";
+import { ICrudDao } from "./ICrudDao.ts";
+
+export type IProductDao = ICrudDao<
+    ICreateProductRequest,
+    IGetAllProductsRequest,
+    IGetProductRequest,
+    IUpdateProductRequest,
     IDeleteProductRequest,
     IProductResponse
 >;

@@ -1,88 +1,78 @@
-import logger from "../../../SillyStoreCommon/logging/Logger.ts";
-import { IOrderRepository } from "../../domain/repos/IOrderRepository.ts";
+import {
+    ICreateOrderRequest,
+    IOrderResponse,
+    IGetAllOrdersRequest,
+    IGetOrderRequest,
+    IGetAllPendingOrdersRequest,
+    IUpdatePendingOrderRequest,
+} from "../../../SillyStoreCommon/dtos/orderDtos.ts";
 import HttpError from "../../errors/HttpError.ts";
-import { IAddProductToOrderRequest } from "../dtos/requests/IAddProductToOrderRequest.ts";
-import { ICreateOrderRequest } from "../dtos/requests/ICreateOrderRequest.ts";
-import { IGetAllOrdersRequest } from "../dtos/requests/IGetAllOrdersRequest.ts";
-import { IGetOrderRequest } from "../dtos/requests/IGetOrderRequest.ts";
-import { IGetProductsInOrderRequest } from "../dtos/requests/IGetProductsInOrder.ts";
-import { IOrderProductResponse } from "../dtos/responses/IOrderProductResponse.ts";
-import { IOrderResponse } from "../dtos/responses/IOrderResponse.ts";
-import { IProductResponse } from "../dtos/responses/IProductResponse.ts";
-import { HttpStatus } from "../http/HttpStatus.ts";
-import { IClientOrderService } from "./IClientOrderService.ts";
+import { IOrderDao } from "../../infrastructure/data_access/IOrderDao.ts";
+import HttpStatus from "../http/HttpStatus.ts";
+import { IOrderClientService } from "./IOrderClientService.ts";
 
-export default class ClientOrderService implements IClientOrderService {
-    private repo: IOrderRepository;
+export default class OrderClientService implements IOrderClientService {
+    private orderDao: IOrderDao;
 
-    constructor(repo: IOrderRepository) {
-        this.repo = repo;
+    constructor(orderDao: IOrderDao) {
+        this.orderDao = orderDao;
     }
 
     async createAsync(dto: ICreateOrderRequest): Promise<IOrderResponse> {
-        return await this.repo.createAsync(dto);
+        return await this.orderDao.createAsync(dto);
     }
 
     async getAllOwnedAsync(
         dto: IGetAllOrdersRequest,
     ): Promise<IOrderResponse[]> {
-        return await this.repo.getAllAsync(dto);
+        return await this.orderDao.getAllAsync(dto);
     }
 
-    async getAsync(dto: IGetOrderRequest): Promise<IOrderResponse> {
-        const found: IOrderResponse | null = await this.repo.getAsync(dto);
+    async getOwnedByIdAsync(dto: IGetOrderRequest): Promise<IOrderResponse> {
+        const found: IOrderResponse | null = await this.orderDao.getAsync(dto);
         if (!found) {
-            throw new HttpError(
-                HttpStatus.NOT_FOUND,
-                "No matching order found!",
-            );
+            throw new HttpError(HttpStatus.NOT_FOUND, "No match!");
         }
         if (found.userId !== dto.userId) {
             throw new HttpError(
                 HttpStatus.FORBIDDEN,
-                "You do not own this order!",
+                "You must own this order to view it!",
             );
         }
         return found;
     }
 
-    async addProductToOrderAsync(
-        dto: IAddProductToOrderRequest,
-    ): Promise<IOrderProductResponse> {
-        const { orderId, userId } = dto;
-        const order: IOrderResponse | null = await this.repo.getAsync({
-            orderId,
-            userId,
-        });
-        if (!order) {
-            throw new HttpError(HttpStatus.NOT_FOUND, "No matching order!");
-        }
-        if (order.userId !== userId) {
+    async getPendingAsync(
+        dto: IGetAllPendingOrdersRequest,
+    ): Promise<IOrderResponse> {
+        const pendingOrders: IOrderResponse[] =
+            await this.orderDao.getAllPendingOrdersAsync(dto);
+        if (pendingOrders.length === 0) {
             throw new HttpError(
-                HttpStatus.FORBIDDEN,
-                "You do not own this order!",
+                HttpStatus.NOT_FOUND,
+                "You do not have a pending order!",
             );
         }
-        return await this.repo.addProductToOrderAsync(dto);
+        if (pendingOrders.length > 1) {
+            throw new HttpError(
+                HttpStatus.FORBIDDEN,
+                "You're not supposed to have multiple pending orders! Are you an admin?",
+            );
+        }
+        return pendingOrders[0];
     }
 
-    async getProductsInOrderAsync(
-        dto: IGetProductsInOrderRequest,
-    ): Promise<IProductResponse[]> {
-        const { orderId, userId } = dto;
-        const order: IOrderResponse | null = await this.repo.getAsync({
-            orderId: orderId,
-            userId: userId,
-        });
-        if (!order) {
-            throw new HttpError(HttpStatus.NOT_FOUND, "No matching order!");
-        }
-        if (order.userId !== userId) {
+    async updatePendingOrder(
+        dto: IUpdatePendingOrderRequest,
+    ): Promise<IOrderResponse> {
+        const updated: IOrderResponse | null =
+            await this.orderDao.updatePendingOrderAsync(dto);
+        if (!updated) {
             throw new HttpError(
-                HttpStatus.FORBIDDEN,
-                "You do not own this order!",
+                HttpStatus.NOT_FOUND,
+                "You do not have a pending order!",
             );
         }
-        return await this.repo.getProductsInOrderAsync(dto);
+        return updated;
     }
 }

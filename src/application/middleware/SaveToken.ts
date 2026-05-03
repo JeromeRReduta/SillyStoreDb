@@ -1,7 +1,7 @@
 import { Response } from "express";
-import { TokenResponse } from "../dtos/responses/TokenResponse.ts";
+import { TokenResponse } from "../../../SillyStoreCommon/dtos/userDtos.ts";
 
-export function saveToken(
+export default function saveToken(
     token: TokenResponse,
     res: Response<{ token: TokenResponse }>,
 ): void {

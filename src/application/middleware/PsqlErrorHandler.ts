@@ -1,8 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import HttpError from "../../errors/HttpError.ts";
-import { HttpStatus } from "../http/HttpStatus.ts";
-import logger from "../../../SillyStoreCommon/logging/Logger.ts";
-
+import HttpStatus from "../http/HttpStatus.ts";
+import backendLogger from "../../configs/BackendLogger.ts";
 const psqlInvalidType: string = "22P02";
 const psqlFKeyViolation: string = "23503";
 const psqlUniqueViolation: string = "23505";
@@ -26,7 +25,7 @@ export default function psqlErrorHandler(
             psqlErr = null;
     }
     if (psqlErr) {
-        logger.error("psql error: ", psqlErr);
+        backendLogger.error("psql error: ", psqlErr);
         res.status(psqlErr.code).send(psqlErr.message!);
         return;
     }

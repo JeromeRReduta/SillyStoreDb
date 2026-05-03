@@ -6,13 +6,13 @@
     "scripts": {
         "dev": "nodemon -w src/server -x tsx --env-file=.env.development src/server/main.ts",
         "dev:strict": "npx eslint . && npm run dev",
-        "start": "vite build && NODE_ENV=production tsx --env-file=.env.production src/server/main.ts",
+        "start": "tsx --env-file=.env.production src/server/main.ts",
         "test": "tsx --env-file=.env.development src/server/test.ts",
-        "build": "vite build",
         "db:schema": "psql -d silly_store_db -f src/infrastructure/psql/schema.sql -U practice",
         "db:seed": "tsx --env-file=.env.development src/infrastructure/psql/seed.ts",
         "db:reset": "npm run db:schema && npm run db:seed",
         "fresh-test": "npm run db:reset && npm run test",
+        "lint": "npx eslint .",
         "see-big-number": "git ls-files | grep '\\.ts' | grep -v 'test' | xargs wc -l | sort -rn"
     },
     "devDependencies": {
@@ -29,14 +29,15 @@
         "globals": "^17.4.0",
         "jiti": "^2.6.1",
         "nodemon": "^3.1.10",
+        "ts-prune": "^0.10.3",
         "typescript": "^6.0.2",
-        "typescript-eslint": "^8.57.2",
-        "vite": "^6.3.3"
+        "typescript-eslint": "^8.57.2"
     },
     "dependencies": {
         "bcrypt": "^6.0.0",
         "cookie-parser": "^1.4.7",
         "cors": "^2.8.6",
+        "depcheck": "^1.4.7",
         "dotenv": "^17.3.1",
         "eslint-plugin-import-x": "^4.16.2",
         "express": "^5.2.1",

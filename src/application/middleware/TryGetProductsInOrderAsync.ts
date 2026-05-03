@@ -1,8 +1,9 @@
-import { NextFunction, Request, Response } from "express";
-import { IProductResponse } from "../dtos/responses/IProductResponse.ts";
-import { IGetProductsInOrderRequest } from "../dtos/requests/IGetProductsInOrderRequest.ts";
-import services from "../../configs/BackendConfigs.ts";
-import { HttpStatus } from "../http/HttpStatus.ts";
+import { Request, Response } from "express";
+import { NextFunction } from "express";
+import { IGetProductsInOrderRequest } from "../../../SillyStoreCommon/dtos/requests/IGetProductsInOrderRequest.ts";
+import { IProductResponse } from "../../../SillyStoreCommon/dtos/responses/IProductResponse.ts";
+import apiConfigs from "../../configs/ApiConfigs.ts";
+import HttpStatus from "../http/HttpStatus.ts";
 
 export default function tryGetProductsInOrder(
     includingQuantities: boolean,
@@ -17,13 +18,14 @@ export default function tryGetProductsInOrder(
         next: NextFunction,
     ): Promise<void> {
         try {
+            const { clientOrderService } = apiConfigs.services;
             const dto: IGetProductsInOrderRequest = {
                 orderId: parseInt(req.params.id),
                 userId: req.userId!,
                 includingQuantities,
             };
             const productsInOrder: IProductResponse[] =
-                await services.clientOrderService.getProductsInOrderAsync(dto);
+                await clientOrderService.getProductsInOrderAsync(dto);
             res.status(HttpStatus.OK).send(productsInOrder);
         } catch (e) {
             next(e);

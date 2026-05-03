@@ -7,8 +7,9 @@ import psqlErrorHandler from "../application/middleware/PsqlErrorHandler.ts";
 import finalErrorHandler from "../application/middleware/FinalErrorHandler.ts";
 import orderRouter from "../presentation/routes/orders.ts";
 import cors from "cors";
+import processToken from "../application/middleware/ProcessToken.ts";
+import cartRouter from "../presentation/routes/cart.ts";
 
-// TODO: change logger to mask pw_hash fields
 const app = express();
 app.use(
     express.json(),
@@ -19,9 +20,12 @@ app.use(
         credentials: true,
     }),
 );
+
+app.use(processToken);
 app.use("/products", productRouter);
 app.use("/users", userRouter);
 app.use("/orders", orderRouter);
+app.use("/cart", cartRouter);
 /** Just gonna add these 2 error handlers from assignments */
 app.use(psqlErrorHandler, finalErrorHandler);
 

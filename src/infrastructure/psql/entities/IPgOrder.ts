@@ -1,5 +1,8 @@
+import { IOrder } from "../../../../SillyStoreCommon/domain-objects/Order.ts";
+
 export interface IPgOrder {
-    readonly id: number;
-    readonly date: string;
-    readonly user_id: number;
+    readonly id: IOrder["id"];
+    readonly date: IOrder["dateStr"];
+    readonly user_id: IOrder["userId"];
+    readonly status: IOrder["status"];
 }

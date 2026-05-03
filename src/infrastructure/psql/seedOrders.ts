@@ -1,7 +1,6 @@
 import { Client, QueryConfig } from "pg";
 import { Quantities } from "./seed.ts";
-import logger from "../../../SillyStoreCommon/logging/Logger.ts";
-
+import backendLogger from "../../configs/BackendLogger.ts";
 export default async function seedOrders(
     db: Client,
     { users, ordersPerUser }: Quantities,
@@ -10,19 +9,21 @@ export default async function seedOrders(
         // note that psql ids start @ 1
         for (let i = 1; i < ordersPerUser + 1; i++) {
             const mayI2000: string = `${i}-5-2000`;
+            const status: "pending" | "completed" | "canceled" =
+                i === ordersPerUser ? "pending" : "completed";
             const sql: QueryConfig = {
                 text: `
-                INSERT INTO orders (date, user_id)
-                VALUES ($1, $2)
+                INSERT INTO orders (date, user_id, status)
+                VALUES ($1, $2, $3)
                 RETURNING id, date::text, user_id
                 `,
-                values: [mayI2000, userId],
+                values: [mayI2000, userId, status],
             };
-            logger.debug("running sql: ", sql);
+            backendLogger.debug("running sql: ", sql);
             const {
                 rows: [pgOrder],
             } = await db.query(sql);
-            logger.debug("result", pgOrder);
+            backendLogger.debug("result", pgOrder);
         }
     }
 }

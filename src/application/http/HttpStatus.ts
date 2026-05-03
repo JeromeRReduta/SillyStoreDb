@@ -1,4 +1,4 @@
-export const HttpStatus = {
+const HttpStatus = {
     OK: 200,
     CREATED: 201,
     EMPTY: 204,
@@ -7,3 +7,4 @@ export const HttpStatus = {
     FORBIDDEN: 403,
     NOT_FOUND: 404,
 };
+export default HttpStatus;
