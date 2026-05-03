@@ -6,9 +6,9 @@ import {
 
 export interface ICartItemClientService {
     /**
-     * Gets cart items in pending order
-     * @throws {HttpError} 404 if no pending order exists
+     * Gets cart items in pending order.
      * @param dto
+     * @note Pre-condition: order exists
      * @returns {Promise<ICartItemResponse[]>}
      */
     getPendingCartItemsAsync(
