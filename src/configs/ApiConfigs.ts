@@ -14,6 +14,8 @@ import backendConfigs from "./BackendConfigs.ts";
 import OrderClientService from "../application/services/ClientOrderService.ts";
 import ProductClientService from "../application/services/ProductClientService.ts";
 import UserClientService from "../application/services/UserClientService.ts";
+import { ICartItemClientService } from "../application/services/ICartItemClientService.ts";
+import CartItemClientService from "../application/services/CartItemClientService.ts";
 
 export interface IApiConfigs {
     readonly db: Client | Pool;
@@ -27,6 +29,7 @@ export interface IApiConfigs {
         readonly orderClientService: IOrderClientService;
         readonly productClientService: IProductClientService;
         readonly userClientService: IUserClientService;
+        readonly cartItemClientService: ICartItemClientService;
     };
 }
 
@@ -41,6 +44,7 @@ const services = {
     orderClientService: new OrderClientService(daos.orderDao),
     productClientService: new ProductClientService(daos.productDao),
     userClientService: new UserClientService(daos.userDao),
+    cartItemClientService: new CartItemClientService(daos.cartItemDao),
 };
 
 const apiConfigs: IApiConfigs = {
