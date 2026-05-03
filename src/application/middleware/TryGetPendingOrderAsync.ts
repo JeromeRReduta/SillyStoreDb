@@ -4,7 +4,7 @@ import {
     NextFunction,
 } from "express";
 import apiConfigs from "../../configs/ApiConfigs.ts";
-import { HttpStatus } from "../http/HttpStatus.ts";
+import HttpStatus from "../http/HttpStatus.ts";
 import {
     IOrderResponse,
     IGetAllPendingOrdersRequest,

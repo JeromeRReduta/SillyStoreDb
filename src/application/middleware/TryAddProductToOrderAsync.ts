@@ -3,7 +3,7 @@ import { NextFunction } from "express";
 import { IAddProductToOrderRequest } from "../../../SillyStoreCommon/dtos/requests/IAddProductToOrderRequest.ts";
 import { IOrderProductResponse } from "../../../SillyStoreCommon/dtos/responses/IOrderProductResponse.ts";
 import apiConfigs from "../../configs/ApiConfigs.ts";
-import { HttpStatus } from "../http/HttpStatus.ts";
+import HttpStatus from "../http/HttpStatus.ts";
 
 export default async function tryAddProductToOrderAsync(
     req: Request<

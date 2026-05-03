@@ -8,7 +8,7 @@ import {
 } from "../../../SillyStoreCommon/dtos/orderDtos.ts";
 import HttpError from "../../errors/HttpError.ts";
 import { IOrderDao } from "../../infrastructure/data_access/IOrderDao.ts";
-import { HttpStatus } from "../http/HttpStatus.ts";
+import HttpStatus from "../http/HttpStatus.ts";
 import { IOrderClientService } from "./IOrderClientService.ts";
 
 export default class OrderClientService implements IOrderClientService {

@@ -9,7 +9,7 @@ import {
     IGetUserByCredentialsRequest,
     ICreateUserRequest,
 } from "../../SillyStoreCommon/dtos/userDtos.ts";
-import { HttpStatus } from "../application/http/HttpStatus.ts";
+import HttpStatus from "../application/http/HttpStatus.ts";
 import tokenOps from "../application/jwt/TokenOperations.ts";
 import requireBody from "../application/middleware/RequireBody.ts";
 import apiConfigs from "../configs/ApiConfigs.ts";

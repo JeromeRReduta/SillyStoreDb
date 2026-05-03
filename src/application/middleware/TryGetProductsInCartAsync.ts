@@ -2,7 +2,7 @@ import Express from "express";
 import { IProductResponse } from "../../../SillyStoreCommon/dtos/responses/IProductResponse.ts";
 import apiConfigs from "../../configs/ApiConfigs.ts";
 import { IGetAllPendingOrdersRequest } from "../../../SillyStoreCommon/dtos/requests/IGetAllPendingOrdersRequest.ts";
-import { HttpStatus } from "../http/HttpStatus.ts";
+import HttpStatus from "../http/HttpStatus.ts";
 
 type ICartItem = IProductResponse & { quantity: number };
 

@@ -5,7 +5,7 @@ import {
 } from "../../../SillyStoreCommon/dtos/productDtos.ts";
 import HttpError from "../../errors/HttpError.ts";
 import { IProductDao } from "../../infrastructure/data_access/IProductDao.ts";
-import { HttpStatus } from "../http/HttpStatus.ts";
+import HttpStatus from "../http/HttpStatus.ts";
 import { IProductClientService } from "./IProductClientService.ts";
 
 export default class ProductClientService implements IProductClientService {

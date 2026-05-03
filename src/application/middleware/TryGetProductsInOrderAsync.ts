@@ -3,7 +3,7 @@ import { NextFunction } from "express";
 import { IGetProductsInOrderRequest } from "../../../SillyStoreCommon/dtos/requests/IGetProductsInOrderRequest.ts";
 import { IProductResponse } from "../../../SillyStoreCommon/dtos/responses/IProductResponse.ts";
 import apiConfigs from "../../configs/ApiConfigs.ts";
-import { HttpStatus } from "../http/HttpStatus.ts";
+import HttpStatus from "../http/HttpStatus.ts";
 
 export default function tryGetProductsInOrder(
     includingQuantities: boolean,

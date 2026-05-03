@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import backendLogger from "../../configs/BackendLogger.ts";
 import HttpError from "../../errors/HttpError.ts";
-import { HttpStatus } from "../http/HttpStatus.ts";
+import HttpStatus from "../http/HttpStatus.ts";
 
 export default function requireBody(fields: string[]) {
     return <

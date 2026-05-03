@@ -3,9 +3,9 @@ import requireBody from "../../application/middleware/RequireBody.ts";
 import requireSignedIn from "../../application/middleware/RequireSignedIn.ts";
 import tryCreateOrderAsync from "../../application/middleware/TryCreateOrderAsync.ts";
 import tryGetAllOwnedOrdersAsync from "../../application/middleware/TryGetAllOwnedOrdersAsync.ts";
+import tryGetOwnedOrderAsync from "../../application/middleware/TryGetOwnedOrderAsync.ts";
 import tryGetPendingOrderAsync from "../../application/middleware/TryGetPendingOrderAsync.ts";
 import tryUpdatePendingOrderAsync from "../../application/middleware/TryUpdatePendingOrderAsync.ts";
-import tryGetOwnedOrderAsync from "../../application/middleware/TryGetOwnedOrderAsync.ts";
 
 /** TODO:
  * Frontend:

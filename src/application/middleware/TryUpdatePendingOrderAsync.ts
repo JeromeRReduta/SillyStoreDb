@@ -9,7 +9,7 @@ import {
 } from "../../../SillyStoreCommon/dtos/orderDtos.ts";
 import { OrderStatus } from "../../../SillyStoreCommon/domain-objects/Order.ts";
 import apiConfigs from "../../configs/ApiConfigs.ts";
-import { HttpStatus } from "../http/HttpStatus.ts";
+import HttpStatus from "../http/HttpStatus.ts";
 
 export default async function tryUpdatePendingOrderAsync(
     req: ExpressRequest<

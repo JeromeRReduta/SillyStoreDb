@@ -8,7 +8,7 @@ import {
     IProductResponse,
 } from "../../../SillyStoreCommon/dtos/productDtos.ts";
 import apiConfigs from "../../configs/ApiConfigs.ts";
-import { HttpStatus } from "../http/HttpStatus.ts";
+import HttpStatus from "../http/HttpStatus.ts";
 
 export default async function tryGetAllProductsAsync(
     _req: ExpressRequest<object, IProductResponse[], object>,

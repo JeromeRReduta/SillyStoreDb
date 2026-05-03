@@ -6,7 +6,7 @@ import {
 } from "../../../SillyStoreCommon/dtos/userDtos.ts";
 import HttpError from "../../errors/HttpError.ts";
 import { IUserDao } from "../../infrastructure/data_access/IUserDao.ts";
-import { HttpStatus } from "../http/HttpStatus.ts";
+import HttpStatus from "../http/HttpStatus.ts";
 import tokenOps from "../jwt/TokenOperations.ts";
 import { IUserClientService } from "./IUserClientService.ts";
 

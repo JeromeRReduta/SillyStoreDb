@@ -8,7 +8,7 @@ import {
     IOrderResponse,
 } from "../../../SillyStoreCommon/dtos/orderDtos.ts";
 import apiConfigs from "../../configs/ApiConfigs.ts";
-import { HttpStatus } from "../http/HttpStatus.ts";
+import HttpStatus from "../http/HttpStatus.ts";
 
 export default async function tryGetAllOwnedOrdersAsync(
     req: ExpressRequest<object, IOrderResponse[], object>,

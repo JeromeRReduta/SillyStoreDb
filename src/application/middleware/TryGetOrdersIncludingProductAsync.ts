@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { HttpStatus } from "../http/HttpStatus.ts";
+import HttpStatus from "../http/HttpStatus.ts";
 import apiConfigs from "../../configs/ApiConfigs.ts";
 import { IOrderResponse } from "../../../SillyStoreCommon/dtos/responses/IOrderResponse.ts";
 
