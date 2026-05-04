@@ -7,8 +7,6 @@ const userRouter = express.Router();
 userRouter
     .route("/register")
     .post(requireBody(["username", "email", "pw"]), tryRegisterAsync);
-userRouter
-    .route("/login")
-    .post(requireBody(["username", "email", "pw"]), tryLoginAsync);
+userRouter.route("/login").post(requireBody(["email", "pw"]), tryLoginAsync);
 
 export default userRouter;
