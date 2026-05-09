@@ -25,11 +25,16 @@
 | title       | string         |             |
 | description | string         |             |
 | price       | number (money) |             |
+| imageSrc    | string         | image url   |
 
 # CartItemResponse
 
-| Key       | Type   | Description |
-| :-------- | :----- | :---------- |
-| orderId   | number |             |
-| productId | number |             |
-| quantity  | number |             |
+| Key         | Type   | Description          |
+| :---------- | :----- | :------------------- |
+| creatorId   | number | order's user id      |
+| orderId     | number | order.id             |
+| productId   | number | product.id           |
+| description | string | product.description  |
+| imageSrc    | string | product.imageSrc     |
+| quantity    | number | not from other table |
+| title       | string | product.title        |

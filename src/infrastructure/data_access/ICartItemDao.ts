@@ -54,9 +54,7 @@ export interface ICartItemDao extends ICrudDao<
      * @param dto
      * @returns {Promise<ICartItemResponse[]>} modified entries
      */
-    mergePendingCartAsync(
-        dto: IMergePendingCartItemsRequest,
-    ): Promise<ICartItemResponse[]>;
+    mergePendingCartAsync(dto: IMergePendingCartItemsRequest): Promise<void>;
 
     /** TODO: Sillystore common:
     * 
