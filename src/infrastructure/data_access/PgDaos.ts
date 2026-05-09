@@ -55,16 +55,24 @@ export default class PgDaos {
 
     static cartItemMapper: IPgDataMapper<IPgCartItem, ICartItemResponse> =
         function ({
+            creator_id,
             order_id,
             product_id,
+            description,
+            image_src,
+            price,
             quantity,
-            creator_id,
+            title,
         }): ICartItemResponse {
             return {
+                creatorId: creator_id,
                 orderId: order_id,
                 productId: product_id,
+                description,
+                imageSrc: image_src,
+                price,
                 quantity,
-                creatorId: creator_id,
+                title,
             };
         };
 
@@ -72,16 +80,24 @@ export default class PgDaos {
         Required<IPgCartItem>,
         ICartItemResponseWithCreator
     > = function ({
+        creator_id,
         order_id,
         product_id,
+        description,
+        image_src,
+        price,
         quantity,
-        creator_id,
+        title,
     }: Required<IPgCartItem>): ICartItemResponseWithCreator {
         return {
+            creatorId: creator_id,
             orderId: order_id,
             productId: product_id,
+            description,
+            imageSrc: image_src,
+            price,
             quantity,
-            creatorId: creator_id,
+            title,
         };
     };
 

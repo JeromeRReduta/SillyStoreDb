@@ -19,6 +19,7 @@ import PgDaos from "../../data_access/PgDaos.ts";
 export default class PgCartItemDao implements ICartItemDao {
     private db: Client | Pool;
     private formattedOrderSql: string;
+    private withDetailedCartItemSql: string;
 
     constructor(db: Client | Pool) {
         this.db = db;
@@ -27,6 +28,25 @@ export default class PgCartItemDao implements ICartItemDao {
             TO_CHAR(date, 'yyyy-mm-dd') AS date,
             user_id,
             status
+        `;
+        this.withDetailedCartItemSql = `
+            WITH detailed_cart_items AS (
+                SELECT 
+                    o.user_id AS creator_id,
+                    o.id AS order_id,
+                    p.id AS product_id,
+                    p.description,
+                    p.image_src,
+                    p.price,
+                    c.quantity,
+                    o.status,
+                    p.title
+                FROM cart_items AS c
+                JOIN products AS p
+                    ON p.id = c.product_id
+                JOIN orders AS o
+                    ON o.id = c.order_id
+            )
         `;
     }
 
@@ -74,17 +94,30 @@ export default class PgCartItemDao implements ICartItemDao {
     async getAllPendingAsync({
         creatorId,
     }: IGetPendingCartItemsRequest): Promise<ICartItemResponse[]> {
+        // readonly creator_id?: ICartItem["creatorId"];
+        // readonly order_id: ICartItem["orderId"];
+        // readonly product_id: ICartItem["productId"];
+        // readonly description: ICartItem["description"];
+        // readonly image_src: ICartItem["imageSrc"];
+        // readonly price: ICartItem["price"];
+        // readonly quantity: ICartItem["quantity"];
+        // readonly title: ICartItem["title"];
+
         const sql: QueryConfig = {
             text: `
-                WITH cart_items_with_creators AS (
-                    SELECT * FROM cart_items AS c
-                    JOIN orders AS o
-                        ON o.id = c.order_id
-                )
-
-                SELECT * from cart_items_with_creators AS result
-                    WHERE result.status = 'pending'
-                        AND result.user_id = $1
+                ${this.withDetailedCartItemSql}
+                SELECT 
+                    creator_id,
+                    order_id,
+                    product_id,
+                    description,
+                    image_src,
+                    price,
+                    quantity,
+                    title    
+                FROM detailed_cart_items
+                WHERE detailed_cart_items.status = 'pending'
+                    AND detailed_cart_items.creator_id = $1
             `,
             values: [creatorId],
         };
@@ -97,16 +130,19 @@ export default class PgCartItemDao implements ICartItemDao {
     }: IGetCartItemsInOrderRequest): Promise<ICartItemResponse[]> {
         const sql: QueryConfig = {
             text: `
-                WITH cart_items_with_creators AS (
-                    SELECT * FROM cart_items AS c
-                    JOIN orders AS o
-                        ON o.id = c.order_id
-                )
-
-                SELECT * from cart_items_with_creators AS result
-                    WHERE result.status = 'pending'
-                        AND result.user_id = $1
-                        AND result.order_id = $2
+                ${this.withDetailedCartItemSql}
+                SELECT
+                    creator_id,
+                    order_id,
+                    product_id,
+                    description,
+                    image_src,
+                    price,
+                    quantity,
+                    title    
+                FROM detailed_cart_items
+                WHERE detailed_cart_items.creator_id = $1
+                    AND detailed_cart_items.order_id = $2
             `,
             values: [creatorId, orderId],
         };
@@ -121,7 +157,7 @@ export default class PgCartItemDao implements ICartItemDao {
     async mergePendingCartAsync({
         creatorId,
         cartItems,
-    }: IMergePendingCartItemsRequest): Promise<ICartItemResponse[]> {
+    }: IMergePendingCartItemsRequest): Promise<void> {
         await this.db.query({
             text: `
             INSERT into orders (date, status, user_id)
@@ -189,6 +225,5 @@ export default class PgCartItemDao implements ICartItemDao {
             values: [pendingOrderId],
         });
         await this.db.query("DROP TABLE cart_items_new");
-        return [];
     }
 }
