@@ -22,8 +22,6 @@ orderRouter.route("/").get(tryGetAllOwnedOrdersAsync);
 orderRouter.route("/").post(requireBody(["dateStr"]), tryCreateOrderAsync);
 orderRouter.route("/pending").get(tryGetPendingOrderAsync);
 orderRouter.route("/:id").get(tryGetOwnedOrderAsync);
-orderRouter
-    .route("/pending")
-    .put(requireBody(["dateStr", "status"]), tryUpdatePendingOrderAsync);
+orderRouter.route("/pending").put(requireBody([]), tryUpdatePendingOrderAsync);
 
 export default orderRouter;
