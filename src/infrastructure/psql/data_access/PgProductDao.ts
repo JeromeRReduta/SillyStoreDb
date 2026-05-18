@@ -24,7 +24,8 @@ export default class PgProductDao implements IProductDao {
             id,
             title,
             description,
-            price::decimal::float8
+            price::decimal::float8,
+            image_src
         `;
     }
 
